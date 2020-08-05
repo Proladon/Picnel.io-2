@@ -1,6 +1,6 @@
 <template>
    <div id="folders-tab">
-
+       
    </div>
 </template>
 
@@ -14,6 +14,6 @@
    #folders-tab{
        width: 100%;
        height: 100%;
-       background-color: deeppink;
+       background-color: rgb(80, 80, 80);
    }
 </style>

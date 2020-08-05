@@ -46,6 +46,10 @@
 </script>
 
 <style lang="scss">
+    :root{
+        --spliter: rgb(117, 147, 151);
+    }
+
     html,
     body,
     #app {
@@ -90,10 +94,10 @@
 
     // 分割線樣式
     .splitpanes--vertical>.splitpanes__splitter {
-        background: mediumturquoise;
+        background: var(--spliter);
     }
 
     .splitpanes--horizontal>.splitpanes__splitter {
-        background: mediumturquoise;
+        background: var(--spliter);
     }
 </style>
