@@ -5,7 +5,7 @@
         @drop.prevent="drop">
 
         
-        <div id="view-area">
+        <div id="view-area" v-viewer="{narbar: false}">
             <img :src="`local-resource://${filepath}`" v-show=" filepath !== 'undefined' && filetype === 'image'">
             <video :src="`local-resource://${filepath}`" controls v-show=" filepath !== 'undefined' && filetype === 'video'"></video>
         
@@ -25,6 +25,8 @@
 <script>
     import {mapGetters} from 'vuex'
     import anime from 'animejs'
+    import 'viewerjs/dist/viewer.css'
+    
     export default {
         name: 'Viewer',
         methods:{
@@ -39,14 +41,13 @@
                     if (e.dataTransfer.items[0].kind === 'file'){
                         const file = e.dataTransfer.items[0].getAsFile()
                         console.log(file)
-                        this.$store.commit('LOAD_FILE', file)
+                        this.$store.dispatch('LOAD_FILE', file)
                     }
                 }
             }
         },
         computed:{
             ...mapGetters({
-                filename: 'getFileName',
                 filepath: 'getFilePath',
                 filetype: 'getFileType',
             })

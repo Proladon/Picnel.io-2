@@ -1,5 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import fs from 'fs-extra'
+import mime from 'mime-types'
 
 Vue.use(Vuex);
 
@@ -10,23 +12,48 @@ export default new Vuex.Store({
 
     },
     mutations: {
-        LOAD_FILE: (state, file) => {
-            state.curFile = file
+        SET_CURFILE: (state, data) => {
+            state.curFile = data
         }
     },
-    actions: {},
+    actions: {
+        LOAD_FILE: async (context, file) => {
+            // 判斷是否為資料夾
+            if (fs.lstatSync(file.path).isDirectory()) {
+                // 列出資料夾內所有檔案
+                const files = fs.readdirSync(file.path).map(f => {
+                    return `${ file.path}/${f}`.replace(/\\/g, '/')
+                    //=> Disk:/../folder/file
+                });
+                
+                // 取得檔案類型
+                const type = mime.lookup(files[0]).split('/')[0]
+
+                const data = {
+                    filepath: files[0],
+                    filetype: type,
+                }
+                context.commit('SET_CURFILE', data)
+            }
+            else {
+                const data = {
+                    filepath: file.path.replace(/\\/g, '/'),
+                    filetype: file.type.split('/')[0],
+                }
+                context.commit('SET_CURFILE', data)
+            }
+        }
+
+    },
     modules: {},
     getters: {
-        getFileName: state => {
-            return state.curFile.name
-        },
 
         getFilePath: state => {
-            return `${state.curFile.path}`.replace(/\\/g, '/')
+            return state.curFile.filepath
         },
 
         getFileType: state => {
-            return state.curFile.type.split('/')[0]
+            return state.curFile.filetype
         },
 
     }
