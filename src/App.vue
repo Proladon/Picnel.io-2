@@ -21,8 +21,21 @@
         </div>
 
         <div id="status-bar">
+            <div class="upload-btn-wrapper status-item">
+                <label class="directory-upload">
+                    <input type="file" @change="uploaddir" webkitdirectory directory />
+                    {{file.foldername}}
+                </label>
+            </div>
 
+            <div class="folder-info status-item">
+                <p style="color: white;">{{folderinfo}}</p>
+            </div>
+            <div>
+                <p>{{folderinfo.folders}}</p>
+            </div>
         </div>
+        
     </div>
 </template>
 
@@ -30,6 +43,8 @@
     // Splitpanes
     import {Splitpanes,Pane} from 'splitpanes'
     import 'splitpanes/dist/splitpanes.css'
+
+    import path from 'path'
     // Components
     import Viewer from './components/Viewer.vue'
     import Sidebar from './components/Sidebar.vue'
@@ -45,6 +60,27 @@
             Sidebar,
             Logger,
             Folderstab,
+        },
+        methods:{
+            uploaddir(e){
+                let folder = e.target.files[0].path.split('\\')
+                folder.pop()
+                folder = folder.join('\\')
+                const file = {
+                    name: path.basename(folder),
+                    path: folder,
+                    type: ""
+                }
+                this.$store.dispatch('LOAD_FILE', file)
+            }
+        },
+        computed:{
+            file(){
+                return this.$store.state.curFile
+            },
+            folderinfo(){
+                return this.$store.getters.getFolderInfo
+            }
         }
     }
 </script>
@@ -52,6 +88,7 @@
 <style lang="scss">
     :root{
         --spliter: rgb(117, 147, 151);
+        --dark: rgb(32, 32, 32);
     }
 
     html,
@@ -78,18 +115,50 @@
         width: 100%;
         height: 97%;
         position: fixed;
-        bottom: 30px;
+        left: 0;
+        right: 0;
+        bottom: 25px;
+        margin: 0 auto;
     }
 
     #status-bar{
         width: 100%;
-        height: 30px;
+        height: 25px;
         position: fixed;
+        display: flex;
+        align-items: center;
         bottom: 0;
-        background: rgb(32, 32, 32);
+        background: var(--dark);
+
+        .status-item{
+            margin-right: 10px;
+        }
     }
 
-    // 分割線感應區域
+    // Input: directory
+    .upload-btn-wrapper{
+        height: 100%;
+        display: flex;
+        align-items: center;
+        transition: ease-in-out .3s;
+    }
+
+    .upload-btn-wrapper:hover{
+        background-color: rgba($color: white, $alpha: .2);
+    }
+
+    .directory-upload {
+        color: lightgrey;
+        display: inline-block;
+        cursor: pointer;
+        
+        input[type="file"] {
+            display: none;
+        }
+    }
+
+
+     /* 分割線感應區域 */
     .splitpanes__splitter {
         background-color: #ccc;
         position: relative;
@@ -101,7 +170,7 @@
         left: 0;
         top: 0;
     }
-    
+
     .splitpanes--vertical>.splitpanes__splitter:before {
         left: -5px;
         right: -5px;
@@ -114,7 +183,7 @@
         width: 100%;
     }
 
-    // 分割線樣式
+    /* 分割線樣式 */
     .splitpanes--vertical>.splitpanes__splitter {
         background: var(--spliter);
     }
@@ -122,4 +191,5 @@
     .splitpanes--horizontal>.splitpanes__splitter {
         background: var(--spliter);
     }
+
 </style>
