@@ -8,7 +8,10 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     state: {
         mode: "random",
-        curFile: Object,
+        curFile: {
+            filepath: 'public/static/picnel.io.png',
+            filetype: 'image'
+        },
 
     },
     mutations: {
@@ -26,9 +29,11 @@ export default new Vuex.Store({
                     //=> Disk:/../folder/file
                 });
                 
+                
                 // 取得檔案類型
                 const type = mime.lookup(files[0]).split('/')[0]
-
+                // todo 當第一個檔案不是圖片或影片
+                // todo 當資料夾內沒有任何圖片或影片
                 const data = {
                     filepath: files[0],
                     filetype: type,

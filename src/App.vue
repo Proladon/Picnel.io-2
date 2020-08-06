@@ -1,24 +1,28 @@
 <template>
     <div id="app">
-        <Sidebar />
-        <splitpanes id="full-panel">
-            
-            <pane>
-                <splitpanes horizontal>
-                    <pane size="85">
-                        <viewer />
-                    </pane>
-                    <pane>
-                        <logger />
-                    </pane>
-                </splitpanes>
-            </pane>
+        <div id="main-panel-wrapper">
+            <Sidebar />
+            <splitpanes id="full-panel">
+                <pane>
+                    <splitpanes horizontal>
+                        <pane size="85">
+                            <viewer />
+                        </pane>
+                        <pane>
+                            <logger />
+                        </pane>
+                    </splitpanes>
+                </pane>
 
-            <pane size="25">
-                <folderstab />
-            </pane>
+                <pane size="25">
+                    <folderstab />
+                </pane>
+            </splitpanes>
+        </div>
 
-        </splitpanes>
+        <div id="status-bar">
+
+        </div>
     </div>
 </template>
 
@@ -61,10 +65,27 @@
 
     #app {
         display: flex;
+        flex-direction: column;
+        position: relative;
     }
 
     #full-panel {
         height: 100%;
+    }
+
+    #main-panel-wrapper{
+        display: flex;
+        width: 100%;
+        height: 97%;
+        margin-bottom: 30px;
+    }
+
+    #status-bar{
+        width: 100%;
+        height: 30px;
+        position: fixed;
+        bottom: 0;
+        background: rgb(32, 32, 32);
     }
 
     // 分割線感應區域

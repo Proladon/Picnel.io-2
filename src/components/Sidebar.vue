@@ -12,8 +12,8 @@ export default {
 
 <style scped lang="scss">
 #sidebar{
-    width: 70px;
+    width: 50px;
     height: 100%;
-    background-color: darkslategray;
+    background-color: mediumturquoise;
 }
 </style>
