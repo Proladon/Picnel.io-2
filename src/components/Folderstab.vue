@@ -14,6 +14,6 @@
    #folders-tab{
        width: 100%;
        height: 100%;
-       background-color: rgb(80, 80, 80);
+       background-color: rgb(44, 44, 44);
    }
 </style>

@@ -77,7 +77,8 @@
         display: flex;
         width: 100%;
         height: 97%;
-        margin-bottom: 30px;
+        position: fixed;
+        bottom: 30px;
     }
 
     #status-bar{

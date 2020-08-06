@@ -14,7 +14,7 @@
    #logger{
        width: 100%;
        height: 100%;
-       background-color: dimgray;
+       background-color: rgb(59, 59, 59);
        overflow-y: auto;
    }
 </style>
