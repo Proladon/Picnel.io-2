@@ -10,7 +10,7 @@ export default new Vuex.Store({
         mode: "random",
         curFile: {
             filefolder: "public/static/",
-            foldername: '',
+            foldername: 'Open Folder',
             files: [],
             index: 0,
             filepath: 'public/static/picnel.io.png',
@@ -65,19 +65,6 @@ export default new Vuex.Store({
             }
         },
 
-        // LOAD_FOLDER: (context, file) => {
-        //     file[0].path.split('\\').splice(file[0].path.length-1, 1)
-        //     const data = {
-        //         filefolder: file.path,
-        //         foldername: file.name,
-        //         files: file,
-        //         index: 0,
-        //         filepath: files[0],
-        //         filetype: type,
-        //     }
-        //     context.commit('SET_CURFILE', data)
-        // },
-
         //:: 隨機挑選圖片
         RANDOM_FILE: context => {
             function randomChoice(arr) {
@@ -92,7 +79,14 @@ export default new Vuex.Store({
 
         // PRENEXT_FILE: context => {
 
-        // }
+        // },
+
+        DELETE_FILE: context => {
+            fs.remove(context.state.curFile.filepath, function(err){
+                if (err) return console.error(err);
+                console.log("success!")
+            });
+        }
 
     },
     modules: {},

@@ -8,16 +8,23 @@
         <div id="view-area" v-viewer="{navbar: false}">
             <img :src="`local-resource://${filepath}`" v-show=" filepath !== 'undefined' && filetype === 'image'">
             <video :src="`local-resource://${filepath}`" controls v-show=" filepath !== 'undefined' && filetype === 'video'"></video>
-        
+        </div>
+
+        <div id="delete-btn">
+            <button @click="del">╳</button>
         </div>
 
         <div id="random-mode" class="view-control" v-show="mode==='random'">
-            <button @click="test">Random</button>
+            <button @click="random">Random</button>
         </div>
         
         <div id="prenext-mode" class="view-control" v-show="mode==='prenext'">
 
         </div>
+
+        <modal name="my-first-modal">
+            This is my first modal
+        </modal>
 
     </div>
 </template>
@@ -26,9 +33,11 @@
     import {mapGetters} from 'vuex'
     import anime from 'animejs'
     import 'viewerjs/dist/viewer.css'
-    
     export default {
         name: 'Viewer',
+        components:{
+            
+        },
         methods:{
             dragging(){
 
@@ -44,8 +53,20 @@
                     }
                 }
             },
-            test(){
+            random(){
+                if (this.filepath ==- 'public/static/picnel.io.png') return
                 this.$store.dispatch('RANDOM_FILE')
+            },
+            del(){
+                // 警告永久刪除
+                const Warning = () => import(/* webpackChunkName: "Warning" */ "@/components/modal/Warning.vue")
+                this.$modal.show(
+                    Warning,
+                    { text: 'This text is passed as a property' },
+                    // { draggable: true }
+                )
+
+                // alert("警告")
             }
         },
         computed:{
@@ -86,6 +107,32 @@
             max-width: 100%;
             max-height: 100%;
         }
+    }
+
+    #delete-btn{
+        width: 30px;
+        height: 30px;
+        top: 10px;
+        right: 0;
+        position: absolute;
+        
+        button{
+            width: 100%;
+            height: 100%;
+            color: transparent;
+            border: none;
+            outline: none;
+            background-color: transparent;
+        }
+    }
+    #delete-btn:hover{
+        background-color: rgba($color: white, $alpha: .1);
+        button{
+            color: red;
+        }
+    }
+    #delete-btn:active{
+        background-color: rgba(200, 200, 200,.1);
     }
 
     .view-control{
