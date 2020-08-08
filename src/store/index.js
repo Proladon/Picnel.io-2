@@ -98,19 +98,19 @@ export default new Vuex.Store({
     },
     modules: {},
     getters: {
-
+        //:: 檔案路徑
         getFilePath: state => {
             return state.curFile.filepath
         },
-
+        //:: 檔案類型
         getFileType: state => {
             return state.curFile.filetype
         },
-
+        //:: 檔案類型
         getMode: state => {
             return state.mode
         },
-
+        //:: 資料夾資訊
         getFolderInfo: state => {
             const files = state.curFile.files
             let file_items = files.filter(i => 
@@ -120,7 +120,6 @@ export default new Vuex.Store({
                 fs.lstatSync(i).isDirectory()
             )
             return `Folders: ${folder_items.length} Files: ${file_items.length}`
-        }
-
+        },
     }
 });

@@ -1,8 +1,8 @@
 <template>
    <div id="logger">
-       <div class="log" v-for="(log, index) in logging" :key="index">
+       <p class="log" v-for="(log, index) in logging" :key="index" :id="`log-${index}`">
           {{log}}
-       </div>
+       </p>
    </div>
 </template>
 
@@ -12,12 +12,16 @@
        computed:{
           logging(){
              return this.$store.state.log
-          }
+          },
        },
        watch:{
            logging:()=>{
-             const logger = document.getElementById('logger')
-             logger.scrollTop = logger.scrollHeight + 100
+            const logger = document.getElementById('logger')
+            // Wait for DOM create element.
+            setTimeout(() => {
+               logger.scrollTop = logger.scrollHeight
+            }, 0);
+            
           }
        }
    }
@@ -28,7 +32,8 @@
       color: rgba($color: white, $alpha: .5);
       width: 100%;
       height: 100%;
-      
+      margin: 0;
+      padding: 0;
       background-color: rgb(59, 59, 59);
       overflow: auto;
 

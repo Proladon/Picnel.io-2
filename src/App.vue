@@ -85,6 +85,7 @@
                 this.$store.dispatch('LOAD_FILE', file)
                 // logging
                 this.$store.commit('UPDATE_LOG', "update folder")
+                
                 // reset selected file, or it won't be firing onchange event!
                 e.target.value = null
             },
