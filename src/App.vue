@@ -81,18 +81,13 @@
             },
 
             resetfolder(){
-                const file = {
-                    filefolder: "public/static/",
-                    foldername: 'Open Folder',
-                    files: [],
-                    index: 0,
-                    filepath: 'public/static/picnel.io.png',
-                    filetype: 'image'
-                }
-                this.$store.commit('SET_CURFILE', file)
+                this.$store.commit('SET_CURFILE', this.home)
             }
         },
         computed:{
+            home(){
+                return this.$store.state.home
+            },
             file(){
                 return this.$store.state.curFile
             },
