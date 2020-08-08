@@ -25,6 +25,7 @@
             <div class="folder-reset status-button status-item" @click="resetfolder">
                 ♻
             </div>
+            
             <!-- Upload Folder -->
             <div class="upload-btn-wrapper status-button status-item">
                 <label class="directory-upload">
@@ -40,6 +41,9 @@
                 <p>{{folderinfo.folders}}</p>
             </div>
         </div>
+
+        <!-- Notify -->
+        <notifications group="home" position="bottom right" animation-type="velocity"/>
         
     </div>
 </template>
@@ -68,6 +72,7 @@
             Folderstab,
         },
         methods:{
+            //:: Upload Folder
             uploaddir(e){
                 let folder = e.target.files[0].path.split('\\')
                 folder.pop()
@@ -78,10 +83,27 @@
                     type: ""
                 }
                 this.$store.dispatch('LOAD_FILE', file)
+                // logging
+                this.$store.commit('UPDATE_LOG', "update folder")
+                // reset selected file, or it won't be firing onchange event!
+                e.target.value = null
             },
-
+            
+            //:: Reset Folder
             resetfolder(){
+                if(this.file.filepath === 'public/static/picnel.io.png') {
+                    this.$notify({
+                        group: 'home',
+                        type: 'warn',
+                        title: 'Notification',
+                        text: 'No need to reset.'
+                    });
+                    return
+                }
+                
                 this.$store.commit('SET_CURFILE', this.home)
+                // logging
+                this.$store.commit('UPDATE_LOG', "reset folder")
             }
         },
         computed:{

@@ -2,6 +2,7 @@
     <div id="sidebar">
         <div class="nav" @click="changemode">{{mode}}</div>
         <div class="nav">Mode</div>
+        <!-- Notify -->
         <notifications group="foo" position="bottom right" animation-type="velocity"/>
     </div>
 </template>

@@ -17,6 +17,7 @@ export default new Vuex.Store({
             filetype: 'image'
         },
         curFile: {},
+        log:[],
 
     },
     mutations: {
@@ -26,6 +27,11 @@ export default new Vuex.Store({
         UPDATE_FILE: (state, data) => {
             state.curFile.filepath = data
         },
+        UPDATE_LOG: (state, log) => {
+            let logs = state.log
+            logs.push(log)
+            state.log = logs
+        }
         
     },
     actions: {

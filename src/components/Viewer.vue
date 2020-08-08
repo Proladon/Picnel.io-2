@@ -49,6 +49,7 @@
                     if (e.dataTransfer.items[0].kind === 'file'){
                         const file = e.dataTransfer.items[0].getAsFile()
                         this.$store.dispatch('LOAD_FILE', file)
+                        this.$store.commit('UPDATE_LOG', "update folder")
                     }
                 }
             },
