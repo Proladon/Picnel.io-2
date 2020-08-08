@@ -98,6 +98,7 @@
         height: 100%;
         margin: 0;
         padding: 0;
+        overflow: hidden;
         font-family: Arial, Helvetica, sans-serif;
     }
 
@@ -115,7 +116,7 @@
         display: flex;
         width: 100%;
         height: 97%;
-        position: fixed;
+        position: absolute;
         left: 0;
         right: 0;
         bottom: 25px;
@@ -125,7 +126,7 @@
     #status-bar{
         width: 100%;
         height: 25px;
-        position: fixed;
+        position: absolute;
         display: flex;
         align-items: center;
         bottom: 0;
@@ -192,5 +193,6 @@
     .splitpanes--horizontal>.splitpanes__splitter {
         background: var(--spliter);
     }
+
 
 </style>

@@ -21,11 +21,10 @@
         <div id="prenext-mode" class="view-control" v-show="mode==='prenext'">
 
         </div>
-
-        <modal name="my-first-modal">
-            This is my first modal
-        </modal>
-
+        
+        <!-- Notify -->
+        <notifications group="random" position="bottom right" animation-type="velocity"/>
+        
     </div>
 </template>
 
@@ -54,7 +53,15 @@
                 }
             },
             random(){
-                if (this.filepath ==- 'public/static/picnel.io.png') return
+                if (this.filepath === 'public/static/picnel.io.png') {
+                    this.$notify({
+                        group: 'random',
+                        type: 'error',
+                        title: 'Error',
+                        text: 'Please open a main folder first.'
+                    })
+                    return   
+                }
                 this.$store.dispatch('RANDOM_FILE')
             },
             del(){
