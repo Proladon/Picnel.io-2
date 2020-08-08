@@ -21,7 +21,12 @@
         </div>
 
         <div id="status-bar">
-            <div class="upload-btn-wrapper status-item">
+            <!-- Folder Reset -->
+            <div class="folder-reset status-button status-item" @click="resetfolder">
+                ♻
+            </div>
+            <!-- Upload Folder -->
+            <div class="upload-btn-wrapper status-button status-item">
                 <label class="directory-upload">
                     <input type="file" @change="uploaddir" webkitdirectory directory />
                     {{file.foldername}}
@@ -45,6 +50,7 @@
     import 'splitpanes/dist/splitpanes.css'
 
     import path from 'path'
+
     // Components
     import Viewer from './components/Viewer.vue'
     import Sidebar from './components/Sidebar.vue'
@@ -72,6 +78,18 @@
                     type: ""
                 }
                 this.$store.dispatch('LOAD_FILE', file)
+            },
+
+            resetfolder(){
+                const file = {
+                    filefolder: "public/static/",
+                    foldername: 'Open Folder',
+                    files: [],
+                    index: 0,
+                    filepath: 'public/static/picnel.io.png',
+                    filetype: 'image'
+                }
+                this.$store.commit('SET_CURFILE', file)
             }
         },
         computed:{
@@ -81,6 +99,10 @@
             folderinfo(){
                 return this.$store.getters.getFolderInfo
             }
+        },
+        created(){
+            const home = this.$store.state.home
+            this.$store.commit('SET_CURFILE', home)
         }
     }
 </script>
@@ -123,6 +145,7 @@
         margin: 0 auto;
     }
 
+    // Status Bar
     #status-bar{
         width: 100%;
         height: 25px;
@@ -135,6 +158,15 @@
         .status-item{
             margin-right: 10px;
         }
+        
+        .status-button{
+            cursor: pointer;
+            background-color: transparent;
+            transition: ease-in-out .3s;
+        }
+        .status-button:hover{
+            background-color: rgba($color: white, $alpha: .2);
+        }
     }
 
     // Input: directory
@@ -142,11 +174,6 @@
         height: 100%;
         display: flex;
         align-items: center;
-        transition: ease-in-out .3s;
-    }
-
-    .upload-btn-wrapper:hover{
-        background-color: rgba($color: white, $alpha: .2);
     }
 
     .directory-upload {

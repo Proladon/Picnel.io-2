@@ -8,7 +8,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     state: {
         mode: "random",
-        curFile: {
+        home: {
             filefolder: "public/static/",
             foldername: 'Open Folder',
             files: [],
@@ -16,6 +16,7 @@ export default new Vuex.Store({
             filepath: 'public/static/picnel.io.png',
             filetype: 'image'
         },
+        curFile: {},
 
     },
     mutations: {
