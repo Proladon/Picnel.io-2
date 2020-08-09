@@ -2,12 +2,15 @@
     <div id="sidebar">
         <div class="nav" @click="changemode">{{mode}}</div>
         <div class="nav">Mode</div>
+        <div class="nav" @click="readjdata">Read test</div>
+        <div class="nav" @click="writejdata">Write test</div>
         <!-- Notify -->
         <notifications group="foo" position="bottom right" animation-type="velocity"/>
     </div>
 </template>
 
 <script>
+    import fs from 'fs-extra'
     export default {
         name: 'Sidebar',
         methods: {
@@ -17,8 +20,38 @@
                     type: 'error',
                     title: 'Important message',
                     text: 'Hello user! This is a notification!'
-                });
+                })
+            },
+            // 測試
+            readjdata(){
+                fs.readJson('C:/Users/Proladon/Desktop/test.json')
+                    .then(res => {
+                        console.log(res)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+            },
+            writejdata(){
+                const url = 'C:/Users/Proladon/Desktop/test.json'
+                fs.readJson(url)
+                    .then(res => {
+                        res.name3 = "Renloter";
+
+                
+                        fs.outputJson(url, res)
+                            .then(() => {
+                                console.log("done")
+                            })
+                            .catch(err => {
+                                console.log(err)
+                            })
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
             }
+            // 測試
         },
         computed: {
             mode() {

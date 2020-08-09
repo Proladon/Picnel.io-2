@@ -25,7 +25,7 @@
          Pane,
       },
       data: () => ({
-         panesNumber: 3
+         panesNumber: 2
       })
    }
 </script>
