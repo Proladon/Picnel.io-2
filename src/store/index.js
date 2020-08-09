@@ -121,5 +121,7 @@ export default new Vuex.Store({
             )
             return `Folders: ${folder_items.length} Files: ${file_items.length}`
         },
+
+        
     }
 });

@@ -15,7 +15,7 @@
                 </pane>
 
                 <pane size="25">
-                    <folderstab />
+                    <Folderslist />
                 </pane>
             </splitpanes>
         </div>
@@ -59,7 +59,7 @@
     import Viewer from './components/Viewer.vue'
     import Sidebar from './components/Sidebar.vue'
     import Logger from './components/Logger.vue'
-    import Folderstab from './components/Folderstab.vue'
+    import Folderslist from './components/Folderslist.vue'
 
     export default {
         name: 'App',
@@ -69,7 +69,7 @@
             Viewer,
             Sidebar,
             Logger,
-            Folderstab,
+            Folderslist,
         },
         methods:{
             //:: Upload Folder
