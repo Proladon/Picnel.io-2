@@ -24,19 +24,35 @@ export default new Vuex.Store({
         SET_CURFILE: (state, data) => {
             state.curFile = data
         },
-        UPDATE_FILE: (state, data) => {
+        UPDATE_CURFILE_PATH: (state, data) => {
             state.curFile.filepath = data
         },
         UPDATE_LOG: (state, log) => {
             let logs = state.log
             logs.push(log)
             state.log = logs
+        },
+        UPDATE_FILES: (state) => {
+            const files = fs.readdirSync(state.curFile.filefolder).map(f => {
+                return `${state.curFile.filefolder}/${f}`.replace(/\\/g, '/')
+                //=> Disk:/../folder/file
+            })
+            state.curFile.files = files
         }
         
     },
     actions: {
         //:: 讀取載入的檔案
         LOAD_FILE: (context, file) => {
+            let data = {
+                filefolder: file.path,
+                foldername: file.name,
+                folderinfo: context.getters.getFolderInfo,
+                files: [],
+                index: 0,
+                filepath: "",
+                filetype: "",
+            }
             // 判斷是否為資料夾
             if (fs.lstatSync(file.path).isDirectory()) {
                 // 列出資料夾內所有檔案
@@ -49,25 +65,15 @@ export default new Vuex.Store({
                 const type = mime.lookup(files[0]).split('/')[0]
                 // todo 當第一個檔案不是圖片或影片
                 // todo 當資料夾內沒有任何圖片或影片
-                const data = {
-                    filefolder: file.path,
-                    foldername: file.name,
-                    files: files,
-                    index: 0,
-                    filepath: files[0],
-                    filetype: type,
-                }
+
+                data.files = files
+                data.filepath = files[0]
+                data.filetype = type
                 context.commit('SET_CURFILE', data)
             }
             else {
-                const data = {
-                    filefolder: file.path,
-                    foldername: file.name,
-                    files: [],
-                    index: 0,
-                    filepath: file.path.replace(/\\/g, '/'),
-                    filetype: file.type.split('/')[0],
-                }
+                data.filepath = file.path.replace(/\\/g, '/')
+                data.filetype = file.type.split('/')[0]
                 context.commit('SET_CURFILE', data)
             }
         },
@@ -78,9 +84,10 @@ export default new Vuex.Store({
                 return arr[Math.floor(Math.random() * arr.length)];
             }
             const files = context.state.curFile.files
-            //? 如果資料夾內有多個檔案
+            //? 如果資料夾內有多個檔案才執行
             if (files.length > 0) {
-                context.commit('UPDATE_FILE', randomChoice(files))
+                context.commit('UPDATE_CURFILE_PATH', randomChoice(files))
+                context.commit('UPDATE_FILES')
             }
         },
 
@@ -121,7 +128,6 @@ export default new Vuex.Store({
             )
             return `Folders: ${folder_items.length} Files: ${file_items.length}`
         },
-
-        
+       
     }
 });

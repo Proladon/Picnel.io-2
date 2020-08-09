@@ -1,8 +1,5 @@
 'use strict'
 
-// Chokidar
-import chokidar from 'chokidar'
-
 import { app, protocol, BrowserWindow } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
@@ -75,18 +72,7 @@ app.on('ready', async () => {
   }
     registerLocalResourceProtocol()
     createWindow()
-      
-    let watcher = chokidar.watch('C:/Users/Proladon/Desktop/test2', {
-        persistent: true
-    });
-    const log = console.log.bind(console);
-    watcher
-    .on('add', path => log(`File ${path} has been added`))
-    .on('change', path => log(`File ${path} has been changed`))
-    .on('unlink', path => log(`File ${path} has been removed`))
-    .on('addDir', path => log(`Directory ${path} has been added`))
-    .on('unlinkDir', path => log(`Directory ${path} has been removed`))
-
+    
 })
 
 

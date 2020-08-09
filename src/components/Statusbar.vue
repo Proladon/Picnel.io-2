@@ -16,9 +16,7 @@
         <div class="folder-info status-item">
             <p style="color: white;">{{folderinfo}}</p>
         </div>
-        <div>
-            <p>{{folderinfo.folders}}</p>
-        </div>
+
     </div>
 </template>
 
