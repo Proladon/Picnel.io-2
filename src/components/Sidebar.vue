@@ -4,6 +4,14 @@
         <div class="nav">Mode</div>
         <div class="nav" @click="readjdata">Read test</div>
         <div class="nav" @click="writejdata">Write test</div>
+        
+        <div class="nav">
+            <label class="directory-upload">
+                <input type="file" @change="saveas" webkitdirectory directory />
+                Save as
+            </label>
+        </div>
+
         <!-- Notify -->
         <notifications group="foo" position="bottom right" animation-type="velocity"/>
     </div>
@@ -37,8 +45,6 @@
                 fs.readJson(url)
                     .then(res => {
                         res.name3 = "Renloter";
-
-                
                         fs.outputJson(url, res)
                             .then(() => {
                                 console.log("done")
@@ -50,6 +56,11 @@
                     .catch(err => {
                         console.log(err)
                     })
+            },
+
+            saveas(e){
+                console.log()
+                e.target.value = null
             }
             // 測試
         },
