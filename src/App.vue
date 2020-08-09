@@ -55,7 +55,7 @@
             //:: Init Viewer Image
             const home = this.$store.state.home
             this.$store.commit('SET_CURFILE', home)
-        }
+        },
     }
 </script>
 

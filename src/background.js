@@ -1,5 +1,8 @@
 'use strict'
 
+// Chokidar
+import chokidar from 'chokidar'
+
 import { app, protocol, BrowserWindow } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
@@ -54,7 +57,7 @@ app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (win === null) {
-    createWindow()
+      createWindow()
   }
 })
 
@@ -70,8 +73,20 @@ app.on('ready', async () => {
       console.error('Vue Devtools failed to install:', e.toString())
     }
   }
-  registerLocalResourceProtocol()
-  createWindow()
+    registerLocalResourceProtocol()
+    createWindow()
+      
+    let watcher = chokidar.watch('C:/Users/Proladon/Desktop/test2', {
+        persistent: true
+    });
+    const log = console.log.bind(console);
+    watcher
+    .on('add', path => log(`File ${path} has been added`))
+    .on('change', path => log(`File ${path} has been changed`))
+    .on('unlink', path => log(`File ${path} has been removed`))
+    .on('addDir', path => log(`Directory ${path} has been added`))
+    .on('unlinkDir', path => log(`Directory ${path} has been removed`))
+
 })
 
 
