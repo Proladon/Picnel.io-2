@@ -48,13 +48,13 @@
                 if (e.dataTransfer.items){
                     if (e.dataTransfer.items[0].kind === 'file'){
                         const file = e.dataTransfer.items[0].getAsFile()
-                        this.$store.dispatch('LOAD_FILE', file)
-                        this.$store.commit('UPDATE_LOG', "update folder")
+                        this.$store.commit('SET_CURFILE', file.path)
+                        // this.$store.commit('UPDATE_LOG', "update folder")
                     }
                 }
             },
             random(){
-                if (this.filepath === 'public/static/picnel.io.png') {
+                if (this.filename === 'picnel.io.png') {
                     this.$notify({
                         group: 'random',
                         type: 'error',
@@ -80,6 +80,7 @@
         computed:{
             ...mapGetters({
                 curfile: 'getCurFilePath',
+                filename: 'getFileName',
                 filetype: 'getFileType',
                 mode: 'getMode',
             })

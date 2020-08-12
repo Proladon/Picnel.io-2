@@ -18,27 +18,17 @@ export default new Vuex.Store({
         SET_CURFILE: (state, data) => {
             state.curFile = data
         },
-        UPDATE_CURFILE_PATH: (state, data) => {
-            state.curFile.filepath = data
-        },
         UPDATE_LOG: (state, log) => {
             let logs = state.log
             logs.push(log)
             state.log = logs
         },
-        UPDATE_FILES: (state) => {
-            const files = fs.readdirSync(state.curFile.filefolder).map(f => {
-                return `${state.curFile.filefolder}/${f}`.replace(/\\/g, '/')
-                //=> Disk:/../folder/file
-            })
-            state.curFile.files = files
-        }
         
     },
     actions: {
         //:: 讀取載入的檔案
-        // LOAD_FILE: (context, file) => {
-        //     // 判斷是否為資料夾
+        // LOAD_FILE: (context, filepath) => {
+            
 
         // },
 
@@ -47,11 +37,13 @@ export default new Vuex.Store({
             function randomChoice(arr) {
                 return arr[Math.floor(Math.random() * arr.length)];
             }
-            const files = context.state.curFile.files
+            const files_list = context.getters.getFilesList
+            const files = files_list.filter(f => {
+                return path.extname(f) !== ''
+            })
             //? 如果資料夾內有多個檔案才執行
             if (files.length > 0) {
-                context.commit('UPDATE_CURFILE_PATH', randomChoice(files))
-                context.commit('UPDATE_FILES')
+                context.commit('SET_CURFILE', randomChoice(files))
             }
         },
 
@@ -82,7 +74,7 @@ export default new Vuex.Store({
             return path.dirname(getters.getCurFilePath)
         },
         //:: Folder Name
-        getFoldername: (state, getters) => {
+        getFolderName: (state, getters) => {
             return path.basename(getters.getFolderPath)
         },
         //:: Folder Files_list
@@ -91,6 +83,12 @@ export default new Vuex.Store({
                 return `${getters.getFolderPath}/${f.replace(/\\/g, '/')}`
             })
             return files
+        },
+        //:: File Index
+        getFileIndex: (state, getters) => {
+            const file = getters.getCurFilePath
+            const files_list = getters.getFilesList
+            return files_list.indexOf(file)
         },
         //:: View Mode
         getMode: state => {
