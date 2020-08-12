@@ -1,13 +1,13 @@
 <template>
     <div id="sidebar">
         <div class="nav" @click="changemode">{{mode}}</div>
-        <div class="nav">Mode</div>
+        <div class="nav" >Mode</div>
         <div class="nav" @click="readjdata">Read test</div>
         <div class="nav" @click="writejdata">Write test</div>
         
         <div class="nav">
             <label class="directory-upload">
-                <input type="file" @change="saveas" webkitdirectory directory />
+                <input type="file"  webkitdirectory directory />
                 Save as
             </label>
         </div>
@@ -57,12 +57,6 @@
                         console.log(err)
                     })
             },
-
-            saveas(e){
-                console.log()
-                e.target.value = null
-            }
-            // 測試
         },
         computed: {
             mode() {

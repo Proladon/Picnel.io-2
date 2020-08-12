@@ -6,8 +6,8 @@
 
         
         <div id="view-area" v-viewer="{navbar: false}">
-            <img :src="`local-resource://${filepath}`" v-show=" filepath !== 'undefined' && filetype === 'image'">
-            <video :src="`local-resource://${filepath}`" controls v-show=" filepath !== 'undefined' && filetype === 'video'"></video>
+            <img :src="`local-resource://${curfile}`" v-show=" curfile !== 'undefined' && filetype === 'image'">
+            <video :src="`local-resource://${curfile}`" controls v-show=" curfile !== 'undefined' && filetype === 'video'"></video>
         </div>
 
         <div id="delete-btn">
@@ -48,13 +48,13 @@
                 if (e.dataTransfer.items){
                     if (e.dataTransfer.items[0].kind === 'file'){
                         const file = e.dataTransfer.items[0].getAsFile()
-                        this.$store.dispatch('LOAD_FILE', file)
-                        this.$store.commit('UPDATE_LOG', "update folder")
+                        this.$store.commit('SET_CURFILE', file.path)
+                        // this.$store.commit('UPDATE_LOG', "update folder")
                     }
                 }
             },
             random(){
-                if (this.filepath === 'public/static/picnel.io.png') {
+                if (this.filename === 'picnel.io.png') {
                     this.$notify({
                         group: 'random',
                         type: 'error',
@@ -79,7 +79,8 @@
         },
         computed:{
             ...mapGetters({
-                filepath: 'getFilePath',
+                curfile: 'getCurFilePath',
+                filename: 'getFileName',
                 filetype: 'getFileType',
                 mode: 'getMode',
             })

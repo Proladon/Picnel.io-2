@@ -9,7 +9,8 @@
         <div class="upload-btn-wrapper status-button status-item">
             <label class="directory-upload">
                 <input type="file" @change="uploaddir" webkitdirectory directory />
-                {{file.foldername}}
+                <p v-if="foldername === 'static'">Upload Folder</p>
+                <p v-if="foldername !== 'static'">{{foldername}}</p>
             </label>
         </div>
 
@@ -21,30 +22,20 @@
 </template>
 
 <script>
-
-    import path from 'path'
+    import {mapGetters} from 'vuex'
+    // import path from 'path'
     export default {
         name: 'Statusbar',
         methods: {
             //:: Upload Folder
             uploaddir(e) {
-                let folder = e.target.files[0].path.split('\\')
-                folder.pop()
-                folder = folder.join('\\')
-                const file = {
-                    name: path.basename(folder),
-                    path: folder,
-                    type: ""
-                }
-                this.$store.dispatch('LOAD_FILE', file)
-                // logging
-                this.$store.commit('UPDATE_LOG', "update folder")
+                this.$store.commit('SET_CURFILE', e.target.files[0].path)
                 // reset selected file, or it won't be firing onchange event!
                 e.target.value = null
             },
             //:: Reset Folder
             resetfolder() {
-                if (this.file.filepath === 'public/static/picnel.io.png') {
+                if (this.foldername === 'static') {
                     this.$notify({
                         group: 'home',
                         type: 'warn',
@@ -62,12 +53,11 @@
             home() {
                 return this.$store.state.home
             },
-            file() {
-                return this.$store.state.curFile
-            },
-            folderinfo() {
-                return this.$store.getters.getFolderInfo
-            }
+            ...mapGetters({
+                file: 'getCurFilePath',
+                folderinfo: 'getFolderInfo',
+                foldername: 'getFolderName'
+            })
         },
         
     }
