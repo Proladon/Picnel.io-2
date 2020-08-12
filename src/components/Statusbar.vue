@@ -22,23 +22,13 @@
 
 <script>
 
-    import path from 'path'
+    // import path from 'path'
     export default {
         name: 'Statusbar',
         methods: {
             //:: Upload Folder
             uploaddir(e) {
-                let folder = e.target.files[0].path.split('\\')
-                folder.pop()
-                folder = folder.join('\\')
-                const file = {
-                    name: path.basename(folder),
-                    path: folder,
-                    type: ""
-                }
-                this.$store.dispatch('LOAD_FILE', file)
-                // logging
-                this.$store.commit('UPDATE_LOG', "update folder")
+                console.log(e.target.name)
                 // reset selected file, or it won't be firing onchange event!
                 e.target.value = null
             },

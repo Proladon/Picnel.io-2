@@ -2,21 +2,15 @@ import Vue from "vue";
 import Vuex from "vuex";
 import fs from 'fs-extra'
 import mime from 'mime-types'
+import path from 'path'
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
         mode: "random",
-        home: {
-            filefolder: "public/static/",
-            foldername: 'Open Folder',
-            files: [],
-            index: 0,
-            filepath: 'public/static/picnel.io.png',
-            filetype: 'image'
-        },
-        curFile: {},
+        home: 'public/static/picnel.io.png',
+        curFile: 'public/static/picnel.io.png',
         log:[],
 
     },
@@ -43,40 +37,10 @@ export default new Vuex.Store({
     },
     actions: {
         //:: 讀取載入的檔案
-        LOAD_FILE: (context, file) => {
-            let data = {
-                filefolder: file.path,
-                foldername: file.name,
-                folderinfo: context.getters.getFolderInfo,
-                files: [],
-                index: 0,
-                filepath: "",
-                filetype: "",
-            }
-            // 判斷是否為資料夾
-            if (fs.lstatSync(file.path).isDirectory()) {
-                // 列出資料夾內所有檔案
-                const files = fs.readdirSync(file.path).map(f => {
-                    return `${ file.path}/${f}`.replace(/\\/g, '/')
-                    //=> Disk:/../folder/file
-                });
-                
-                // 取得檔案類型
-                const type = mime.lookup(files[0]).split('/')[0]
-                // todo 當第一個檔案不是圖片或影片
-                // todo 當資料夾內沒有任何圖片或影片
+        // LOAD_FILE: (context, file) => {
+        //     // 判斷是否為資料夾
 
-                data.files = files
-                data.filepath = files[0]
-                data.filetype = type
-                context.commit('SET_CURFILE', data)
-            }
-            else {
-                data.filepath = file.path.replace(/\\/g, '/')
-                data.filetype = file.type.split('/')[0]
-                context.commit('SET_CURFILE', data)
-            }
-        },
+        // },
 
         //:: 隨機挑選圖片
         RANDOM_FILE: context => {
@@ -91,10 +55,6 @@ export default new Vuex.Store({
             }
         },
 
-        // PRENEXT_FILE: context => {
-
-        // },
-
         DELETE_FILE: context => {
             fs.remove(context.state.curFile.filepath, function(err){
                 if (err) return console.error(err);
@@ -105,21 +65,40 @@ export default new Vuex.Store({
     },
     modules: {},
     getters: {
-        //:: 檔案路徑
-        getFilePath: state => {
-            return state.curFile.filepath
+        //:: File Path
+        getCurFilePath: state => {
+            return state.curFile.replace(/\\/g, '/')
         },
-        //:: 檔案類型
-        getFileType: state => {
-            return state.curFile.filetype
+        //:: File Name
+        getFileName: (state, getters) => {
+            return path.basename(getters.getCurFilePath)
         },
-        //:: 檔案類型
+        //:: File Type
+        getFileType: (state, getters) => {
+            return mime.lookup(getters.getCurFilePath).split('/')[0]
+        },
+        //:: File Foleder Path
+        getFolderPath: (state, getters) => {
+            return path.dirname(getters.getCurFilePath)
+        },
+        //:: Folder Name
+        getFoldername: (state, getters) => {
+            return path.basename(getters.getFolderPath)
+        },
+        //:: Folder Files_list
+        getFilesList: (state, getters) => {
+            const files = fs.readdirSync(getters.getFolderPath).map(f => {
+                return `${getters.getFolderPath}/${f.replace(/\\/g, '/')}`
+            })
+            return files
+        },
+        //:: View Mode
         getMode: state => {
             return state.mode
         },
-        //:: 資料夾資訊
-        getFolderInfo: state => {
-            const files = state.curFile.files
+        //:: Folder Info
+        getFolderInfo: (state, getters) => {
+            const files = getters.getFilesList
             let file_items = files.filter(i => 
                 fs.lstatSync(i).isFile()
             )

@@ -6,8 +6,8 @@
 
         
         <div id="view-area" v-viewer="{navbar: false}">
-            <img :src="`local-resource://${filepath}`" v-show=" filepath !== 'undefined' && filetype === 'image'">
-            <video :src="`local-resource://${filepath}`" controls v-show=" filepath !== 'undefined' && filetype === 'video'"></video>
+            <img :src="`local-resource://${curfile}`" v-show=" curfile !== 'undefined' && filetype === 'image'">
+            <video :src="`local-resource://${curfile}`" controls v-show=" curfile !== 'undefined' && filetype === 'video'"></video>
         </div>
 
         <div id="delete-btn">
@@ -79,7 +79,7 @@
         },
         computed:{
             ...mapGetters({
-                filepath: 'getFilePath',
+                curfile: 'getCurFilePath',
                 filetype: 'getFileType',
                 mode: 'getMode',
             })
