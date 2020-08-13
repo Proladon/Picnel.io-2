@@ -14,7 +14,7 @@
                     </splitpanes>
                 </pane>
 
-                <pane size="25">
+                <pane size="40">
                     <Folderslist />
                 </pane>
             </splitpanes>

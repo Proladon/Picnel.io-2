@@ -11,6 +11,7 @@ export default new Vuex.Store({
         mode: "random",
         home: 'public/static/picnel.io.png',
         curFile: 'public/static/picnel.io.png',
+        folderList:{},
         log:[],
 
     },
@@ -18,6 +19,9 @@ export default new Vuex.Store({
         SET_CURFILE: (state, data) => {
             state.curFile = data
         },
+        // ADD_FOLDER: (state, data) => {
+
+        // },
         UPDATE_LOG: (state, log) => {
             let logs = state.log
             logs.push(log)
@@ -26,11 +30,6 @@ export default new Vuex.Store({
         
     },
     actions: {
-        //:: 讀取載入的檔案
-        // LOAD_FILE: (context, filepath) => {
-            
-
-        // },
 
         //:: 隨機挑選圖片
         RANDOM_FILE: context => {

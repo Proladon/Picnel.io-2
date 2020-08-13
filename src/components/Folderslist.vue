@@ -1,13 +1,21 @@
 <template>
    <div id="folderslist">
-      <button @click="panesNumber++">Add pane</button>
-<button @click="panesNumber--">Remove pane</button>
-      <splitpanes class="default-theme" style="height: 100%">
-         <pane v-for="i in panesNumber" :key="i">
-            <span>{{ i }}</span>
+      <div class="tab-control">
+
+      </div>
+      <splitpanes>
+         <pane size="70">
+            <draggable>
+               <div v-for="i in obj" :key="i.name" class="draggable-item">
+                  {{i.name}}
+               </div>
+            </draggable>
+         </pane>
+
+         <pane>
+
          </pane>
       </splitpanes>
-
    </div>
 </template>
 
@@ -17,15 +25,27 @@
       Splitpanes,
       Pane
    } from 'splitpanes'
+   import draggable from 'vuedraggable'
    import 'splitpanes/dist/splitpanes.css'
    export default {
       name: 'Folderslist',
-      components:{
+      components: {
          Splitpanes,
          Pane,
+         draggable,
       },
       data: () => ({
-         panesNumber: 2
+         obj: [{
+               name: "test1",
+               order: 1,
+               fixed: false,
+            },
+            {
+               name: "test2",
+               order: 1,
+               fixed: false,
+            }
+         ]
       })
    }
 </script>
@@ -35,5 +55,18 @@
       width: 100%;
       height: 100%;
       background-color: rgb(44, 44, 44);
+   }
+
+
+   .tab-control{
+      width: 100%;
+      height: 30px;
+      background-color: cadetblue;
+   }
+
+   .draggable-item {
+      width: 100%;
+      margin: 5px;
+      background-color: white;
    }
 </style>
