@@ -11,6 +11,7 @@ export default new Vuex.Store({
         mode: "random",
         home: 'public/static/picnel.io.png',
         curFile: 'public/static/picnel.io.png',
+        worksapce: "undefined",
         activeGroup: "女僕",
         folderGroups: [
             {

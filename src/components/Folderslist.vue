@@ -1,6 +1,7 @@
 <template>
     <div id="folderslist">
         <div class="tab-control">
+            <p>{{worksapce}}</p>
             <button >ADD Folder</button>
             <button @click="addGroupModal">ADD Group</button>
         </div>  
@@ -18,10 +19,10 @@
             <!-- Group -->
             <pane>
                 <draggable v-model="foldergroups">
-                    <div class="draggable-item" 
+                    <div class="draggable-group" 
                         v-for="group in foldergroups" 
                         :key="group.name"
-                        @click="changeGroup(group.name)">
+                        @click="changeGroup(group.name, $event)">
                         {{group.name}}
                     </div>
                 </draggable>
@@ -32,8 +33,7 @@
         <!-- Modal -->
         <modal name="addgroup">
             <input type="text" 
-                autofocus  
-                ref ="inputGroupName" 
+                id ="inputGroupName" 
                 @keypress.enter.prevent="addgroup">
             This is an example
         </modal>
@@ -58,26 +58,49 @@
             draggable,
         },
         methods: {
-            changeGroup(name) {
+            //:: Changing active group
+            changeGroup(name, e) {
+                // remove all element active class
+                (document.getElementsByClassName('draggable-group')).forEach(element => {
+                    element.classList.remove('active')
+                })
+                // add clicked element active class
+                e.target.classList.add('active')
                 this.$store.commit('CHANGE_ACTIVE_GROUP', name)
             },
+            
+            //:: Show add new group modal
             addGroupModal(){
                 this.$modal.show('addgroup')
+                setTimeout(() => {
+                    document.getElementById('inputGroupName').focus()
+                });
             },
+            
+            //:: Add new group
             addgroup(){
-                const name = this.$refs.inputGroupName.value
-                if (name.trim(' ') === '') return
+                let el = document.getElementById('inputGroupName')
+                if (el.value.trim(' ') === '') {
+                    el.value = ""
+                    return
+                }
                 else{
                     const data = {
-                        name: name,
+                        name: el.value.trim(' '),
                         path: ""
                     }
                     this.$store.commit('ADD_GROUP', data)
+                    setTimeout(() => {
+                        el.value = ""
+                    });
                 }
             },
 
         },
         computed: {
+            worksapce(){
+                return this.$store.state.worksapce
+            },
             foldergroups:{
                 get(){
                     return this.$store.state.folderGroups
@@ -113,6 +136,8 @@
     .tab-control {
         width: 100%;
         height: 30px;
+        display: flex;
+        align-items: center;
         background-color: cadetblue;
     }
 
@@ -120,5 +145,19 @@
         width: 100%;
         margin: 5px;
         background-color: white;
+    }
+
+    .draggable-group{
+        width: 100%;
+        margin: 5px;
+        color: white;
+    }
+
+    .draggable-group:hover{
+        background-color: cadetblue;
+    }
+
+    .active{
+        background-color: hotpink;
     }
 </style>
