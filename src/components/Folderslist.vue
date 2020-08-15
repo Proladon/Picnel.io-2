@@ -2,7 +2,7 @@
     <div id="folderslist">
         <div class="tab-control">
             <button >ADD Folder</button>
-            <button @click="addgroup">ADD Group</button>
+            <button @click="addGroupModal">ADD Group</button>
         </div>  
         <splitpanes>
 
@@ -31,7 +31,10 @@
 
         <!-- Modal -->
         <modal name="addgroup">
-            <input type="text">
+            <input type="text" 
+                autofocus  
+                ref ="inputGroupName" 
+                @keypress.enter.prevent="addgroup">
             This is an example
         </modal>
 
@@ -58,8 +61,19 @@
             changeGroup(name) {
                 this.$store.commit('CHANGE_ACTIVE_GROUP', name)
             },
-            addgroup(){
+            addGroupModal(){
                 this.$modal.show('addgroup')
+            },
+            addgroup(){
+                const name = this.$refs.inputGroupName.value
+                if (name.trim(' ') === '') return
+                else{
+                    const data = {
+                        name: name,
+                        path: ""
+                    }
+                    this.$store.commit('ADD_GROUP', data)
+                }
             },
 
         },
