@@ -11,7 +11,40 @@ export default new Vuex.Store({
         mode: "random",
         home: 'public/static/picnel.io.png',
         curFile: 'public/static/picnel.io.png',
-        folderList:{},
+        activeGroup: "女僕",
+        folderGroups: [
+            {
+                name: "女僕",
+                order: 1,
+            },
+            {
+                name: "護士",
+                order: 2,
+            }
+        ],
+        folderLists: {
+            女僕: [
+                {
+                    name: "懷孕",
+                    path: ""
+                },
+                {
+                    name: "抽插",
+                    path: ""
+                },
+            ],
+            護士: [
+                {
+                    name: "偷情",
+                    path: ""
+                },
+                {
+                    name: "誘惑",
+                    path: ""
+                },
+            ],
+        },
+        
         log:[],
 
     },
@@ -22,6 +55,20 @@ export default new Vuex.Store({
         // ADD_FOLDER: (state, data) => {
 
         // },
+        UPDATE_LISTS: (state, data) => {
+            state.folderLists[state.activeGroup] = data
+        },
+        UPDATE_GROUP: (state, data) => {
+            state.folderGroups = data
+        },
+        ADD_GROUP: (state, data) => {
+            let groups = state.folderGroups
+            groups.push(data)
+            state.folderGroups = groups
+        },
+        CHANGE_ACTIVE_GROUP: (state, group) => {
+            state.activeGroup = group
+        },
         UPDATE_LOG: (state, log) => {
             let logs = state.log
             logs.push(log)
@@ -104,6 +151,12 @@ export default new Vuex.Store({
             )
             return `Folders: ${folder_items.length} Files: ${file_items.length}`
         },
+        //:: Active Folderlist
+        getActiveFolderList: (state) => {
+            const actgroup = state.activeGroup
+            const folderlist = state.folderLists
+            return folderlist[actgroup]
+        }
        
     }
 });
