@@ -12,8 +12,8 @@
                 <draggable v-model="folderlist" 
                 v-bind="dragOptions">
                     <transition-group type="transition" >
-                        <div v-for="i in folderlist" :key="i.name" class="draggable-item">
-                            <div class=""></div>
+                        <div v-for="i in folderlist" :key="i.name" class="draggable-folder">
+                            <div class="color-tag" :style="`background-color: ${i.color}`"></div>
                             {{i.name}}
                         </div>
                     </transition-group>
@@ -158,14 +158,21 @@
         background-color: var(--lightyellow);
     }
 
-    .draggable-item {
+    .draggable-folder {
         cursor: default;
+        display: flex;
         margin: 15px;
         font-size: 20px;
         color: var(--lightyellow);
         background-color: #4f5662;
         padding: 5px;
         border-radius: 5px;
+
+        .color-tag{
+            width: 10px;
+            height: auto;
+            margin-right: 15px;
+        }
     }
 
     .draggable-group{

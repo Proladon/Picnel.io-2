@@ -26,22 +26,22 @@ export default new Vuex.Store({
                 {
                     name: "Anime",
                     path: "",
-                    color: "",
+                    color: "rgb(228, 216, 160)",
                 },
                 {
                     name: "風景",
                     path: "",
-                    color: "",
+                    color: "rgb(187, 228, 160)",
                 },
                 {
                     name: "Art",
                     path: "",
-                    color: "",
+                    color: "rgb(228, 160, 160)",
                 },
                 {
                     name: "Nature",
                     path: "",
-                    color: "",
+                    color: "rgb(160, 209, 228)",
                 },
             ],
             ACG: [
