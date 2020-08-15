@@ -56,8 +56,10 @@
 
 <style lang="scss">
     :root{
-        --spliter: rgb(117, 147, 151);
-        --dark: rgb(32, 32, 32);
+        --spliter: #423f3b;
+        // --dark: rgb(32, 32, 32);
+        --dark: #0F2232;
+        --lightyellow: #CDC0B8;
     }
 
     html,

@@ -12,36 +12,48 @@ export default new Vuex.Store({
         home: 'public/static/picnel.io.png',
         curFile: 'public/static/picnel.io.png',
         worksapce: "undefined",
-        activeGroup: "女僕",
+        activeGroup: "",
         folderGroups: [
             {
-                name: "女僕",
-                order: 1,
+                name: "Wallpaper",
             },
             {
-                name: "護士",
-                order: 2,
+                name: "ACG",
             }
         ],
         folderLists: {
-            女僕: [
+            Wallpaper: [
                 {
-                    name: "懷孕",
-                    path: ""
+                    name: "Anime",
+                    path: "",
+                    color: "",
                 },
                 {
-                    name: "抽插",
-                    path: ""
+                    name: "風景",
+                    path: "",
+                    color: "",
+                },
+                {
+                    name: "Art",
+                    path: "",
+                    color: "",
+                },
+                {
+                    name: "Nature",
+                    path: "",
+                    color: "",
                 },
             ],
-            護士: [
+            ACG: [
                 {
-                    name: "偷情",
-                    path: ""
+                    name: "Games",
+                    path: "",
+                    color: "",
                 },
                 {
-                    name: "誘惑",
-                    path: ""
+                    name: "Anime",
+                    path: "",
+                    color: "",
                 },
             ],
         },

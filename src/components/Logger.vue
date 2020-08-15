@@ -34,7 +34,7 @@
       height: 100%;
       margin: 0;
       padding: 0;
-      background-color: rgb(59, 59, 59);
+      background-color: #1C1E26;
       overflow: auto;
 
       .log{

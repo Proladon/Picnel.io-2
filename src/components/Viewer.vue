@@ -103,7 +103,7 @@
         width: 100%;
         height: 100%;
         position: relative;
-        background-color: rgb(32, 32, 32);
+        background-color: #1C1E26;
     }
 
     #view-area{

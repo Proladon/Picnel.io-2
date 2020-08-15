@@ -9,16 +9,20 @@
 
             <!-- Folders -->
             <pane size="70">
-                <draggable v-model="folderlist">
-                    <div v-for="i in folderlist" :key="i.name" class="draggable-item">
-                        {{i.name}}
-                    </div>
+                <draggable v-model="folderlist" 
+                v-bind="dragOptions">
+                    <transition-group type="transition" >
+                        <div v-for="i in folderlist" :key="i.name" class="draggable-item">
+                            <div class=""></div>
+                            {{i.name}}
+                        </div>
+                    </transition-group>
                 </draggable>
             </pane>
 
             <!-- Group -->
             <pane>
-                <draggable v-model="foldergroups">
+                <draggable v-model="foldergroups" v-bind="dragOptions">
                     <div class="draggable-group" 
                         v-for="group in foldergroups" 
                         :key="group.name"
@@ -32,6 +36,7 @@
 
         <!-- Modal -->
         <modal name="addgroup">
+            <p>Group Name:</p>
             <input type="text" 
                 id ="inputGroupName" 
                 @keypress.enter.prevent="addgroup">
@@ -67,6 +72,7 @@
                 // add clicked element active class
                 e.target.classList.add('active')
                 this.$store.commit('CHANGE_ACTIVE_GROUP', name)
+
             },
             
             //:: Show add new group modal
@@ -120,7 +126,16 @@
             },
             activegroup(){
                 return this.$store.state.activeGroup
+            },
+            dragOptions() {
+                return {
+                    animation: 200,
+                    group: "description",
+                    disabled: false,
+                    ghostClass: "ghost"
+                };
             }
+
         },
     }
 </script>
@@ -129,28 +144,38 @@
     #folderslist {
         width: 100%;
         height: 100%;
-        background-color: rgb(44, 44, 44);
+            background-color: #20232B;
     }
 
 
     .tab-control {
         width: 100%;
         height: 30px;
+        box-sizing: border-box;
+        padding: 10px;
         display: flex;
         align-items: center;
-        background-color: cadetblue;
+        background-color: var(--lightyellow);
     }
 
     .draggable-item {
-        width: 100%;
-        margin: 5px;
-        background-color: white;
+        cursor: default;
+        margin: 15px;
+        font-size: 20px;
+        color: var(--lightyellow);
+        background-color: #4f5662;
+        padding: 5px;
+        border-radius: 5px;
     }
 
     .draggable-group{
-        width: 100%;
-        margin: 5px;
-        color: white;
+        cursor: pointer;
+        text-align: center;
+        margin: 10px;
+        font-size: 20px;
+        border: solid 1px var(--lightyellow);
+        border-radius: 15px;
+        color: var(--lightyellow);
     }
 
     .draggable-group:hover{
@@ -158,6 +183,13 @@
     }
 
     .active{
-        background-color: hotpink;
+        color: #1C1E26;
+        background-color: #61bcd3;
     }
+
+    .ghost {
+        opacity: 0.5;
+        background: #bdbdbd;
+    }
+
 </style>
