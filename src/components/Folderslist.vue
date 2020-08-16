@@ -43,10 +43,6 @@
             This is an example
         </modal>
 
-        <modal name="colorPicker">
-            <chrome-picker/>
-        </modal>
-
     </div>
 </template>
 
@@ -58,6 +54,7 @@
     } from 'splitpanes'
     import draggable from 'vuedraggable'
     import 'splitpanes/dist/splitpanes.css'
+    import anime from 'animejs'
     
 
     export default {
@@ -77,7 +74,15 @@
                 // add clicked element active class
                 e.target.classList.add('active')
                 this.$store.commit('CHANGE_ACTIVE_GROUP', name)
-
+                
+                setTimeout(() => {
+                    anime({
+                        targets: ['.draggable-folder'],
+                        translateX: ['-500', '0'],
+                        delay: anime.stagger(100)
+                    });
+                    
+                });
             },
             
             //:: Show add new group modal
@@ -91,13 +96,23 @@
             //:: Add new group
             addgroup(){
                 let el = document.getElementById('inputGroupName')
-                if (el.value.trim(' ') === '') {
+                let newName = el.value.trim(' ')
+                let repeat = false
+                // Check repeat
+                for (let name of this.foldergroups){
+                    if (newName === name.name){
+                        repeat = true
+                    }
+                }
+                
+                if (newName === '' || repeat === true) {
                     el.value = ""
                     return
                 }
                 else{
+                    console.log(repeat)
                     const data = {
-                        name: el.value.trim(' '),
+                        name: newName,
                         path: ""
                     }
                     this.$store.commit('ADD_GROUP', data)
@@ -117,18 +132,11 @@
                     {color: icolor, title: iname, index: index},
                     {
                         width: "500px",
-                        height: "585px",
+                        height: "600px",
                         draggable: false,
                     },
                     {'choicecolor': data => {console.log(data)}}
                 )
-                
-                // this.folderlist[0].color = this.tempColor.hex
-
-                
-                // setTimeout(() => {
-                //     this.$store.commit('UPDATE_LISTS', this.folderlist)
-                // });
             }
 
         },

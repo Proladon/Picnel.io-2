@@ -5,8 +5,12 @@
         </div>
         <chrome-picker class="picker" v-model="tempColor" />
         <div class="colorpick-btn-wrapper">
-            <div class="colorpick-confirm-btn" @click="changeTagColor">Confirm</div>
-            <div class="colorpick-cancel-btn" @click="$emit('close')">Cancel</div>
+            <div class="colorpick-confirm-btn" @click="changeTagColor">
+                <p>Confirm</p>
+            </div>
+            <div class="colorpick-cancel-btn" @click="$emit('close')">
+                <p>Cancel</p>
+            </div>
         </div>
     </div>
 </template>
@@ -75,7 +79,7 @@
         font-size: 20px;
         text-align: center;
         color: var(--lightyellow);
-        background-color: rgb(31, 41, 53);
+        background-color: var(--popupdark);
     }
 
     .colorpick-btn-wrapper{
@@ -84,20 +88,32 @@
         justify-content: space-around;
 
         .colorpick-cancel-btn, .colorpick-confirm-btn{
+            cursor: default;
             width: 100%;
             height: 100%;
-            text-align: center;
+            display: flex;
+            justify-content: center;            
+            align-items: center;
+            color: var(--lightyellow);
+            background-color: var(--popupdark);
+        }
+
+        .colorpick-cancel-btn:hover, .colorpick-confirm-btn:hover{
+            filter: contrast(110%);
+        }
+        .colorpick-cancel-btn:hover{
+            color: #e6417d;
         }
     }
 
     .picker {
         
-        background-color: rgb(31, 41, 53) !important; 
+        background-color: var(--popupdark) !important; 
         width: 100% !important;
         height: 100%;
 
         .vc-chrome-body{
-            background-color: rgb(31, 41, 53); 
+            background-color: var(--popupdark); 
         }
 
         input{

@@ -86,7 +86,7 @@
             })
         },
         watch:{
-            filepath:()=>{
+            curfile:()=>{
                 anime({
                     targets:['img', 'video'],
                     opacity: ['0', '100'],

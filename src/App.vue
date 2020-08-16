@@ -57,8 +57,8 @@
 <style lang="scss">
     :root{
         --spliter: #423f3b;
-        // --dark: rgb(32, 32, 32);
         --dark: #0F2232;
+        --popupdark: rgb(31, 41, 53);
         --lightyellow: #CDC0B8;
     }
 
