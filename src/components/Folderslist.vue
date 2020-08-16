@@ -12,8 +12,8 @@
                 <draggable v-model="folderlist" 
                 v-bind="dragOptions">
                     <transition-group type="transition" >
-                        <div v-for="i in folderlist" :key="i.name" class="draggable-folder">
-                            <div class="color-tag" :style="`background-color: ${i.color}`"></div>
+                        <div v-for="(i, index) in folderlist" :key="i.name" class="draggable-folder">
+                            <div class="color-tag" @click="choiceColor(i.name, i.color, index)" :style="`background-color: ${i.color}`"></div>
                             {{i.name}}
                         </div>
                     </transition-group>
@@ -43,6 +43,10 @@
             This is an example
         </modal>
 
+        <modal name="colorPicker">
+            <chrome-picker/>
+        </modal>
+
     </div>
 </template>
 
@@ -54,6 +58,7 @@
     } from 'splitpanes'
     import draggable from 'vuedraggable'
     import 'splitpanes/dist/splitpanes.css'
+    
 
     export default {
         name: 'Folderslist',
@@ -102,6 +107,30 @@
                 }
             },
 
+            //:: Color Tag ColorPicker
+            choiceColor(iname, icolor, index){
+                /* webpackChunkName: "Colorpicker" */ 
+                const ColorPicker = () => import("@/components/modal/Colorpicker.vue")
+                
+                this.$modal.show(
+                    ColorPicker,
+                    {color: icolor, title: iname, index: index},
+                    {
+                        width: "500px",
+                        height: "585px",
+                        draggable: false,
+                    },
+                    {'choicecolor': data => {console.log(data)}}
+                )
+                
+                // this.folderlist[0].color = this.tempColor.hex
+
+                
+                // setTimeout(() => {
+                //     this.$store.commit('UPDATE_LISTS', this.folderlist)
+                // });
+            }
+
         },
         computed: {
             worksapce(){
@@ -132,8 +161,11 @@
                     animation: 200,
                     group: "description",
                     disabled: false,
-                    ghostClass: "ghost"
+                    ghostClass: "ghost",
                 };
+            },
+            tempColor(){
+                return this.$store.state.tempColor
             }
 
         },
@@ -147,6 +179,9 @@
             background-color: #20232B;
     }
 
+    .splitpanes__pane{
+        overflow-y: auto;
+    }
 
     .tab-control {
         width: 100%;
@@ -169,6 +204,7 @@
         border-radius: 5px;
 
         .color-tag{
+            cursor: pointer;
             width: 10px;
             height: auto;
             margin-right: 15px;
@@ -191,7 +227,7 @@
 
     .active{
         color: #1C1E26;
-        background-color: #61bcd3;
+        background-color: var(--lightyellow);
     }
 
     .ghost {

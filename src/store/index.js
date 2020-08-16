@@ -57,6 +57,7 @@ export default new Vuex.Store({
                 },
             ],
         },
+        tempColor: Object,
         
         log:[],
 
@@ -81,6 +82,9 @@ export default new Vuex.Store({
         },
         CHANGE_ACTIVE_GROUP: (state, group) => {
             state.activeGroup = group
+        },
+        COLOR_UPDATE: (state, color) => {
+            state.tempColor = color
         },
         UPDATE_LOG: (state, log) => {
             let logs = state.log
