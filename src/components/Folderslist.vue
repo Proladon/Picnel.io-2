@@ -35,7 +35,7 @@
                         :key="group.name"
                         @click="changeGroup(group.name, $event)"
                         @contextmenu="groupcontext($event, index)"
-                    >
+                        >
                         {{ group.name }}
                     </div>
                 </draggable>
@@ -52,10 +52,11 @@
             />
         </modal>
 
+        <!-- Dialog -->
         <v-dialog />
 
         <!-- Context Menu -->
-        <Groupcontext @deleteGroup="deleteGroup" />
+        <Groupcontext @deletegroup="deleteGroup" @renamegroup="renameGroup" />
     </div>
 </template>
 
@@ -79,6 +80,7 @@ export default {
         return {
             groupIndex: 0,
             groupname: "",
+            targetgroup: HTMLDivElement,
         };
     },
     methods: {
@@ -128,7 +130,6 @@ export default {
                 el.value = "";
                 return;
             } else {
-                console.log(repeat);
                 const data = {
                     name: newName,
                     path: "",
@@ -155,11 +156,6 @@ export default {
                     height: "600px",
                     draggable: false,
                 },
-                {
-                    choicecolor: (data) => {
-                        console.log(data);
-                    },
-                }
             );
         },
 
@@ -167,6 +163,7 @@ export default {
         groupcontext(e, index) {
             this.groupIndex = index;
             this.groupname = e.target.innerText
+            this.targetgroup = e.target
             const element = document.getElementById("group-context");
             element.classList.remove("context-active");
             element.style.top = e.clientY + "px";
@@ -190,8 +187,15 @@ export default {
                             delete folders[this.groupname]
                             this.$store.commit('SET_LIST', folders)
                             this.$store.commit('DELETE_GROUP', this.groupIndex)
-                            this.$store.commit('CHANGE_ACTIVE_GROUP', null)
+                            
+                            if (this.groupname === this.activegroup){
+                                this.$store.commit('CHANGE_ACTIVE_GROUP', null)
+                            }
                             this.$modal.hide('dialog')
+
+                            this.groupname = null
+                            this.groupIndex = null
+                            this.targetgroup = null
                         }
                     },
                     {
@@ -204,6 +208,62 @@ export default {
                 ]
             })
         },
+
+        //:: Rename Group 
+        renameGroup(){
+            this.$modal.show('dialog', {
+                title: "Group Rename",
+                text: `<input name="dialog-input" type:text placeholder="${this.groupname}" >`,
+                buttons:[
+                    {
+                        title: "Rename",
+                        class: 'dialog-red-btn dialog-btn',
+                        handler: () => {
+                            const element = document.getElementsByName('dialog-input')[0]
+                            let newName = element.value.trim(' ')
+                            // Check Repeat
+                            for (let oldName of this.$store.state.folderGroups){
+                                if (newName === oldName.name) {
+                                    element.value = '' 
+                                    this.$notify({
+                                        group: 'foo',
+                                        type: 'warn',
+                                        title: 'Name Repeat',
+                                        text: `Group Name: ${newName} already existing`
+                                    });
+                                    return
+                                }
+                            }
+                            // Check Empty
+                            if (newName !== ''){
+                                // Change Group Name
+                                this.$store.commit('RENAME_GROUP', {index:this.groupIndex, name:element.value})
+                                // Change Group Links Folders Name
+                                this.$store.commit('RENAME_LIST', {oldName: this.groupname, newName: newName})
+                                this.$store.commit('CHANGE_ACTIVE_GROUP', newName)
+                                this.$modal.hide('dialog')
+
+                                this.groupname = newName
+                                setTimeout(() => {
+                                    const el = document.getElementsByClassName('draggable-group')[this.groupIndex]
+                                    el.classList.add('active')
+                                }, 10);
+                            }
+                            else{
+                                element.value = ''
+                            }
+                        }
+                    },
+                    {
+                        title: "Cancel",
+                        class: 'dialog-green-btn dialog-btn',
+                        handler: () => {
+                            this.$modal.hide('dialog')
+                        }
+                    }
+                ]
+            })
+        }
     },
     computed: {
         worksapce() {
@@ -247,6 +307,7 @@ export default {
         window.addEventListener("click", () => {
             element.classList.remove("context-active");
         });
+
     },
 };
 </script>

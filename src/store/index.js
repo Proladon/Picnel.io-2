@@ -48,12 +48,12 @@ export default new Vuex.Store({
                 {
                     name: "Games",
                     path: "",
-                    color: "",
+                    color: "#22df8c",
                 },
                 {
                     name: "Anime",
                     path: "",
-                    color: "",
+                    color: "#54BBFF",
                 },
             ],
         },
@@ -66,19 +66,27 @@ export default new Vuex.Store({
         SET_CURFILE: (state, data) => {
             state.curFile = data
         },
-        // ADD_FOLDER: (state, data) => {
-
-        // },
+        
+        //:: Folders List
         UPDATE_LISTS: (state, data) => {
             state.folderLists[state.activeGroup] = data
         },
         SET_LIST: (state, data) => {
             state.folderLists = data
         },
+        RENAME_LIST: (state, {oldName, newName}) => {
+            let flist = state.folderLists
+            flist[newName] = flist[oldName]
+            delete flist[oldName]
+            state.folderLists = flist
+        },
 
         //:: Group
         UPDATE_GROUP: (state, data) => {
             state.folderGroups = data
+        },
+        RENAME_GROUP: (state, {index, name}) => {
+            state.folderGroups[index].name = name
         },
         ADD_GROUP: (state, data) => {
             let groups = state.folderGroups

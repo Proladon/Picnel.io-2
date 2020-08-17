@@ -1,8 +1,8 @@
 <template>
     <div id="group-context">
         <div class="context-item-wrapper">
-            <p class="context-item">Rename</p>
-            <p class="context-item" @click="deleteGroup">Delete</p>
+            <p class="context-item" @click="$emit('renamegroup')">Rename</p>
+            <p class="context-item" @click="$emit('deletegroup')">Delete</p>
         </div>
 
     </div>
@@ -11,11 +11,6 @@
 <script>
     export default {
         name: 'Groupcontext',
-        methods:{
-            deleteGroup(){
-                this.$emit('deleteGroup')
-            }
-        },
     }
 </script>
 

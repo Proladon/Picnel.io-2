@@ -8,6 +8,7 @@
         <div id="view-area" v-viewer="{navbar: false}">
             <img :src="`local-resource://${curfile}`" v-show=" curfile !== 'undefined' && filetype === 'image'">
             <video :src="`local-resource://${curfile}`" controls v-show=" curfile !== 'undefined' && filetype === 'video'"></video>
+            <audio :src="`local-resource://${curfile}`" controls v-show=" curfile !== 'undefined' && filetype === 'audio'"></audio>
         </div>
 
         <div id="delete-btn">
