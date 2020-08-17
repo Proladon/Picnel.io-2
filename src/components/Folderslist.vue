@@ -245,8 +245,13 @@ export default {
 
                                 this.groupname = newName
                                 setTimeout(() => {
-                                    const el = document.getElementsByClassName('draggable-group')[this.groupIndex]
-                                    el.classList.add('active')
+                                    // Re-add active class to current activeGroup
+                                    const elList = document.getElementsByClassName('draggable-group')
+                                    elList.forEach(e => {
+                                        e.classList.remove('active')
+                                    })
+                                    const target = elList[this.groupIndex]
+                                    target.classList.add('active')
                                 }, 10);
                             }
                             else{
