@@ -55,6 +55,10 @@
 </script>
 
 <style lang="scss">
+// V-Dialog
+@import "assets/scss/custom-v-dialog.scss";
+@import "assets/scss/custom-v-splitpanes.scss";
+
     :root{
         --spliter: #423f3b;
         --dark: #0F2232;
@@ -94,39 +98,6 @@
         margin: 0 auto;
     }
 
-     /* 分割線感應區域 */
-    .splitpanes__splitter {
-        background-color: #ccc;
-        position: relative;
-    }
-
-    .splitpanes__splitter:before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 0;
-    }
-
-    .splitpanes--vertical>.splitpanes__splitter:before {
-        left: -5px;
-        right: -5px;
-        height: 100%;
-    }
-
-    .splitpanes--horizontal>.splitpanes__splitter:before {
-        top: -5px;
-        bottom: -5px;
-        width: 100%;
-    }
-
-    /* 分割線樣式 */
-    .splitpanes--vertical>.splitpanes__splitter {
-        background: var(--spliter);
-    }
-
-    .splitpanes--horizontal>.splitpanes__splitter {
-        background: var(--spliter);
-    }
 
 
 </style>

@@ -71,10 +71,7 @@
                 this.$modal.show(
                     Warning,
                     { text: 'This text is passed as a property' },
-                    // { draggable: true }
                 )
-
-                // alert("警告")
             }
         },
         computed:{

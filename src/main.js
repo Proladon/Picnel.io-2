@@ -12,10 +12,12 @@ Vue.use(Viewer)
 Vue.use(VNotifications, { velocity })
 Vue.use(VModal, {
     dynamicDefaults: {
-      draggable: true,
+        draggable: true,
     //   resizable: true,
       height: 'auto'
-    }
+    },
+    dialog:true,
+
   })
 new Vue({
   store,

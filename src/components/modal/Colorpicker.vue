@@ -101,9 +101,6 @@
         .colorpick-cancel-btn:hover, .colorpick-confirm-btn:hover{
             filter: contrast(110%);
         }
-        .colorpick-cancel-btn:hover{
-            color: #e6417d;
-        }
     }
 
     .picker {

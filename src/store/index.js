@@ -80,6 +80,11 @@ export default new Vuex.Store({
             groups.push(data)
             state.folderGroups = groups
         },
+        DELETE_GROUP: (state, index) => {
+            let groups = state.folderGroups
+            groups.splice(index, 1)
+            state.folderGroups = groups
+        },
         CHANGE_ACTIVE_GROUP: (state, group) => {
             state.activeGroup = group
         },

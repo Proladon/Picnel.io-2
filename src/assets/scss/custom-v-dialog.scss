@@ -1,0 +1,36 @@
+.vue-dialog {
+    font-size: 20px !important;
+    color: var(--dark);
+    border-radius: 10px !important;
+    box-shadow: 2px 2px 2px 2px black;
+
+    .vue-dialog-content {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+}
+
+.dialog-btn {
+    font-size: inherit;
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    cursor: pointer;
+    box-sizing: border-box;
+    line-height: 40px;
+    height: 40px;
+    color: inherit;
+    font: inherit;
+    outline: none;
+}
+.dialog-btn:hover {
+    filter: brightness(120%);
+}
+
+.dialog-red-btn {
+    background-color: rgb(212, 91, 128);
+}
+.dialog-green-btn {
+    background-color: cadetblue;
+}
