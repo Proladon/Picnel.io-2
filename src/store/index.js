@@ -72,6 +72,11 @@ export default new Vuex.Store({
         UPDATE_LISTS: (state, data) => {
             state.folderLists[state.activeGroup] = data
         },
+        SET_LIST: (state, data) => {
+            state.folderLists = data
+        },
+
+        //:: Group
         UPDATE_GROUP: (state, data) => {
             state.folderGroups = data
         },
@@ -88,9 +93,13 @@ export default new Vuex.Store({
         CHANGE_ACTIVE_GROUP: (state, group) => {
             state.activeGroup = group
         },
+        
+        //:: Color
         COLOR_UPDATE: (state, color) => {
             state.tempColor = color
         },
+
+        //:: Log
         UPDATE_LOG: (state, log) => {
             let logs = state.log
             logs.push(log)

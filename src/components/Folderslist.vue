@@ -78,6 +78,7 @@ export default {
     data() {
         return {
             groupIndex: 0,
+            groupname: "",
         };
     },
     methods: {
@@ -162,8 +163,10 @@ export default {
             );
         },
 
+        //:: Show group context menu
         groupcontext(e, index) {
             this.groupIndex = index;
+            this.groupname = e.target.innerText
             const element = document.getElementById("group-context");
             element.classList.remove("context-active");
             element.style.top = e.clientY + "px";
@@ -173,6 +176,7 @@ export default {
             }, 150);
         },
 
+        //:: Delete Group Dialog
         deleteGroup() {
             this.$modal.show('dialog', {
                 title: "Warning",
@@ -182,7 +186,11 @@ export default {
                         title: "Delete",
                         class: 'dialog-red-btn dialog-btn',
                         handler: () => {
+                            let folders = this.$store.state.folderLists
+                            delete folders[this.groupname]
+                            this.$store.commit('SET_LIST', folders)
                             this.$store.commit('DELETE_GROUP', this.groupIndex)
+                            this.$store.commit('CHANGE_ACTIVE_GROUP', null)
                             this.$modal.hide('dialog')
                         }
                     },
