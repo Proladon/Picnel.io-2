@@ -23,13 +23,54 @@
 
 <script>
     import {mapGetters} from 'vuex'
-    // import path from 'path'
+    import fs from 'fs-extra'
+    import path from 'path'
+    import mime from 'mime-types'
+
     export default {
         name: 'Statusbar',
         methods: {
             //:: Upload Folder
             uploaddir(e) {
-                this.$store.commit('SET_CURFILE', e.target.files[0].path)
+                console.log(e)
+                const readable = ['image', 'video', 'audio']
+                let readablefiles = []
+                
+                // Get Select Folder Path
+                const abspath = (e.target.files[0].path).split('\\')
+                const relpath = (e.target.files[0].webkitRelativePath).split('/')[0]
+                let root = ""
+                for(let p of abspath){
+                    if (p !== relpath){
+                        root += p + '/'
+                    }
+                    else if (p === relpath){
+                        root += p
+                        break
+                    }
+                }
+
+                fs.readdirSync(root).map(f => {
+                    let type = mime.lookup(path.join(root, f))
+                    if(type !== false){
+                        if(readable.includes(type.split('/')[0])){
+                            readablefiles.push(path.join(root, f))
+                        }
+                    }
+                })
+                // No readable files
+                if (readablefiles.length === 0){
+                    this.$notify({
+                        group: 'foo',
+                        type: 'error',
+                        title: 'Error',
+                        text: 'No readable files in the directory'
+                    });
+                }
+                else{
+                    this.$store.commit('SET_CURFILE', readablefiles[0])
+                }
+
                 // reset selected file, or it won't be firing onchange event!
                 e.target.value = null
             },

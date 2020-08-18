@@ -25,6 +25,7 @@
         
         <!-- Notify -->
         <notifications group="random" position="bottom right" animation-type="velocity"/>
+        <notifications group="nofiles" position="bottom right" animation-type="velocity"/>
         
     </div>
 </template>
@@ -54,19 +55,31 @@
                         if (fs.lstatSync(file.path).isDirectory()){
                             // Directory
                             let readable = ['image', 'video', 'audio']
-                            let list = fs.readdirSync(file.path).filter(f => {
+                            let readablelist = fs.readdirSync(file.path).filter(f => {
                                 let type = mime.lookup(f)
                                 if (type !== false && readable.includes(type.split('/')[0])){
                                     return f 
                                 }
                             })
-                            this.$store.commit('SET_CURFILE', `${file.path}/${list[0]}`)
+
+                            // No readable files
+                            if (readablelist.length === 0){
+                                this.$notify({
+                                    group: 'nofiles',
+                                    type: 'error',
+                                    title: 'Error',
+                                    text: 'No readable files in the directory'
+                                })
+                            }
+                            else{
+                                this.$store.commit('SET_CURFILE', `${file.path}/${readablelist[0]}`)
+                            }
                         }
                         else{
                             // Single File
                             this.$store.commit('SET_CURFILE', file.path)
                         }
-
+                        // Logging
                         // this.$store.commit('UPDATE_LOG', "update folder")
                     }
                 }
