@@ -6,7 +6,7 @@
         </div>
 
         <!-- Upload Folder -->
-        <div class="upload-btn-wrapper status-button status-item">
+        <div class="upload-btn-wrapper status-button status-item" @contextmenu="mainfolderContext">
             <label class="directory-upload">
                 <input type="file" @change="uploaddir" webkitdirectory directory />
                 <p v-if="foldername === 'static'">Upload Folder</p>
@@ -18,6 +18,9 @@
             <p style="color: white;">{{folderinfo}}</p>
         </div>
 
+        <!-- Context Menu -->
+        <Mainfoldercontext  @opendirectory="openfolder"/>
+
     </div>
 </template>
 
@@ -26,13 +29,17 @@
     import fs from 'fs-extra'
     import path from 'path'
     import mime from 'mime-types'
+    import { shell } from 'electron'
+    import Mainfoldercontext from  '@/components/contextmenu/Mainfoldercontext.vue'
 
     export default {
         name: 'Statusbar',
+        components:{
+            Mainfoldercontext,
+        },
         methods: {
             //:: Upload Folder
             uploaddir(e) {
-                console.log(e)
                 const readable = ['image', 'video', 'audio']
                 let readablefiles = []
                 
@@ -88,7 +95,20 @@
                 this.$store.commit('SET_CURFILE', this.home)
                 // logging
                 this.$store.commit('UPDATE_LOG', "reset folder")
-            }
+            },
+            mainfolderContext(e){
+                const element = document.getElementById("mainfolder-context");
+                element.classList.remove("context-active");
+                element.style.top = parseInt(e.clientY)-70  + "px";
+                element.style.left = e.clientX + "px";
+                setTimeout(() => {
+                    element.classList.add("context-active");
+                }, 150);
+            },
+
+            openfolder(){
+                shell.openPath(this.folderpath)
+            },
         },
         computed: {
             home() {
@@ -96,10 +116,17 @@
             },
             ...mapGetters({
                 file: 'getCurFilePath',
+                folderpath: 'getFolderPath',
                 folderinfo: 'getFolderInfo',
                 foldername: 'getFolderName'
             })
         },
+        mounted(){
+            const element = document.getElementById("mainfolder-context");
+            window.addEventListener("click", () => {
+                element.classList.remove("context-active");
+            });
+        }
         
     }
 </script>
@@ -145,5 +172,9 @@
         input[type="file"] {
             display: none;
         }
+    }
+
+    .context-active {
+        transform: scale(1) !important;
     }
 </style>

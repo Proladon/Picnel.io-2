@@ -199,5 +199,9 @@
         opacity: 30%;
     }
 
+    .context-active {
+    transform: scale(1) !important;
+}
+
 
 </style>
