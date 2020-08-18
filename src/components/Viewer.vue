@@ -33,6 +33,8 @@
     import {mapGetters} from 'vuex'
     import anime from 'animejs'
     import 'viewerjs/dist/viewer.css'
+    import fs from 'fs-extra'
+    import mime from 'mime-types'
     export default {
         name: 'Viewer',
         components:{
@@ -49,7 +51,22 @@
                 if (e.dataTransfer.items){
                     if (e.dataTransfer.items[0].kind === 'file'){
                         const file = e.dataTransfer.items[0].getAsFile()
-                        this.$store.commit('SET_CURFILE', file.path)
+                        if (fs.lstatSync(file.path).isDirectory()){
+                            // Directory
+                            let readable = ['image', 'video', 'audio']
+                            let list = fs.readdirSync(file.path).filter(f => {
+                                let type = mime.lookup(f)
+                                if (type !== false && readable.includes(type.split('/')[0])){
+                                    return f 
+                                }
+                            })
+                            this.$store.commit('SET_CURFILE', `${file.path}/${list[0]}`)
+                        }
+                        else{
+                            // Single File
+                            this.$store.commit('SET_CURFILE', file.path)
+                        }
+
                         // this.$store.commit('UPDATE_LOG', "update folder")
                     }
                 }
