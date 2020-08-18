@@ -107,7 +107,17 @@
             },
 
             openfolder(){
-                shell.openPath(this.folderpath)
+                if (this.folderpath == 'public/static'){
+                    this.$notify({
+                        group: 'foo',
+                        type: 'error',
+                        title: 'Error',
+                        text: 'Please select directory first'
+                    })
+                }
+                else{
+                    shell.openPath(this.folderpath)
+                }
             },
         },
         computed: {
