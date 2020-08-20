@@ -159,7 +159,10 @@ export default new Vuex.Store({
             })
             //? 如果資料夾內有多個檔案才執行
             if (files.length > 0) {
-                context.commit('SET_CURFILE', files[index+1])
+                let nextIndex = index + 1
+                if (nextIndex < files.length) {
+                    context.commit('SET_CURFILE', files[index+1])
+                }
             }
         },
 
