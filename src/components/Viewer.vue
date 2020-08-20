@@ -98,9 +98,27 @@
                 this.$store.dispatch('RANDOM_FILE')
             },
             previous(){
+                if (this.filename === 'picnel.io.png') {
+                    this.$notify({
+                        group: 'random',
+                        type: 'error',
+                        title: 'Error',
+                        text: 'Please open a main folder first.'
+                    })
+                    return   
+                }
                 this.$store.dispatch('PRE_FILE')
             },
             next(){
+                if (this.filename === 'picnel.io.png') {
+                    this.$notify({
+                        group: 'random',
+                        type: 'error',
+                        title: 'Error',
+                        text: 'Please open a main folder first.'
+                    })
+                    return   
+                }
                 this.$store.dispatch('NEXT_FILE')
             },
             del(){
