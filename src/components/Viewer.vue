@@ -15,12 +15,13 @@
             <button @click="del">╳</button>
         </div>
 
-        <div id="random-mode" class="view-control" v-show="mode==='random'">
+        <div id="random-mode" class="view-control" v-show="mode==='Random'">
             <button @click="random">Random</button>
         </div>
         
-        <div id="prenext-mode" class="view-control" v-show="mode==='prenext'">
-
+        <div id="prenext-mode" class="view-control" v-show="mode==='PreNext'">
+            <button @click="previous">← Previous</button>
+            <button @click="next">Next →</button>
         </div>
         
         <!-- Notify -->
@@ -95,6 +96,12 @@
                     return   
                 }
                 this.$store.dispatch('RANDOM_FILE')
+            },
+            previous(){
+                this.$store.dispatch('PRE_FILE')
+            },
+            next(){
+                this.$store.dispatch('NEXT_FILE')
             },
             del(){
                 // 警告永久刪除
@@ -174,7 +181,7 @@
 
     .view-control{
         width: 100%;
-        height: 50px;
+        height: 70px;
         position: absolute;
         bottom: 0;
         opacity: 0;
@@ -189,16 +196,41 @@
         }
     }
 
+// ---------------- //
+//             Random            //
+// ---------------- //
     #random-mode button{
         width: 100%;
         height: 100%;
-        
     }
 
     #random-mode:hover{
         opacity: 30%;
     }
 
+// ---------------- //
+//             PreNext            //
+// ---------------- //
+    #prenext-mode{
+        display: flex;
+    }
+    #prenext-mode button{
+        font-size: 30px;
+        width: 100%;
+        height: 100%;
+    }
+
+    #prenext-mode button:hover{
+        opacity: 70%;
+    }
+
+    #prenext-mode:hover{
+        opacity: 30%;
+    }
+
+// ---------------- //
+//             Context             //
+// ---------------- //
     .context-active {
     transform: scale(1) !important;
 }

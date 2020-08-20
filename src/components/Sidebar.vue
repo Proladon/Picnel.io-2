@@ -1,81 +1,62 @@
 <template>
-    <div id="sidebar">
-        <div class="nav" @click="changemode">{{mode}}</div>
-        <div class="nav" >Mode</div>
-        <div class="nav" @click="readjdata">Read test</div>
-        <div class="nav" @click="writejdata">Write test</div>
-        
-        <div class="nav">
-            <label class="directory-upload">
-                <input type="file"  webkitdirectory directory />
-                Save as
-            </label>
+    <div id="sidebar" ref="sidebar">
+        <div class="tools">
+            <h1 align="center" @click="changeMode">M</h1>
+            <p align="center">{{viewmode}}</p>
         </div>
-
         <!-- Notify -->
         <notifications group="foo" position="bottom right" animation-type="velocity"/>
+        <notifications classes="mode-notify" group="mode" 
+        position="center center" 
+        width="500px"
+        animation-type="velocity"/>
     </div>
 </template>
 
 <script>
-    import fs from 'fs-extra'
+    import {mapGetters} from 'vuex'
     export default {
         name: 'Sidebar',
         methods: {
-            changemode() {
+            changeMode(){
+                if (this.viewmode === 'Random'){
+                    this.$store.commit('CHANGE_MODE', 'PreNext')
+                }
+                else{
+                    this.$store.commit('CHANGE_MODE', 'Random')
+                }
                 this.$notify({
-                    group: 'foo',
-                    type: 'error',
-                    title: 'Important message',
-                    text: 'Hello user! This is a notification!'
+                    group: 'mode',
+                    title: `${this.viewmode} Mode`,
                 })
-            },
-            // 測試
-            readjdata(){
-                fs.readJson('C:/Users/Proladon/Desktop/test.json')
-                    .then(res => {
-                        console.log(res)
-                    })
-                    .catch(err => {
-                        console.log(err)
-                    })
-            },
-            writejdata(){
-                const url = 'C:/Users/Proladon/Desktop/test.json'
-                fs.readJson(url)
-                    .then(res => {
-                        res.name3 = "Renloter";
-                        fs.outputJson(url, res)
-                            .then(() => {
-                                console.log("done")
-                            })
-                            .catch(err => {
-                                console.log(err)
-                            })
-                    })
-                    .catch(err => {
-                        console.log(err)
-                    })
-            },
+            }
         },
         computed: {
-            mode() {
-                return this.$store.state.mode
-            }
-        }
+            ...mapGetters({
+                viewmode: 'getMode'
+            })
+        },
+
     }
 </script>
 
 <style scped lang="scss">
+    
     #sidebar {
-        width: 50px;
-        // height: 100%;
-        padding-top: 20px;
-        padding-bottom: 20px;
-        background-color: rgb(51, 108, 131);
+        width: 70px;
+        height: 100%;
+        box-sizing: border-box;
+        // background-color: rgb(51, 108, 131);
+        background-color: cadetblue;
     }
 
-    .nav {
-        margin-bottom: 30px;
+    .mode-notify{
+        border-radius: 10px;
+        box-sizing: border-box;
+        padding: 15px;
+        font-size: 30px;
+        height: 100px;
+        background: cadetblue !important;
     }
+
 </style>

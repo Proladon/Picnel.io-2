@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <div id="main-panel-wrapper">
+        <div id="main-panel-wrapper" ref="mainpanel">
             <Sidebar />
             <splitpanes id="full-panel">
                 <pane>
@@ -51,6 +51,10 @@
             Folderslist,
             Statusbar,
         },
+        mounted(){
+            const barheight = document.getElementById('statusbar').offsetHeight
+            this.$refs.mainpanel.style.paddingBottom = barheight + 'px'
+        }
     }
 </script>
 
@@ -66,13 +70,16 @@
         --lightyellow: #CDC0B8;
     }
 
+    *{
+        margin: 0;
+        padding: 0;
+    }
+
     html,
     body,
     #app {
         width: 100%;
         height: 100%;
-        margin: 0;
-        padding: 0;
         overflow: hidden;
         font-family: Arial, Helvetica, sans-serif;
     }
@@ -90,11 +97,13 @@
     #main-panel-wrapper{
         display: flex;
         width: 100%;
-        height: 97%;
+        height: 100%;
+        box-sizing: border-box;
         position: absolute;
+        top: 0;
         left: 0;
         right: 0;
-        bottom: 25px;
+        bottom: 0;
         margin: 0 auto;
     }
 

@@ -112,7 +112,7 @@
                         group: 'foo',
                         type: 'error',
                         title: 'Error',
-                        text: 'Please select directory first'
+                        text: 'No found directory'
                     })
                 }
                 else{
@@ -145,7 +145,7 @@
     // Status Bar
     #statusbar {
         width: 100%;
-        height: 25px;
+        height: 30px;
         position: absolute;
         display: flex;
         align-items: center;

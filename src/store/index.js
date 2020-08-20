@@ -8,7 +8,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
-        mode: "random",
+        mode: "Random",
         home: 'public/static/picnel.io.png',
         curFile: 'public/static/picnel.io.png',
         worksapce: "undefined",
@@ -63,6 +63,11 @@ export default new Vuex.Store({
 
     },
     mutations: {
+        //:: Mode
+        CHANGE_MODE: (state, mode) => {
+            state.mode = mode
+        },
+
         SET_CURFILE: (state, data) => {
             state.curFile = data
         },
@@ -123,12 +128,38 @@ export default new Vuex.Store({
                 return arr[Math.floor(Math.random() * arr.length)];
             }
             const files_list = context.getters.getFilesList
+            // ignore no extname files
             const files = files_list.filter(f => {
                 return path.extname(f) !== ''
             })
             //? 如果資料夾內有多個檔案才執行
             if (files.length > 0) {
                 context.commit('SET_CURFILE', randomChoice(files))
+            }
+        },
+
+        PRE_FILE: context => {
+            let index = context.getters.getFileIndex
+            const files_list = context.getters.getFilesList
+            // ignore no extname files
+            const files = files_list.filter(f => {
+                return path.extname(f) !== ''
+            })
+            //? 如果資料夾內有多個檔案才執行
+            if (files.length > 0 && index !== 0) {
+                context.commit('SET_CURFILE', files[index-1])
+            }
+        },
+        NEXT_FILE: context => {
+            let index = context.getters.getFileIndex
+            const files_list = context.getters.getFilesList
+            // ignore no extname files
+            const files = files_list.filter(f => {
+                return path.extname(f) !== ''
+            })
+            //? 如果資料夾內有多個檔案才執行
+            if (files.length > 0) {
+                context.commit('SET_CURFILE', files[index+1])
             }
         },
 
@@ -188,7 +219,7 @@ export default new Vuex.Store({
             let folder_items = files.filter(i =>
                 fs.lstatSync(i).isDirectory()
             )
-            return `Folders: ${folder_items.length} Files: ${file_items.length}`
+            return `Directorys: ${folder_items.length} / Files: ${file_items.length}`
         },
         //:: Active Folderlist
         getActiveFolderList: (state) => {
