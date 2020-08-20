@@ -62,12 +62,14 @@
 // V-Dialog
 @import "assets/scss/custom-v-dialog.scss";
 @import "assets/scss/custom-v-splitpanes.scss";
+@import "assets/scss/custom-v-modal.scss";
 
     :root{
         --spliter: #423f3b;
         --dark: #0F2232;
         --popupdark: rgb(31, 41, 53);
         --lightyellow: #CDC0B8;
+        --statusbar: #353f52;
     }
 
     *{

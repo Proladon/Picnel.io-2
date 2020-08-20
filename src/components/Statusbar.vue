@@ -14,8 +14,14 @@
             </label>
         </div>
 
+        <!-- Folder Info -->
         <div class="folder-info status-item">
-            <p style="color: white;">{{folderinfo}}</p>
+            <p>{{folderinfo}}</p>
+        </div>
+
+        <!-- File -->
+        <div class="status-item">
+            <p></p>
         </div>
 
         <!-- Context Menu -->
@@ -148,11 +154,15 @@
         height: 30px;
         position: absolute;
         display: flex;
+        padding-left: 15px;
+        padding-right: 15px;
         align-items: center;
         bottom: 0;
-        background: var(--dark);
+        background: var(--statusbar);
+
 
         .status-item {
+            color: white;
             margin-right: 10px;
         }
 

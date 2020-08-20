@@ -1,8 +1,9 @@
 <template>
     <div id="folderslist">
+
         <div class="list-control">
             <p>{{ worksapce }}</p>
-            <button>ADD Folder</button>
+            <button @click="addFoldersModal">ADD Folder</button>
             <button @click="addGroupModal">ADD Group</button>
         </div>
         <splitpanes>
@@ -20,7 +21,12 @@
                                 @click="choiceColor(i.name, i.color, index)"
                                 :style="`background-color: ${i.color}`"
                             ></div>
-                            {{ i.name }}
+                            <p>{{ i.name }}</p>
+
+                            <div class="folder-control-wrapper">
+                                <div class="copy" @click="copyfile">C</div>
+                                <div class="move" @click="movefile">M</div>
+                            </div>
                         </div>
                     </transition-group>
                 </draggable>
@@ -35,7 +41,7 @@
                         :key="group.name"
                         @click="changeGroup(group.name, $event)"
                         @contextmenu="groupcontext($event, index)"
-                        >
+                    >
                         {{ group.name }}
                     </div>
                 </draggable>
@@ -43,9 +49,10 @@
         </splitpanes>
 
         <!-- Modal -->
-        <modal name="addgroup">
-            <p>Group Name:</p>
+        <modal name="addgroup" classes="modal-test" @drop="droptest">
+            <p >Group Name:</p>
             <input
+                @drop="droptest"
                 type="text"
                 id="inputGroupName"
                 @keypress.enter.prevent="addgroup"
@@ -67,6 +74,7 @@ import draggable from "vuedraggable";
 import "splitpanes/dist/splitpanes.css";
 import anime from "animejs";
 import Groupcontext from "@/components/contextmenu/Groupcontext.vue";
+// import fs from 'fs-extra'
 
 export default {
     name: "Folderslist",
@@ -84,6 +92,24 @@ export default {
         };
     },
     methods: {
+        drop(e) {
+            console.log(e)
+            if (e.dataTransfer.items) {
+                if (e.dataTransfer.items[0].kind === "file") {
+                    const file = e.dataTransfer.items[0].getAsFile()
+
+                    console.log(file)
+
+                    // Logging
+                    // this.$store.commit('UPDATE_LOG', "update folder")
+                }
+            }
+        },
+
+        dragover(e){
+            console.log(e)
+        },
+
         //:: Changing active group
         changeGroup(name, e) {
             // remove all element active class
@@ -104,7 +130,14 @@ export default {
                 });
             });
         },
-
+        addFoldersModal(){
+            const Addfolders = () => import("@/components/modal/Addfolders.vue")
+            this.$modal.show(
+                Addfolders,
+                {group: this.activegroup},
+                {resizable: true, classes: 'addfolders-modal'}
+            )
+        },
         //:: Show add new group modal
         addGroupModal() {
             this.$modal.show("addgroup");
@@ -155,15 +188,15 @@ export default {
                     width: "500px",
                     height: "600px",
                     draggable: false,
-                },
+                }
             );
         },
 
         //:: Show group context menu
         groupcontext(e, index) {
             this.groupIndex = index;
-            this.groupname = e.target.innerText
-            this.targetgroup = e.target
+            this.groupname = e.target.innerText;
+            this.targetgroup = e.target;
             const element = document.getElementById("group-context");
             element.classList.remove("context-active");
             element.style.top = e.clientY + "px";
@@ -175,99 +208,122 @@ export default {
 
         //:: Delete Group Dialog
         deleteGroup() {
-            this.$modal.show('dialog', {
+            this.$modal.show("dialog", {
                 title: "Warning",
                 text: "Delete Group?",
-                buttons:[
+                buttons: [
                     {
                         title: "Delete",
-                        class: 'dialog-red-btn dialog-btn',
+                        class: "dialog-red-btn dialog-btn",
                         handler: () => {
-                            let folders = this.$store.state.folderLists
-                            delete folders[this.groupname]
-                            this.$store.commit('SET_LIST', folders)
-                            this.$store.commit('DELETE_GROUP', this.groupIndex)
-                            
-                            if (this.groupname === this.activegroup){
-                                this.$store.commit('CHANGE_ACTIVE_GROUP', null)
-                            }
-                            this.$modal.hide('dialog')
+                            let folders = this.$store.state.folderLists;
+                            delete folders[this.groupname];
+                            this.$store.commit("SET_LIST", folders);
+                            this.$store.commit("DELETE_GROUP", this.groupIndex);
 
-                            this.groupname = null
-                            this.groupIndex = null
-                            this.targetgroup = null
-                        }
+                            if (this.groupname === this.activegroup) {
+                                this.$store.commit("CHANGE_ACTIVE_GROUP", null);
+                            }
+                            this.$modal.hide("dialog");
+
+                            this.groupname = null;
+                            this.groupIndex = null;
+                            this.targetgroup = null;
+                        },
                     },
                     {
                         title: "Cancel",
-                        class: 'dialog-green-btn dialog-btn',
+                        class: "dialog-green-btn dialog-btn",
                         handler: () => {
-                            this.$modal.hide('dialog')
-                        }
-                    }
-                ]
-            })
+                            this.$modal.hide("dialog");
+                        },
+                    },
+                ],
+            });
         },
 
-        //:: Rename Group 
-        renameGroup(){
-            this.$modal.show('dialog', {
+        //:: Rename Group
+        renameGroup() {
+            this.$modal.show("dialog", {
                 title: "Group Rename",
                 text: `<input name="dialog-input" type:text placeholder="${this.groupname}" >`,
-                buttons:[
+                buttons: [
                     {
                         title: "Rename",
-                        class: 'dialog-red-btn dialog-btn',
+                        class: "dialog-red-btn dialog-btn",
                         handler: () => {
-                            const element = document.getElementsByName('dialog-input')[0]
-                            let newName = element.value.trim(' ')
+                            const element = document.getElementsByName(
+                                "dialog-input"
+                            )[0];
+                            let newName = element.value.trim(" ");
                             // Check Repeat
-                            for (let oldName of this.$store.state.folderGroups){
+                            for (let oldName of this.$store.state
+                                .folderGroups) {
                                 if (newName === oldName.name) {
-                                    element.value = '' 
+                                    element.value = "";
                                     this.$notify({
-                                        group: 'foo',
-                                        type: 'warn',
-                                        title: 'Name Repeat',
-                                        text: `Group Name: ${newName} already existing`
+                                        group: "foo",
+                                        type: "warn",
+                                        title: "Name Repeat",
+                                        text: `Group Name: ${newName} already existing`,
                                     });
-                                    return
+                                    return;
                                 }
                             }
                             // Check Empty
-                            if (newName !== ''){
+                            if (newName !== "") {
                                 // Change Group Name
-                                this.$store.commit('RENAME_GROUP', {index:this.groupIndex, name:element.value})
+                                this.$store.commit("RENAME_GROUP", {
+                                    index: this.groupIndex,
+                                    name: element.value,
+                                });
                                 // Change Group Links Folders Name
-                                this.$store.commit('RENAME_LIST', {oldName: this.groupname, newName: newName})
-                                this.$store.commit('CHANGE_ACTIVE_GROUP', newName)
-                                this.$modal.hide('dialog')
+                                this.$store.commit("RENAME_LIST", {
+                                    oldName: this.groupname,
+                                    newName: newName,
+                                });
+                                this.$store.commit(
+                                    "CHANGE_ACTIVE_GROUP",
+                                    newName
+                                );
+                                this.$modal.hide("dialog");
 
-                                this.groupname = newName
+                                this.groupname = newName;
                                 setTimeout(() => {
                                     // Re-add active class to current activeGroup
-                                    const elList = document.getElementsByClassName('draggable-group')
-                                    elList.forEach(e => {
-                                        e.classList.remove('active')
-                                    })
-                                    const target = elList[this.groupIndex]
-                                    target.classList.add('active')
+                                    const elList = document.getElementsByClassName(
+                                        "draggable-group"
+                                    );
+                                    elList.forEach((e) => {
+                                        e.classList.remove("active");
+                                    });
+                                    const target = elList[this.groupIndex];
+                                    target.classList.add("active");
                                 }, 10);
+                            } else {
+                                element.value = "";
                             }
-                            else{
-                                element.value = ''
-                            }
-                        }
+                        },
                     },
                     {
                         title: "Cancel",
-                        class: 'dialog-green-btn dialog-btn',
+                        class: "dialog-green-btn dialog-btn",
                         handler: () => {
-                            this.$modal.hide('dialog')
-                        }
-                    }
-                ]
-            })
+                            this.$modal.hide("dialog");
+                        },
+                    },
+                ],
+            });
+        },
+
+        copyfile(){
+
+        },
+        movefile(){
+
+        },
+        droptest(e){
+            console.log(e)
         }
     },
     computed: {
@@ -312,17 +368,20 @@ export default {
         window.addEventListener("click", () => {
             element.classList.remove("context-active");
         });
-
     },
 };
 </script>
 
 <style scoped lang="scss">
+
 #folderslist {
+    position: relative;
     width: 100%;
     height: 100%;
     background-color: #20232b;
 }
+
+
 
 .splitpanes__pane {
     overflow-y: auto;
@@ -358,6 +417,7 @@ export default {
 .draggable-folder {
     cursor: default;
     display: flex;
+    justify-content: space-between;
     margin: 15px;
     font-size: 20px;
     color: var(--lightyellow);
@@ -369,7 +429,30 @@ export default {
         cursor: pointer;
         width: 10px;
         height: auto;
-        margin-right: 15px;
+    }
+
+    p {
+        width: 55%;
+        overflow: hidden;
+    }
+}
+
+.folder-control-wrapper {
+    display: flex;
+    width: 30%;
+
+    .copy,
+    .move {
+        cursor: pointer;
+        width: 100%;
+        margin-right: 5px;
+        text-align: center;
+        background-color: rgba(160, 160, 160, 0.274);
+    }
+
+    .copy:hover,
+    .move:hover {
+        filter: brightness(70%);
     }
 }
 
@@ -395,6 +478,4 @@ export default {
 .context-active {
     transform: scale(1) !important;
 }
-
-
 </style>
