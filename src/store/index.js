@@ -152,7 +152,10 @@ export default new Vuex.Store({
 
         PRE_FILE: context => {
             let index = context.getters.getFileIndex
-            const files_list = context.getters.getFilesList
+            
+            let files_list = fs.readdirSync(context.getters.getFolderPath).map(f => {
+                return `${context.getters.getFolderPath}/${f.replace(/\\/g, '/')}`
+            })
             // ignore no extname files
             const files = files_list.filter(f => {
                 return path.extname(f) !== ''
@@ -164,7 +167,9 @@ export default new Vuex.Store({
         },
         NEXT_FILE: context => {
             let index = context.getters.getFileIndex
-            const files_list = context.getters.getFilesList
+            let files_list = fs.readdirSync(context.getters.getFolderPath).map(f => {
+                return `${context.getters.getFolderPath}/${f.replace(/\\/g, '/')}`
+            })
             // ignore no extname files
             const files = files_list.filter(f => {
                 return path.extname(f) !== ''
@@ -175,6 +180,9 @@ export default new Vuex.Store({
                 if (nextIndex < files.length) {
                     context.commit('SET_CURFILE', files[index+1])
                 }
+            }
+            else {
+                context.commit('SET_CURFILE', context.state.home)
             }
         },
 

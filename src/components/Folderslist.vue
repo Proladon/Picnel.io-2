@@ -314,26 +314,44 @@ export default {
 
         copyfile(targetpath){
             fs.copySync(this.filepath, path.join(targetpath.replace(/\\/g, '/'), this.filename))
+            // todo => Logging
         },
         movefile(targetpath){
-            fs.moveSync(this.filepath, path.join(targetpath.replace(/\\/g, '/'), this.filename))
-            this.$store.dispatch('RANDOM_FILE')
             if (this.filename === 'picnel.io.png'){
                 this.$notify({
                     group: 'foo',
                     title: 'No File'
                 })
+                return
             }
-
-
+            fs.moveSync(this.filepath, path.join(targetpath.replace(/\\/g, '/'), this.filename))
             
-            // TODO  Logging
-            // TODO  Update view & folderinfo
+            if (this.mode === 'Random'){
+                this.$store.dispatch('RANDOM_FILE')
+            }
+            else{
+                this.$store.dispatch('NEXT_FILE')
+                let files_list = fs.readdirSync(this.$store.getters.getFolderPath).map(f => {
+                    return `${this.$store.getters.getFolderPath}/${f.replace(/\\/g, '/')}`
+                })
+                
+                if (files_list.length === 1){
+                    this.$store.commit('SET_CURFILE', files_list[0])
+                }
+                else if (this.fileindex < files_list.length){
+                    this.$store.commit('SET_CURFILE', files_list[this.fileindex-1])
+                }
+            }
+            
+            // todo => Logging
         },
     },
     computed: {
         mode(){
             return this.$store.state.mode
+        },
+        fileindex(){
+            return this.$store.getters.getFileIndex
         },
         worksapce() {
             return this.$store.state.worksapce;
