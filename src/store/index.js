@@ -71,7 +71,8 @@ export default new Vuex.Store({
         SET_CURFILE: (state, data) => {
             state.curFile = data
         },
-        
+
+       
         //:: Folders List
         UPDATE_LISTS: (state, data) => {
             state.folderLists[state.activeGroup] = data
@@ -128,11 +129,14 @@ export default new Vuex.Store({
     actions: {
 
         //:: 隨機挑選圖片
-        RANDOM_FILE: context => {
+        RANDOM_FILE: (context) => {
             function randomChoice(arr) {
                 return arr[Math.floor(Math.random() * arr.length)];
             }
-            const files_list = context.getters.getFilesList
+            let files_list = fs.readdirSync(context.getters.getFolderPath).map(f => {
+                return `${context.getters.getFolderPath}/${f.replace(/\\/g, '/')}`
+            })
+
             // ignore no extname files
             const files = files_list.filter(f => {
                 return path.extname(f) !== ''
@@ -140,6 +144,9 @@ export default new Vuex.Store({
             //? 如果資料夾內有多個檔案才執行
             if (files.length > 0) {
                 context.commit('SET_CURFILE', randomChoice(files))
+            }
+            else {
+                context.commit('SET_CURFILE', context.state.home)
             }
         },
 

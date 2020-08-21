@@ -14,7 +14,8 @@
                 <p>Upload Folder</p>
             </label>
         </div>
-        <p class="upload-notice">*Only support single folder</p>
+        <p class="upload-notice">*Only support single folder and folder need some files inside</p>
+        <p class="upload-notice">If not necessary recommend using drop folders</p>
 
         <h2>OR</h2>
 
@@ -152,10 +153,6 @@ export default {
                 text: `Add ${count} folders to ${this.group}`,
             });
 
-        },
-
-        drag(e) {
-            console.log(e);
         },
     },
     

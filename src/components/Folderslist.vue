@@ -24,8 +24,8 @@
                             <p>{{ i.name }}</p>
 
                             <div class="folder-control-wrapper">
-                                <div class="copy" @click="copyfile">C</div>
-                                <div class="move" @click="movefile">M</div>
+                                <div class="copy" @click="copyfile(i.path)">C</div>
+                                <div class="move" @click="movefile(i.path)">M</div>
                             </div>
                         </div>
                     </transition-group>
@@ -49,10 +49,9 @@
         </splitpanes>
 
         <!-- Modal -->
-        <modal name="addgroup" classes="modal-test" @drop="droptest">
+        <modal name="addgroup" classes="modal-test">
             <p >Group Name:</p>
             <input
-                @drop="droptest"
                 type="text"
                 id="inputGroupName"
                 @keypress.enter.prevent="addgroup"
@@ -74,7 +73,8 @@ import draggable from "vuedraggable";
 import "splitpanes/dist/splitpanes.css";
 import anime from "animejs";
 import Groupcontext from "@/components/contextmenu/Groupcontext.vue";
-// import fs from 'fs-extra'
+import fs from 'fs-extra'
+import path from 'path'
 
 export default {
     name: "Folderslist",
@@ -104,10 +104,6 @@ export default {
                     // this.$store.commit('UPDATE_LOG', "update folder")
                 }
             }
-        },
-
-        dragover(e){
-            console.log(e)
         },
 
         //:: Changing active group
@@ -316,19 +312,37 @@ export default {
             });
         },
 
-        copyfile(){
-
+        copyfile(targetpath){
+            fs.copySync(this.filepath, path.join(targetpath.replace(/\\/g, '/'), this.filename))
         },
-        movefile(){
+        movefile(targetpath){
+            fs.moveSync(this.filepath, path.join(targetpath.replace(/\\/g, '/'), this.filename))
+            this.$store.dispatch('RANDOM_FILE')
+            if (this.filename === 'picnel.io.png'){
+                this.$notify({
+                    group: 'foo',
+                    title: 'No File'
+                })
+            }
 
+
+            
+            // TODO  Logging
+            // TODO  Update view & folderinfo
         },
-        droptest(e){
-            console.log(e)
-        }
     },
     computed: {
+        mode(){
+            return this.$store.state.mode
+        },
         worksapce() {
             return this.$store.state.worksapce;
+        },
+        filepath(){
+            return this.$store.state.curFile
+        },
+        filename(){
+            return this.$store.getters.getFileName
         },
         foldergroups: {
             get() {
