@@ -1,5 +1,8 @@
 <template>
    <div id="logger">
+       <!-- todo: Move Tab -->
+       <!-- todo: Copy Tab -->
+       <!-- todo: Set Tab -->
        <p class="log" v-for="(log, index) in logging" :key="index" :id="`log-${index}`">
           {{log}}
        </p>
