@@ -134,7 +134,7 @@ export default {
             const Addfolders = () => import("@/components/modal/Addfolders.vue")
             this.$modal.show(
                 Addfolders,
-                {group: this.activegroup},
+                {group: this.activegroup, folderlist: this.folderlist},
                 {resizable: true, classes: 'addfolders-modal'}
             )
         },
