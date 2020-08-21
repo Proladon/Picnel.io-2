@@ -33,6 +33,7 @@
 </template>
 
 <script>
+import path from 'path'
 export default {
     name: "Addfolders",
     props: ["group", "folderlist"],
@@ -102,7 +103,6 @@ export default {
             let folders = [];
             const ignore = ["image", "video", "audio"];
             let count = 0;
-            let warn = false;
 
             // Get every
             for (let i of e.dataTransfer.items) {
@@ -110,31 +110,48 @@ export default {
                     i.kind !== "file" ||
                     ignore.includes(i.type.split("/")[0])
                 ) {
-                    warn = true;
-                    break;
+                    // Error not folder
+                    this.$notify({
+                        group: "onlyfolder",
+                        type: "error",
+                        title: "Upload Error",
+                        text: "Only support folder !",
+                    })
+                    return
                 } else {
                     count += 1;
                     folders.push(i.getAsFile().path);
                 }
             }
 
-            // Notify
-            if (warn) {
-                this.$notify({
-                    group: "onlyfolder",
-                    type: "error",
-                    title: "Upload Error",
-                    text: "Only support folder !",
-                });
-            } else {
-                this.$notify({
-                    group: "foo",
-                    title: "Done",
-                    text: `Add ${count} folders to ${this.group}`,
-                });
-
-                // this.$store.commit()
+            // Check Repeat
+            let exist = []
+            for (let n of this.folderlist){
+                exist.push(n.name)
             }
+            
+            let fname = ""
+            for (let fpath of folders){
+                fname = path.basename(fpath)
+                if (exist.includes(fname)){
+                    folders.splice(folders.indexOf(fpath), 1)
+                }
+                else{
+                     let folder = {
+                        name: fname,
+                        path: fpath,
+                        color: 'white'
+                    }
+                    this.$store.commit('ADD_FOLDER', {group: this.group, folder: folder})
+                }
+            }
+            
+            this.$notify({
+                group: "foo",
+                title: "Done",
+                text: `Add ${count} folders to ${this.group}`,
+            });
+
         },
 
         drag(e) {
