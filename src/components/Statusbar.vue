@@ -16,12 +16,12 @@
 
         <!-- Folder Info -->
         <div class="folder-info status-item">
-            <p>{{folderinfo}}</p>
+            <p>{{filename}}</p>
         </div>
 
         <!-- File -->
         <div class="status-item">
-            <p></p>
+            <p>{{this.file}}</p>
         </div>
 
         <!-- Context Menu -->
@@ -132,6 +132,7 @@
             },
             ...mapGetters({
                 file: 'getCurFilePath',
+                filename: 'getFileName',
                 folderpath: 'getFolderPath',
                 folderinfo: 'getFolderInfo',
                 foldername: 'getFolderName'

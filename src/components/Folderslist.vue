@@ -1,6 +1,7 @@
 <template>
     <div id="folderslist">
 
+        <!-- Control -->
         <div class="list-control">
             <p>{{ worksapce }}</p>
             <button @click="addFoldersModal">ADD Folder</button>
@@ -49,14 +50,14 @@
         </splitpanes>
 
         <!-- Modal -->
-        <modal name="addgroup" classes="modal-test">
+        <!-- <modal name="addgroup" classes="modal-test">
             <p >Group Name:</p>
             <input
                 type="text"
                 id="inputGroupName"
                 @keypress.enter.prevent="addgroup"
             />
-        </modal>
+        </modal> -->
 
         <!-- Dialog -->
         <v-dialog />
@@ -136,38 +137,12 @@ export default {
         },
         //:: Show add new group modal
         addGroupModal() {
-            this.$modal.show("addgroup");
-            setTimeout(() => {
-                document.getElementById("inputGroupName").focus();
-            });
-        },
-
-        //:: Add new group
-        addgroup() {
-            let el = document.getElementById("inputGroupName");
-            let newName = el.value.trim(" ");
-            let repeat = false;
-
-            // Check Repeat Name
-            for (let name of this.foldergroups) {
-                if (newName === name.name) {
-                    repeat = true;
-                }
-            }
-            // Check Empty
-            if (newName === "" || repeat === true) {
-                el.value = "";
-                return;
-            } else {
-                const data = {
-                    name: newName,
-                    path: "",
-                };
-                this.$store.commit("ADD_GROUP", data);
-                setTimeout(() => {
-                    el.value = "";
-                });
-            }
+            const Addgroup = () => import("@/components/modal/Addgroup.vue")
+            this.$modal.show(
+                Addgroup,
+                {foldergroups: this.foldergroups},
+                {width: "400", classes: 'addfolders-modal'}
+            )
         },
 
         //:: Color Tag ColorPicker
@@ -401,6 +376,11 @@ export default {
             element.classList.remove("context-active");
         });
     },
+    watch:{
+        foldergroups: ()=>{
+
+        }
+    }
 };
 </script>
 
@@ -430,6 +410,12 @@ export default {
     display: flex;
     align-items: center;
     background-color: var(--lightyellow);
+
+    button{
+        background-color: transparent;
+        border: var(--dark) solid 1px;
+        padding: 5px;
+    }
 }
 
 // ---------------- //

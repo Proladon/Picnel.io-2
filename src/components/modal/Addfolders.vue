@@ -40,6 +40,7 @@ export default {
     props: ["group", "folderlist"],
     methods: {
         uploadfolders(e) {
+            
             const abspath = e.target.files[0].path.split("\\");
             const relpath = e.target.files[0].webkitRelativePath.split("/")[0];
             let pass = false
@@ -54,20 +55,25 @@ export default {
                 return
             }
             else{
-                for (let f of this.folderlist){
-                    if (relpath === f.name){
-                      this.$notify({
-                            group: 'foo',
-                            type: 'warn',
-                            title: 'Warn',
-                            text: `Folder ${relpath} already in list`
-                        })
-                        e.target.value = null
-                        return  
+                if (this.folderlist.length > 0){
+                    for (let f of this.folderlist){
+                        if (relpath === f.name){
+                          this.$notify({
+                                group: 'foo',
+                                type: 'warn',
+                                title: 'Warn',
+                                text: `Folder ${relpath} already in list`
+                            })
+                            e.target.value = null
+                            return  
+                        }
+                        else{
+                            pass = true
+                        }
                     }
-                    else{
-                        pass = true
-                    }
+                }
+                else{
+                    pass = true
                 }
             }
 
@@ -86,6 +92,7 @@ export default {
                     path: root,
                     color: 'white'
                 }
+                
                 this.$store.commit('ADD_FOLDER', {group:this.group, folder: folder})
     
                 this.$notify({
@@ -97,6 +104,7 @@ export default {
                 e.target.value = null
             }
             else{
+                console.log(false)
                 e.target.value = null
             }
         },

@@ -86,6 +86,9 @@ export default new Vuex.Store({
             delete flist[oldName]
             state.folderLists = flist
         },
+        ADD_LIST: (state, name) => {
+            Vue.set(state.folderLists, name, []) 
+        },
         ADD_FOLDER: (state, { group, folder }) => {
             let flist = state.folderLists[group]
             flist.push(folder)
