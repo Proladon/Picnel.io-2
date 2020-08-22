@@ -16,6 +16,7 @@
                             v-for="(i, index) in folderlist"
                             :key="i.name"
                             class="draggable-folder"
+                            @contextmenu="foldercontext($event, index)"
                         >
                             <div
                                 class="color-tag"
@@ -64,6 +65,7 @@
 
         <!-- Context Menu -->
         <Groupcontext @deletegroup="deleteGroup" @renamegroup="renameGroup" />
+        <Foldercontext />
     </div>
 </template>
 
@@ -73,7 +75,10 @@ import { Splitpanes, Pane } from "splitpanes";
 import draggable from "vuedraggable";
 import "splitpanes/dist/splitpanes.css";
 import anime from "animejs";
+// Context Menu
+import Foldercontext from "@/components/contextmenu/Foldercontext.vue";
 import Groupcontext from "@/components/contextmenu/Groupcontext.vue";
+// Mods
 import fs from 'fs-extra'
 import path from 'path'
 
@@ -84,6 +89,7 @@ export default {
         Pane,
         draggable,
         Groupcontext,
+        Foldercontext,
     },
     data() {
         return {
@@ -161,6 +167,17 @@ export default {
                     draggable: false,
                 }
             );
+        },
+
+        foldercontext(e, index){
+            console.log(index)
+            const element = document.getElementById("folder-context");
+            element.classList.remove("context-active");
+            element.style.top = e.clientY + "px";
+            element.style.left = e.clientX + "px";
+            setTimeout(() => {
+                element.classList.add("context-active");
+            }, 150);
         },
 
         //:: Show group context menu
@@ -371,9 +388,11 @@ export default {
     },
     mounted() {
         //:: Cancel context menu
-        const element = document.getElementById("group-context");
+        const context_folder = document.getElementById("folder-context");
+        const context_group = document.getElementById("group-context");
         window.addEventListener("click", () => {
-            element.classList.remove("context-active");
+            context_folder.classList.remove("context-active");
+            context_group.classList.remove("context-active");
         });
     },
     watch:{

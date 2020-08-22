@@ -14,48 +14,48 @@ export default new Vuex.Store({
         worksapce: "undefined",
         activeGroup: "",
         folderGroups: [
-            {
-                name: "Wallpaper",
-            },
-            {
-                name: "ACG",
-            }
+            // {
+            //     name: "Wallpaper",
+            // },
+            // {
+            //     name: "ACG",
+            // }
         ],
         folderLists: {
-            Wallpaper: [
-                {
-                    name: "Anime",
-                    path: "",
-                    color: "rgb(228, 216, 160)",
-                },
-                {
-                    name: "風景",
-                    path: "",
-                    color: "rgb(187, 228, 160)",
-                },
-                {
-                    name: "Art",
-                    path: "",
-                    color: "rgb(228, 160, 160)",
-                },
-                {
-                    name: "Nature",
-                    path: "",
-                    color: "rgb(160, 209, 228)",
-                },
-            ],
-            ACG: [
-                {
-                    name: "Games",
-                    path: "",
-                    color: "#22df8c",
-                },
-                {
-                    name: "Anime",
-                    path: "",
-                    color: "#54BBFF",
-                },
-            ],
+            // Wallpaper: [
+            //     {
+            //         name: "Anime",
+            //         path: "",
+            //         color: "rgb(228, 216, 160)",
+            //     },
+            //     {
+            //         name: "風景",
+            //         path: "",
+            //         color: "rgb(187, 228, 160)",
+            //     },
+            //     {
+            //         name: "Art",
+            //         path: "",
+            //         color: "rgb(228, 160, 160)",
+            //     },
+            //     {
+            //         name: "Nature",
+            //         path: "",
+            //         color: "rgb(160, 209, 228)",
+            //     },
+            // ],
+            // ACG: [
+            //     {
+            //         name: "Games",
+            //         path: "",
+            //         color: "#22df8c",
+            //     },
+            //     {
+            //         name: "Anime",
+            //         path: "",
+            //         color: "#54BBFF",
+            //     },
+            // ],
         },
         tempColor: Object,
         

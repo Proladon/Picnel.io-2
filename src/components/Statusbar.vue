@@ -16,17 +16,17 @@
 
         <!-- Folder Info -->
         <div class="folder-info status-item">
-            <p>{{filename}}</p>
+            <p>{{folderinfo}}</p>
         </div>
 
         <!-- File -->
         <div class="status-item">
-            <p>{{this.file}}</p>
+            <p>{{filename}}</p>
         </div>
 
         <!-- Context Menu -->
         <Mainfoldercontext  @opendirectory="openfolder"/>
-
+ 
     </div>
 </template>
 
