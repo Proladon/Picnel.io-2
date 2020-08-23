@@ -4,6 +4,18 @@
             <h1 align="center" @click="changeMode">M</h1>
             <p align="center">{{viewmode}}</p>
         </div>
+
+        <div class="tools">
+            <h1 align="center">❤</h1>
+        </div>
+
+        <div class="tools">
+            <h1 align="center">✉</h1>
+        </div>
+
+        <div class="tools">
+            <h1 align="center">⚙</h1>
+        </div>
         <!-- Notify -->
         <notifications 
             group="mode" 
@@ -48,17 +60,19 @@
         width: 70px;
         height: 100%;
         box-sizing: border-box;
+        padding-top: 10px;
+        padding-bottom: 10px;
         // background-color: rgb(51, 108, 131);
         background-color: cadetblue;
     }
 
-    // .mode-notify{
-    //     text-align: center !important;
-    //     border-radius: 10px;
-    //     box-sizing: border-box;
-    //     padding: 15px;
-    //     font-size: 30px;
-    //     height: 100px;
-    // }
+    .tools{
+        cursor: pointer;
+        margin-bottom: 20px;
+    }
+
+    .tools:hover{
+        background-color: rgba($color: #000000, $alpha: .3);
+    }
 
 </style>

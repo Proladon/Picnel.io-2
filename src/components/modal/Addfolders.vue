@@ -46,7 +46,7 @@ export default {
             let pass = false
             if (this.group === ''){
                 this.$notify({
-                    group: 'foo',
+                    group: 'onlyfolder',
                     type: 'error',
                     title: 'Error',
                     text: 'None active group can be add folder'
@@ -59,7 +59,7 @@ export default {
                     for (let f of this.folderlist){
                         if (relpath === f.name){
                           this.$notify({
-                                group: 'foo',
+                                group: 'onlyfolder',
                                 type: 'warn',
                                 title: 'Warn',
                                 text: `Folder ${relpath} already in list`
@@ -96,7 +96,8 @@ export default {
                 this.$store.commit('ADD_FOLDER', {group:this.group, folder: folder})
     
                 this.$notify({
-                    group: 'foo',
+                    group: 'onlyfolder',
+                    type: 'success',
                     title: 'Upload Folder',
                     text: `Upload 1 folder to ${this.group}`
                 })
@@ -156,7 +157,8 @@ export default {
             }
             
             this.$notify({
-                group: "foo",
+                group: "onlyfolder",
+                type: 'success',
                 title: "Done",
                 text: `Add ${count} folders to ${this.group}`,
             });

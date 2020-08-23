@@ -59,6 +59,14 @@
         <!-- Context Menu -->
         <Groupcontext @deletegroup="deleteGroup" @renamegroup="renameGroup" />
         <Foldercontext @removefolder="removeFolder" @openfolder="openFolder" />
+
+        <!-- Notify -->
+        <notifications 
+            group="folderlist" 
+            position="right bottom"
+            animation-type="velocity" 
+        />
+
     </div>
 </template>
 
@@ -232,10 +240,10 @@ export default {
         removeFolder(){
             this.$modal.show("dialog", {
                 title: "Warning",
-                text: "Delete Folder?",
+                text: "Remove Folder?",
                 buttons: [
                     {
-                        title: "Delete",
+                        title: "Remove",
                         class: "dialog-red-btn dialog-btn",
                         handler: () => {
                             let folders = this.folderlist
@@ -340,8 +348,10 @@ export default {
         movefile(targetpath){
             if (this.filename === 'picnel.io.png'){
                 this.$notify({
-                    group: 'foo',
-                    title: 'No File'
+                    group: 'folderlist',
+                    type: 'error',
+                    title: 'Error',
+                    text: 'No file can move'
                 })
                 return
             }
@@ -446,8 +456,6 @@ export default {
 .splitpanes__pane {
     overflow-y: auto;
 }
-
-
 
 // ---------------- //
 //             Controls            //
