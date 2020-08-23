@@ -16,7 +16,7 @@
                             v-for="(i, index) in folderlist"
                             :key="i.name"
                             class="draggable-folder"
-                            @contextmenu="foldercontext($event, index)"
+                            @contextmenu="foldercontext($event, index, i.path)"
                         >
                             <div
                                 class="color-tag"
@@ -50,22 +50,12 @@
             </pane>
         </splitpanes>
 
-        <!-- Modal -->
-        <!-- <modal name="addgroup" classes="modal-test">
-            <p >Group Name:</p>
-            <input
-                type="text"
-                id="inputGroupName"
-                @keypress.enter.prevent="addgroup"
-            />
-        </modal> -->
-
         <!-- Dialog -->
         <v-dialog />
 
         <!-- Context Menu -->
         <Groupcontext @deletegroup="deleteGroup" @renamegroup="renameGroup" />
-        <Foldercontext @deletefolder="deleteFolder" />
+        <Foldercontext @removefolder="removeFolder" @openfolder="openFolder" />
     </div>
 </template>
 
@@ -81,6 +71,7 @@ import Groupcontext from "@/components/contextmenu/Groupcontext.vue";
 // Mods
 import fs from 'fs-extra'
 import path from 'path'
+import { shell } from 'electron'
 
 export default {
     name: "Folderslist",
@@ -94,6 +85,7 @@ export default {
     data() {
         return {
             folderindex: 0,
+            folderpath: "",
             groupIndex: 0,
             groupname: "",
             targetgroup: HTMLDivElement,
@@ -171,8 +163,9 @@ export default {
         },
 
         //:: Folder context menu
-        foldercontext(e, index){
+        foldercontext(e, index, fpath){
             this.folderindex = index
+            this.folderpath = fpath
             const element = document.getElementById("folder-context");
             element.classList.remove("context-active");
             element.style.top = e.clientY + "px";
@@ -233,7 +226,7 @@ export default {
         },
 
         //:: Delete Folder Dialog
-        deleteFolder(){
+        removeFolder(){
             this.$modal.show("dialog", {
                 title: "Warning",
                 text: "Delete Folder?",
@@ -242,7 +235,6 @@ export default {
                         title: "Delete",
                         class: "dialog-red-btn dialog-btn",
                         handler: () => {
-                            console.log(this.folderindex)
                             let folders = this.folderlist
                             folders.splice(this.folderindex, 1)
                             this.$store.commit('UPDATE_LISTS', folders)
@@ -332,6 +324,10 @@ export default {
                     },
                 ],
             });
+        },
+
+        openFolder() {
+            shell.openPath(this.folderpath)
         },
 
         copyfile(targetpath){

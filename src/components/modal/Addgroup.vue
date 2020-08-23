@@ -58,10 +58,11 @@ export default {
                     text: `Create group: ${newName} successful`
                 })
 
+                this.$emit('close')
+
                 setTimeout(() => {
                     el.value = "";
                 });
-                this.$forceUpdate();
             }
         },
     },

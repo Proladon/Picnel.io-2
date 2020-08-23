@@ -163,9 +163,10 @@ export default new Vuex.Store({
             const files = files_list.filter(f => {
                 return path.extname(f) !== ''
             })
+            
             //? 如果資料夾內有多個檔案才執行
             if (files.length > 0 && index !== 0) {
-                context.commit('SET_CURFILE', files[index-1])
+                context.commit('SET_CURFILE', files[index - 1])
             }
         },
         NEXT_FILE: context => {
@@ -177,11 +178,12 @@ export default new Vuex.Store({
             const files = files_list.filter(f => {
                 return path.extname(f) !== ''
             })
+
             //? 如果資料夾內有多個檔案才執行
             if (files.length > 0) {
                 let nextIndex = index + 1
                 if (nextIndex < files.length) {
-                    context.commit('SET_CURFILE', files[index+1])
+                    context.commit('SET_CURFILE', files[index + 1])
                 }
             }
             else {
