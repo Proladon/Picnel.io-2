@@ -22,4 +22,18 @@
       background: #68CD86;
       border-left-color: #42A85F;
     }
+
+    &.mode {
+        border-left-width: 10px;
+        border-left-color: cadetblue;
+        // border-left-color: #4288a8;
+        text-align: center !important;
+        border-radius: 10px;
+        box-sizing: border-box;
+        padding: 15px;
+        font-size: 30px;
+        height: 100px;
+        color: var(--popupdark);
+        background: var(--lightyellow);
+    }
   }

@@ -63,6 +63,7 @@
 @import "assets/scss/custom-v-dialog.scss";
 @import "assets/scss/custom-v-splitpanes.scss";
 @import "assets/scss/custom-v-modal.scss";
+@import "assets/scss/custom-v-notify.scss";
 
     :root{
         --spliter: #423f3b;

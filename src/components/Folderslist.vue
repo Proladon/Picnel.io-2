@@ -4,8 +4,11 @@
         <!-- Control -->
         <div class="list-control">
             <p>{{ worksapce }}</p>
-            <button @click="addFoldersModal">ADD Folder</button>
-            <button @click="addGroupModal">ADD Group</button>
+
+            <div class="list-control-btn-wrapper">
+                <button class="list-control-btn" @click="addFoldersModal">ADD Folder</button>
+                <button class="list-control-btn" @click="addGroupModal">ADD Group</button>
+            </div>
         </div>
         <splitpanes>
             <!-- Folders -->
@@ -444,8 +447,10 @@ export default {
     overflow-y: auto;
 }
 
+
+
 // ---------------- //
-//           draggable          //
+//             Controls            //
 // ---------------- //
 .list-control {
     width: 100%;
@@ -453,10 +458,17 @@ export default {
     box-sizing: border-box;
     padding: 10px;
     display: flex;
+    justify-content: space-between;
     align-items: center;
     background-color: var(--lightyellow);
 
-    button{
+}
+
+.list-control-btn-wrapper{
+    display: flex;
+    justify-content: space-between;
+    .list-control-btn{
+        margin-left: 5px;
         background-color: transparent;
         border: var(--dark) solid 1px;
         padding: 5px;

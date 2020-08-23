@@ -5,11 +5,11 @@
             <p align="center">{{viewmode}}</p>
         </div>
         <!-- Notify -->
-        <notifications group="foo" position="bottom right" animation-type="velocity"/>
-        <notifications classes="mode-notify" group="mode" 
-        position="center center" 
-        width="500px"
-        animation-type="velocity"/>
+        <notifications 
+            group="mode" 
+            position="center center" width="500px"
+            animation-type="velocity" />
+        
     </div>
 </template>
 
@@ -27,7 +27,9 @@
                 }
                 this.$notify({
                     group: 'mode',
-                    title: `${this.viewmode} Mode`,
+                    type: 'mode',
+                    title: 'Mode Change',
+                    text: `${this.viewmode}`,
                 })
             }
         },
@@ -50,13 +52,13 @@
         background-color: cadetblue;
     }
 
-    .mode-notify{
-        border-radius: 10px;
-        box-sizing: border-box;
-        padding: 15px;
-        font-size: 30px;
-        height: 100px;
-        background: cadetblue !important;
-    }
+    // .mode-notify{
+    //     text-align: center !important;
+    //     border-radius: 10px;
+    //     box-sizing: border-box;
+    //     padding: 15px;
+    //     font-size: 30px;
+    //     height: 100px;
+    // }
 
 </style>
