@@ -65,7 +65,7 @@
 
         <!-- Context Menu -->
         <Groupcontext @deletegroup="deleteGroup" @renamegroup="renameGroup" />
-        <Foldercontext />
+        <Foldercontext @deletefolder="deleteFolder" />
     </div>
 </template>
 
@@ -93,6 +93,7 @@ export default {
     },
     data() {
         return {
+            folderindex: 0,
             groupIndex: 0,
             groupname: "",
             targetgroup: HTMLDivElement,
@@ -169,8 +170,9 @@ export default {
             );
         },
 
+        //:: Folder context menu
         foldercontext(e, index){
-            console.log(index)
+            this.folderindex = index
             const element = document.getElementById("folder-context");
             element.classList.remove("context-active");
             element.style.top = e.clientY + "px";
@@ -180,7 +182,7 @@ export default {
             }, 150);
         },
 
-        //:: Show group context menu
+        //:: Group context menu
         groupcontext(e, index) {
             this.groupIndex = index;
             this.groupname = e.target.innerText;
@@ -217,6 +219,34 @@ export default {
                             this.groupname = null;
                             this.groupIndex = null;
                             this.targetgroup = null;
+                        },
+                    },
+                    {
+                        title: "Cancel",
+                        class: "dialog-green-btn dialog-btn",
+                        handler: () => {
+                            this.$modal.hide("dialog");
+                        },
+                    },
+                ],
+            });
+        },
+
+        //:: Delete Folder Dialog
+        deleteFolder(){
+            this.$modal.show("dialog", {
+                title: "Warning",
+                text: "Delete Folder?",
+                buttons: [
+                    {
+                        title: "Delete",
+                        class: "dialog-red-btn dialog-btn",
+                        handler: () => {
+                            console.log(this.folderindex)
+                            let folders = this.folderlist
+                            folders.splice(this.folderindex, 1)
+                            this.$store.commit('UPDATE_LISTS', folders)
+                            this.$modal.hide("dialog");
                         },
                     },
                     {

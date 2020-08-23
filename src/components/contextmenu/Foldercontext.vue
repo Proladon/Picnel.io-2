@@ -1,7 +1,7 @@
 <template>
    <div id="folder-context">
        <div class="context-item-wrapper">
-            <p class="context-item" >Delete</p>
+            <p class="context-item" @click="$emit('deletefolder')">Delete</p>
         </div>
    </div>
 </template>

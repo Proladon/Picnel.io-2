@@ -105,7 +105,7 @@
             mainfolderContext(e){
                 const element = document.getElementById("mainfolder-context");
                 element.classList.remove("context-active");
-                element.style.top = parseInt(e.clientY)-70  + "px";
+                element.style.top = parseInt(e.clientY)-50  + "px";
                 element.style.left = e.clientX + "px";
                 setTimeout(() => {
                     element.classList.add("context-active");
