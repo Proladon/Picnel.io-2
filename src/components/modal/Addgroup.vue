@@ -5,7 +5,6 @@
         <input
             type="text"
             id="inputGroupName"
-            autofocus
             placeholder="New group name"
             @keypress.enter.prevent="addgroup"
         />

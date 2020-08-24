@@ -20,7 +20,8 @@
         <notifications 
             group="mode" 
             position="center center" width="500px"
-            animation-type="velocity" />
+            animation-type="velocity" 
+        />
         
     </div>
 </template>
@@ -50,7 +51,6 @@
                 viewmode: 'getMode'
             })
         },
-
     }
 </script>
 

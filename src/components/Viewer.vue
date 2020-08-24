@@ -15,6 +15,14 @@
             <button @click="del">╳</button>
         </div>
 
+        <div id="start-index" class="view-control">
+            <button @click="goStart">Start</button>
+        </div>
+
+        <div id="end-index" class="view-control">
+            <button @click="goEnd">End</button>
+        </div>
+
         <div id="random-mode" class="view-control" v-show="mode==='Random'">
             <button @click="random">Random</button>
         </div>
@@ -37,6 +45,7 @@
     import 'viewerjs/dist/viewer.css'
     import fs from 'fs-extra'
     import mime from 'mime-types'
+    import helper from '@/assets/func/helper.js'
     export default {
         name: 'Viewer',
         components:{
@@ -121,6 +130,14 @@
                 }
                 this.$store.dispatch('NEXT_FILE')
             },
+            goStart(){
+                const files = helper.filesFilter(this.files)
+                this.$store.commit('SET_CURFILE', files[0])
+            },
+            goEnd(){
+                const files = helper.filesFilter(this.files)
+                this.$store.commit('SET_CURFILE', files[files.length -1])
+            },
             del(){
                 // 警告永久刪除
                 const Warning = () => import(/* webpackChunkName: "Warning" */ "@/components/modal/Warning.vue")
@@ -135,6 +152,7 @@
                 curfile: 'getCurFilePath',
                 filename: 'getFileName',
                 filetype: 'getFileType',
+                files: 'getFilesList',
                 mode: 'getMode',
             })
         },
@@ -171,6 +189,28 @@
         }
     }
 
+    .view-control{
+        width: 100%;
+        height: 70px;
+        position: absolute;
+        bottom: 0;
+        opacity: 0;
+        transition: ease-in-out .3s;
+
+        button{
+            width: 100%;
+            height: 100%;
+            border: none;
+            outline: none;
+        }
+        button:active{
+            background-color: rgb(200, 200, 200);
+        }
+    }
+
+// ---------------- //
+//         Delete Btton        //
+// ---------------- //
     #delete-btn{
         width: 30px;
         height: 30px;
@@ -197,22 +237,32 @@
         background-color: rgba(200, 200, 200,.1);
     }
 
-    .view-control{
-        width: 100%;
-        height: 70px;
-        position: absolute;
-        bottom: 0;
-        opacity: 0;
-        transition: ease-in-out .3s;
+// ---------------- //
+//            Start-End          //
+// ---------------- //
+#start-index, #end-index{
+    cursor: default;
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    top: calc(50% - 50px);
+}
 
-        button{
-            border: none;
-            outline: none;
-        }
-        button:active{
-            background-color: rgb(200, 200, 200);
-        }
-    }
+#start-index:hover, #end-index:hover{
+    background: white;
+    opacity: 30%;
+}
+
+#start-index{
+    left: 0;
+}
+
+#end-index{
+    right: 0;
+}
+
+
+
 
 // ---------------- //
 //             Random            //

@@ -3,6 +3,7 @@ import Vuex from "vuex";
 import fs from 'fs-extra'
 import mime from 'mime-types'
 import path from 'path'
+import helper from '@/assets/func/helper.js'
 
 Vue.use(Vuex);
 
@@ -136,14 +137,8 @@ export default new Vuex.Store({
             function randomChoice(arr) {
                 return arr[Math.floor(Math.random() * arr.length)];
             }
-            let files_list = fs.readdirSync(context.getters.getFolderPath).map(f => {
-                return `${context.getters.getFolderPath}/${f.replace(/\\/g, '/')}`
-            })
-
-            // ignore no extname files
-            const files = files_list.filter(f => {
-                return path.extname(f) !== ''
-            })
+            let files_list = helper.getDirFiles(context.getters.getFolderPath)
+            const files = helper.filesFilter(files_list)
             //? 如果資料夾內有多個檔案才執行
             if (files.length > 0) {
                 context.commit('SET_CURFILE', randomChoice(files))
@@ -155,31 +150,18 @@ export default new Vuex.Store({
 
         PRE_FILE: context => {
             let index = context.getters.getFileIndex
+            let files_list = helper.getDirFiles(context.getters.getFolderPath)
+            const files = helper.filesFilter(files_list)
             
-            let files_list = fs.readdirSync(context.getters.getFolderPath).map(f => {
-                return `${context.getters.getFolderPath}/${f.replace(/\\/g, '/')}`
-            })
-            // ignore no extname files
-            const files = files_list.filter(f => {
-                return path.extname(f) !== ''
-            })
-            
-            //? 如果資料夾內有多個檔案才執行
             if (files.length > 0 && index !== 0) {
                 context.commit('SET_CURFILE', files[index - 1])
             }
         },
         NEXT_FILE: context => {
             let index = context.getters.getFileIndex
-            let files_list = fs.readdirSync(context.getters.getFolderPath).map(f => {
-                return `${context.getters.getFolderPath}/${f.replace(/\\/g, '/')}`
-            })
-            // ignore no extname files
-            const files = files_list.filter(f => {
-                return path.extname(f) !== ''
-            })
+            let files_list = helper.getDirFiles(context.getters.getFolderPath)
+            const files = helper.filesFilter(files_list)
 
-            //? 如果資料夾內有多個檔案才執行
             if (files.length > 0) {
                 let nextIndex = index + 1
                 if (nextIndex < files.length) {
@@ -232,7 +214,8 @@ export default new Vuex.Store({
         getFileIndex: (state, getters) => {
             const file = getters.getCurFilePath
             const files_list = getters.getFilesList
-            return files_list.indexOf(file)
+            const files = helper.filesFilter(files_list)
+            return files.indexOf(file)
         },
         //:: View Mode
         getMode: state => {
