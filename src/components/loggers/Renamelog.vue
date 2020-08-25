@@ -13,7 +13,7 @@
         name: 'Renamelog',
         computed: {
             logging() {
-                return this.$store.state.log.renameLog
+                return this.$store.state.log.Renamelog
             },
         },
         watch: {

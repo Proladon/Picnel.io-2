@@ -13,7 +13,7 @@
         name: 'Movelog',
         computed: {
             logging() {
-                return this.$store.state.log.moveLog
+                return this.$store.state.log.Movelog
             },
         },
         watch: {

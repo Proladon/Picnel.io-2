@@ -6,14 +6,14 @@
                 @click="tabActive('Copylog')"
                 :class="{tab_active:activetab==='Copylog'}">
                 <p>Copy Log</p>
-                <div class="unread" v-show="this.copy_unread !== 0">{{this.copy_unread}}</div>
+                <div class="unread" v-show="this.Copylog_Unread !== 0">{{this.Copylog_Unread}}</div>
             </div>
             <!-- Move -->
             <div class="move-logger tab-item" 
                 @click="tabActive('Movelog')"
                 :class="{tab_active:activetab==='Movelog'}">
                 <p>Move Log</p>
-                <div class="unread" v-show="this.move_unread !== 0">{{this.move_unread}}</div>
+                <div class="unread" v-show="this.Movelog_Unread !== 0">{{this.Movelog_Unread}}</div>
             </div>
             <!-- Delete -->
             <div class="move-logger tab-item" 
@@ -83,7 +83,7 @@
                             title: "Clear",
                             class: "dialog-red-btn dialog-btn",
                             handler: () => {
-                                this.$store.commit('CLEAR_LOG', this.activetab)
+                                this.$store.commit('CLEAR_LOG')
                                 this.$modal.hide("dialog")
                             }
                         },
@@ -101,10 +101,10 @@
         computed: {
             ...mapState({
                 activetab: state => state.log.activeTab,
-                copy_unread: state => state.log.copyUnread,
-                move_unread: state => state.log.moveUnread,
-                delete_unread: state => state.log.deleteUnread,
-                rename_unread: state => state.log.renameUnread,
+                Copylog_Unread: state => state.log.Copylog_Unread,
+                Movelog_Unread: state => state.log.Movelog_Unread,
+                Deletelog_Unread: state => state.log.Deletelog_Unread,
+                Renamelog_Unread: state => state.log.Renamelog_Unread,
             }),
 
             

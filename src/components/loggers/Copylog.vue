@@ -13,7 +13,7 @@
         name: 'Copylog',
         computed: {
             logging() {
-                return this.$store.state.log.copyLog
+                return this.$store.state.log.Copylog
             },
         },
         watch: {

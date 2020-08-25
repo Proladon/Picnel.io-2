@@ -123,15 +123,7 @@ export default new Vuex.Store({
         //:: Color
         COLOR_UPDATE: (state, color) => {
             state.tempColor = color
-        },
-
-        //:: Log
-        UPDATE_LOG: (state, log) => {
-            let logs = state.log
-            logs.push(log)
-            state.log = logs
-        },
-        
+        },      
     },
     actions: {
 

@@ -13,7 +13,7 @@
         name: 'Deletelog',
         computed: {
             logging() {
-                return this.$store.state.log.deleteLog
+                return this.$store.state.log.Deletelog
             },
         },
         watch: {

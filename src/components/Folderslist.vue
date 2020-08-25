@@ -345,7 +345,7 @@ export default {
             const target = path.join(targetpath, this.filename)
             fs.copySync(this.filepath, target)
             // ${filedir.replace('/', '\\')}
-            this.$store.commit('UPDATE_COPYLOG', `File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`)
+            this.$store.commit('UPDATE_LOG', {logger:'Copylog', log:`File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`})
         },
         movefile(targetpath){
             if (this.filename === 'picnel.io.png'){
