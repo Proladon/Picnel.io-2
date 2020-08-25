@@ -1,21 +1,27 @@
 <template>
     <div id="logger">
         <div class="tab-header">
+            <!-- Copy -->
             <div class="copy-logger tab-item" 
                 @click="tabActive('Copylog')"
                 :class="{tab_active:activetab==='Copylog'}">
                 <p>Copy Log</p>
+                <div class="unread" v-show="this.copy_unread !== 0">{{this.copy_unread}}</div>
             </div>
+            <!-- Move -->
             <div class="move-logger tab-item" 
                 @click="tabActive('Movelog')"
                 :class="{tab_active:activetab==='Movelog'}">
                 <p>Move Log</p>
+                <div class="unread" v-show="this.move_unread !== 0">{{this.move_unread}}</div>
             </div>
+            <!-- Delete -->
             <div class="move-logger tab-item" 
                 @click="tabActive('Deletelog')"
                 :class="{tab_active:activetab==='Deletelog'}">
                 <p>Delete Log</p>
             </div>
+            <!-- Rename -->
             <div class="move-logger tab-item" 
                 @click="tabActive('Renamelog')"
                 :class="{tab_active:activetab==='Renamelog'}">
@@ -33,6 +39,8 @@
             </keep-alive>
         </div>
 
+        <v-dialog />
+
     </div>
 </template>
 
@@ -41,6 +49,7 @@
     import Movelog from '@/components/loggers/Movelog.vue'
     import Deletelog from '@/components/loggers/Deletelog.vue'
     import Renamelog from '@/components/loggers/Renamelog.vue'
+    import {mapState} from 'vuex'
     export default {
         name: 'Logger',
         components: {
@@ -58,16 +67,47 @@
             tabActive(tab){
                 this.logger_component = tab
                 this.$store.commit('ACTIVE_TAB', tab)
+                this.$store.commit('CLEAR_UNREAD')
+                const logger = document.getElementById('logger')
+                setTimeout(() => {
+                    logger.scrollTop = logger.scrollHeight
+                }, 0);
             },
 
             clearLog(){
-                this.$store.commit('CLEAR_LOG', this.activetab)
-            }
+                this.$modal.show("dialog",{
+                    title: `Clear log`,
+                    text: `Clear all ${this.activetab} log ?`,
+                    buttons: [
+                        {
+                            title: "Clear",
+                            class: "dialog-red-btn dialog-btn",
+                            handler: () => {
+                                this.$store.commit('CLEAR_LOG', this.activetab)
+                                this.$modal.hide("dialog")
+                            }
+                        },
+                        {
+                            title: "Cancel",
+                            class: "dialog-green-btn dialog-btn",
+                            handler: () => {
+                                this.$modal.hide("dialog")
+                            }
+                        }
+                    ]
+                })
+            },
         },
         computed: {
-            activetab() {
-                return this.$store.state.log.activeTab
-            }
+            ...mapState({
+                activetab: state => state.log.activeTab,
+                copy_unread: state => state.log.copyUnread,
+                move_unread: state => state.log.moveUnread,
+                delete_unread: state => state.log.deleteUnread,
+                rename_unread: state => state.log.renameUnread,
+            }),
+
+            
         },
         watch: {
             logging: () => {
@@ -126,6 +166,16 @@
         }
         .clear-log:hover{
             background-color: rgb(228, 41, 97);
+        }
+
+        .unread{
+            margin-left: 10px;
+            width: auto;
+            height: 15px;
+            padding: 5px;
+            color: black;
+            border-radius: 20px;
+            background-color: rgb(226, 90, 131);
         }
     }
 </style>

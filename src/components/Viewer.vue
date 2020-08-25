@@ -24,12 +24,12 @@
         </div>
 
         <div id="random-mode" class="view-control" v-show="mode==='Random'">
-            <button @click="random">Random</button>
+            <button @click="random" ref="randombtn">Random</button>
         </div>
         
         <div id="prenext-mode" class="view-control" v-show="mode==='PreNext'">
-            <button @click="previous">← Previous</button>
-            <button @click="next">Next →</button>
+            <button @click="previous" ref="prebtn">← Previous</button>
+            <button @click="next" ref="nextbtn">Next →</button>
         </div>
         
         <!-- Notify -->
@@ -165,7 +165,7 @@
                     easing: 'easeInOutQuad',
                 })
             }
-        }
+        },
     }
 </script>
 
