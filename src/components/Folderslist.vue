@@ -342,8 +342,10 @@ export default {
         },
 
         copyfile(targetpath){
-            fs.copySync(this.filepath, path.join(targetpath.replace(/\\/g, '/'), this.filename))
-            // todo => Logging
+            const target = path.join(targetpath, this.filename)
+            fs.copySync(this.filepath, target)
+            // ${filedir.replace('/', '\\')}
+            this.$store.commit('UPDATE_COPYLOG', `File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`)
         },
         movefile(targetpath){
             if (this.filename === 'picnel.io.png'){
@@ -389,6 +391,9 @@ export default {
         },
         filepath(){
             return this.$store.state.curFile
+        },
+        filefolder(){
+            return this.$store.getters.getFolderPath
         },
         filename(){
             return this.$store.getters.getFileName

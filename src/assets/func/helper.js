@@ -1,6 +1,8 @@
 import mime from 'mime-types'
 import fs from 'fs-extra'
 export default {
+
+    //:: Filter files inside folder, ignore folder、unsupport files
     filesFilter: (files_list) => {
         const readable = ['image', 'video', 'audio']
         let readable_files = []
@@ -16,6 +18,7 @@ export default {
         return readable_files
     },
 
+    //:: Get all files in the folder
     getDirFiles: (dirPath) => {
         let files_list = fs.readdirSync(dirPath).map(f => {
             return `${dirPath}/${f.replace(/\\/g, '/')}`

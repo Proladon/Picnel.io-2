@@ -64,6 +64,7 @@
 @import "assets/scss/custom-v-splitpanes.scss";
 @import "assets/scss/custom-v-modal.scss";
 @import "assets/scss/custom-v-notify.scss";
+@import "assets/scss/custom-scrollbar.scss";
 
     :root{
         --spliter: #423f3b;
@@ -71,9 +72,12 @@
         --popupdark: rgb(31, 41, 53);
         --lightyellow: #CDC0B8;
         --statusbar: #353f52;
+        --font: DisposableDroid BB;
     }
+    
 
     *{
+        // font-family: var(--font);
         margin: 0;
         padding: 0;
     }
@@ -109,7 +113,5 @@
         bottom: 0;
         margin: 0 auto;
     }
-
-
 
 </style>
