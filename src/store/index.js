@@ -10,6 +10,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
+        isChanged: false,
         mode: "Random",
         home: 'public/static/picnel.io.png',
         curFile: 'public/static/picnel.io.png',
@@ -136,7 +137,12 @@ export default new Vuex.Store({
             const files = helper.filesFilter(files_list)
             //? 如果資料夾內有多個檔案才執行
             if (files.length > 0) {
-                context.commit('SET_CURFILE', randomChoice(files))
+                // Not repeat choice curfile
+                let random_file = randomChoice(files)
+                while (random_file === context.state.curFile) {
+                    random_file = randomChoice(files)
+                }
+                context.commit('SET_CURFILE', random_file)
             }
             else {
                 context.commit('SET_CURFILE', context.state.home)
@@ -227,7 +233,11 @@ export default new Vuex.Store({
             let folder_items = files.filter(i =>
                 fs.lstatSync(i).isDirectory()
             )
-            return `Directorys: ${folder_items.length} / Files: ${file_items.length}`
+            
+            
+            const readable = helper.filesFilter(files)
+
+            return `Directorys: ${folder_items.length} / Files: ${file_items.length} / Readable: ${readable.length}`
         },
         //:: Active Folderlist
         getActiveFolderList: (state) => {

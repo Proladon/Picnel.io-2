@@ -63,7 +63,7 @@
         padding-top: 10px;
         padding-bottom: 10px;
         // background-color: rgb(51, 108, 131);
-        background-color: cadetblue;
+        background-color: var(--sidebar);
     }
 
     .tools{

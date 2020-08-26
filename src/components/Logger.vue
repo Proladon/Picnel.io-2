@@ -20,12 +20,14 @@
                 @click="tabActive('Deletelog')"
                 :class="{tab_active:activetab==='Deletelog'}">
                 <p>Delete Log</p>
+                <div class="unread" v-show="this.Deletelog_Unread !== 0">{{this.Deletelog_Unread}}</div>
             </div>
             <!-- Rename -->
             <div class="move-logger tab-item" 
                 @click="tabActive('Renamelog')"
                 :class="{tab_active:activetab==='Renamelog'}">
                 <p>Rename Log</p>
+                <div class="unread" v-show="this.Renamelog_Unread !== 0">{{this.Renamelog_Unread}}</div>
             </div>
 
             <div class="clear-log tab-item" @click="clearLog">
@@ -38,8 +40,6 @@
                 <component :is='logger_component' />
             </keep-alive>
         </div>
-
-        <v-dialog />
 
     </div>
 </template>
@@ -171,7 +171,7 @@
         .unread{
             margin-left: 10px;
             width: auto;
-            height: 15px;
+            height: 14px;
             padding: 5px;
             color: black;
             border-radius: 20px;

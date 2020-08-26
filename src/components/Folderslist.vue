@@ -53,9 +53,6 @@
             </pane>
         </splitpanes>
 
-        <!-- Dialog -->
-        <v-dialog />
-
         <!-- Context Menu -->
         <Groupcontext @deletegroup="deleteGroup" @renamegroup="renameGroup" />
         <Foldercontext @removefolder="removeFolder" @openfolder="openFolder" />
@@ -343,11 +340,16 @@ export default {
 
         copyfile(targetpath){
             const target = path.join(targetpath, this.filename)
-            fs.copySync(this.filepath, target)
-            // ${filedir.replace('/', '\\')}
+            try {
+                fs.copySync(this.filepath, target, {overwrite: false, errorOnExist: true})
+            } catch (error) {
+                // TODO Copy Error handler
+                console.log("CE")
+            }
             this.$store.commit('UPDATE_LOG', {logger:'Copylog', log:`File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`})
         },
         movefile(targetpath){
+            const target = path.join(targetpath.replace(/\\/g, '/'), this.filename)
             if (this.filename === 'picnel.io.png'){
                 this.$notify({
                     group: 'folderlist',
@@ -357,7 +359,14 @@ export default {
                 })
                 return
             }
-            fs.moveSync(this.filepath, path.join(targetpath.replace(/\\/g, '/'), this.filename))
+            try {
+                fs.moveSync(this.filepath, target, {overwrite: false, errorOnExist: true})
+            } catch (error) {
+                // TODO Move Error handler
+                console.log("ME")
+                return            
+            }
+            this.$store.commit('UPDATE_LOG', {logger:'Movelog', log:`File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`})
             
             if (this.mode === 'Random'){
                 this.$store.dispatch('RANDOM_FILE')

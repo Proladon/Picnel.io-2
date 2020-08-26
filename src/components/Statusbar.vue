@@ -10,19 +10,23 @@
             <label class="directory-upload">
                 <input type="file" @change="uploaddir" webkitdirectory directory />
                 <p v-if="foldername === 'static'">Upload Folder</p>
-                <p v-if="foldername !== 'static'">{{foldername}}</p>
+                <p v-if="foldername !== 'static'">{{this.foldername}}</p>
             </label>
         </div>
 
         <!-- Folder Info -->
-        <div class="folder-info status-item">
-            <p>{{folderinfo}}</p>
+        <div class="status-item folder-info">
+            <p>{{this.folderinfo}}</p>
+        </div>
+        <!-- File -->
+        <div class="status-item cur-fileindex">
+            <p>Index: {{this.fileindex + 1}}</p>
         </div>
 
-        <!-- File -->
-        <div class="status-item">
-            <p>{{filename}}</p>
+        <div class="status-item cur-filename">
+            <p>{{this.filename}}</p>
         </div>
+
 
         <!-- Context Menu -->
         <Mainfoldercontext  @opendirectory="openfolder"/>
@@ -133,9 +137,10 @@
             ...mapGetters({
                 file: 'getCurFilePath',
                 filename: 'getFileName',
+                fileindex: 'getFileIndex',
                 folderpath: 'getFolderPath',
                 folderinfo: 'getFolderInfo',
-                foldername: 'getFolderName'
+                foldername: 'getFolderName',
             })
         },
         mounted(){
@@ -163,8 +168,9 @@
 
 
         .status-item {
+            cursor: default;
             color: white;
-            margin-right: 10px;
+            margin-right: 15px;
         }
 
         .status-button {
@@ -178,6 +184,16 @@
         }
     }
 
+    .folder-info{
+        color: lightgray !important;
+    }
+    .cur-fileindex {
+        color: lightblue !important;
+    }
+    .cur-filename {
+        color: var(--lightyellow) !important;
+    }
+
     // Input: directory
     .upload-btn-wrapper {
         height: 100%;
@@ -186,7 +202,7 @@
     }
 
     .directory-upload {
-        color: lightgrey;
+        color: mediumspringgreen;
         display: inline-block;
         cursor: pointer;
 

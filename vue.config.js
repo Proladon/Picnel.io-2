@@ -4,7 +4,8 @@ module.exports = {
         host: 'localhost'
       },
       electronBuilder: {
-            nodeIntegration: true,
+          nodeIntegration: true,
+          
       }
     }
   }

@@ -1,11 +1,34 @@
 <template>
     <div id="app">
+        
+        <div class="menu" style="-webkit-app-region: drag;">
+            <p>Picnel.io 2</p>
+
+            <div class="window-controls-wrapper">
+                <svg style="-webkit-app-region: no-drag;" @click="winmin">
+                    <circle id="minimized" class="circle-outline" />
+                    <circle class="circle-inline" />
+                </svg>
+
+                <svg style="-webkit-app-region: no-drag;" @click="winmax">
+                    <circle id="maximized" class="circle-outline" />
+                    <circle class="circle-inline" />
+                </svg>
+
+                <svg style="-webkit-app-region: no-drag;" @click="quit">
+                    <circle id="quit" class="circle-outline" />
+                    <circle class="circle-inline" />
+                </svg>
+            </div>
+
+        </div>
+
         <div id="main-panel-wrapper" ref="mainpanel">
             <Sidebar />
             <splitpanes id="full-panel">
                 <pane>
                     <splitpanes horizontal>
-                        <pane size="85">
+                        <pane size="80">
                             <viewer />
                         </pane>
                         <pane>
@@ -25,6 +48,9 @@
         <!-- Notify -->
         <notifications group="home" position="bottom right" animation-type="velocity"/>
         
+        <!-- Dialog (Global) -->
+        <v-dialog />
+
     </div>
 </template>
 
@@ -40,6 +66,8 @@
     import Folderslist from './components/Folderslist.vue'
     import Statusbar from './components/Statusbar.vue'
 
+    import {remote} from 'electron'
+
     export default {
         name: 'App',
         components: {
@@ -51,9 +79,34 @@
             Folderslist,
             Statusbar,
         },
+        data(){
+            return{
+                winMaximized: false,
+            }
+        },
+        methods:{
+            winmin(){
+                const win = remote.BrowserWindow.getFocusedWindow()
+                win.minimize()
+            },
+            winmax(){
+                const win = remote.BrowserWindow.getFocusedWindow()
+                if (this.winMaximized === false){
+                    win.maximize()
+                    this.winMaximized = true
+                }
+                else{
+                    win.unmaximize()
+                    this.winMaximized = false
+                }
+            },
+            quit(){
+                remote.app.exit()
+            }
+        },
         mounted(){
-            const barheight = document.getElementById('statusbar').offsetHeight
-            this.$refs.mainpanel.style.paddingBottom = barheight + 'px'
+            // const barheight = document.getElementById('statusbar').offsetHeight
+            // this.$refs.mainpanel.style.marginBottom = `${barheight}px`
         }
     }
 </script>
@@ -71,7 +124,10 @@
         --dark: #0F2232;
         --popupdark: rgb(31, 41, 53);
         --lightyellow: #CDC0B8;
-        --statusbar: #353f52;
+        
+        --statusbar: #1c1e26;
+        // --sidebar: cadetblue;
+        --sidebar: rgb(63, 81, 92);
         --font: DisposableDroid BB;
     }
     
@@ -97,6 +153,62 @@
         position: relative;
     }
 
+    .menu{
+        position: fixed;
+        background-color: var(--statusbar);
+        width: 100%;
+        height: 40px;
+        top: 0;
+        display: flex;
+        align-items: center;
+        display: flex;
+        justify-items: center;
+        justify-content: space-between;
+        box-sizing: border-box;
+        padding-left: 15px;
+        padding-right: 15px;
+        color: skyblue;
+
+    }
+
+    .window-controls-wrapper{
+        width: auto;
+        height: auto;
+        display: flex;
+
+        svg{
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            margin-left: 15px;
+
+            #minimized{
+                fill:rgb(230, 168, 53);
+            }
+
+            #maximized{
+                fill:rgb(95, 158, 160);
+            }
+
+            #quit{
+                fill:rgb(216, 70, 114);
+            }
+        }
+        .circle-outline{
+            cx: 15;
+            cy: 15;
+            r: 12;
+            fill: white;
+        }
+
+        .circle-inline{
+            cx: 15;
+            cy: 15;
+            r: 8;
+            fill: var(--statusbar);
+        }
+    }
+
     #full-panel {
         height: 100%;
     }
@@ -104,13 +216,13 @@
     #main-panel-wrapper{
         display: flex;
         width: 100%;
-        height: 100%;
+        // height: 100%;
         box-sizing: border-box;
         position: absolute;
-        top: 0;
+        top: 40px;
         left: 0;
         right: 0;
-        bottom: 0;
+        bottom: 30px;
         margin: 0 auto;
     }
 
