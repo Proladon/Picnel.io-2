@@ -30,7 +30,10 @@
 
         <!-- Context Menu -->
         <Mainfoldercontext  @opendirectory="openfolder"/>
- 
+        
+        <!-- Notify -->
+        <notifications group="statusbar" position="bottom right" animation-type="velocity"/>
+
     </div>
 </template>
 
@@ -78,9 +81,9 @@
                 // No readable files
                 if (readablefiles.length === 0){
                     this.$notify({
-                        group: 'foo',
-                        type: 'error',
-                        title: 'Error',
+                        group: 'statusbar',
+                        type: 'warn',
+                        title: 'Warn',
                         text: 'No readable files in the directory'
                     });
                 }
@@ -119,7 +122,7 @@
             openfolder(){
                 if (this.folderpath == 'public/static'){
                     this.$notify({
-                        group: 'foo',
+                        group: 'statusbar',
                         type: 'error',
                         title: 'Error',
                         text: 'No found directory'

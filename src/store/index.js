@@ -5,16 +5,17 @@ import mime from 'mime-types'
 import path from 'path'
 import helper from '@/assets/func/helper.js'
 import log from './modules/logger.js'
+import app from './modules/app.js'
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
-        isChanged: false,
+        
         mode: "Random",
         home: 'public/static/picnel.io.png',
         curFile: 'public/static/picnel.io.png',
-        worksapce: "undefined",
+        
         activeGroup: "",
         folderGroups: [
             {
@@ -183,6 +184,7 @@ export default new Vuex.Store({
 
     },
     modules: {
+        app,
         log,
     },
     getters: {

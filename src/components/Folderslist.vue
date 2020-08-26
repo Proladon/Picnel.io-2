@@ -396,7 +396,7 @@ export default {
             return this.$store.getters.getFileIndex
         },
         worksapce() {
-            return this.$store.state.worksapce;
+            return this.$store.state.app.worksapce;
         },
         filepath(){
             return this.$store.state.curFile

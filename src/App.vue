@@ -20,7 +20,6 @@
                     <circle class="circle-inline" />
                 </svg>
             </div>
-
         </div>
 
         <div id="main-panel-wrapper" ref="mainpanel">
@@ -41,8 +40,10 @@
                     <Folderslist />
                 </pane>
             </splitpanes>
+
         </div>
 
+        <!-- Statusbar -->
         <Statusbar />
 
         <!-- Notify -->
@@ -104,9 +105,11 @@
                 remote.app.exit()
             }
         },
+        computed:{
+
+        },
         mounted(){
-            // const barheight = document.getElementById('statusbar').offsetHeight
-            // this.$refs.mainpanel.style.marginBottom = `${barheight}px`
+
         }
     }
 </script>
@@ -127,7 +130,7 @@
         
         --statusbar: #1c1e26;
         // --sidebar: cadetblue;
-        --sidebar: rgb(63, 81, 92);
+        --sidebar: rgb(142, 180, 192);
         --font: DisposableDroid BB;
     }
     

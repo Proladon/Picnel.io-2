@@ -7,18 +7,18 @@
     >
         <div id="view-area" v-viewer="{ navbar: false }">
             <!-- Image Viewer -->
-            <img
+            <img class="files-viewer"
                 :src="`local-resource://${curfile}`"
                 v-show="curfile !== 'undefined' && filetype === 'image'"
             />
             <!-- Video Viewer -->
-            <video
+            <video class="files-viewer"
                 :src="`local-resource://${curfile}`"
                 controls
                 v-show="curfile !== 'undefined' && filetype === 'video'"
             ></video>
             <!-- Audio Viewer -->
-            <audio
+            <audio class="files-viewer"
                 :src="`local-resource://${curfile}`"
                 controls
                 v-show="curfile !== 'undefined' && filetype === 'audio'"
@@ -201,7 +201,7 @@ export default {
     watch: {
         curfile: () => {
             anime({
-                targets: ["img", "video"],
+                targets: [".files-viewer"],
                 opacity: ["0", "100"],
                 duration: 5000,
                 easing: "easeInOutQuad",

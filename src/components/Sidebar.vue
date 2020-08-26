@@ -1,41 +1,49 @@
 <template>
     <div id="sidebar" ref="sidebar">
-        <div class="tools">
-            <h1 align="center" @click="changeMode">M</h1>
+        <div class="tools" @click="changeMode">
+            <h1 align="center">M</h1>
             <p align="center">{{viewmode}}</p>
         </div>
 
         <div class="tools">
-            <h1 align="center">❤</h1>
+            <img src="@/assets/icon/book.svg">
         </div>
 
         <div class="tools">
-            <h1 align="center">✉</h1>
+            <img src="@/assets/icon/info.svg" style="width:70%">
         </div>
-
-        <div class="tools">
-            <h1 align="center">⚙</h1>
-        </div>
-        <!-- Notify -->
-        <notifications 
-            group="mode" 
-            position="center center" width="500px"
-            animation-type="velocity" 
-        />
         
+        <!-- <div class="tools">
+            <img src="@/assets/icon/paper.svg">
+        </div> -->
+
+        <div class="tools">
+            <img src="@/assets/icon/update.svg">
+        </div>
+        
+        <div class="tools">
+            <img src="@/assets/icon/energy.svg">
+        </div>
+
+        
+
+        <!-- Notify -->
+        <notifications group="mode" position="center center" width="500px" animation-type="velocity" />
+
     </div>
 </template>
 
 <script>
-    import {mapGetters} from 'vuex'
+    import {
+        mapGetters
+    } from 'vuex'
     export default {
         name: 'Sidebar',
         methods: {
-            changeMode(){
-                if (this.viewmode === 'Random'){
+            changeMode() {
+                if (this.viewmode === 'Random') {
                     this.$store.commit('CHANGE_MODE', 'PreNext')
-                }
-                else{
+                } else {
                     this.$store.commit('CHANGE_MODE', 'Random')
                 }
                 this.$notify({
@@ -55,7 +63,6 @@
 </script>
 
 <style scped lang="scss">
-    
     #sidebar {
         width: 70px;
         height: 100%;
@@ -64,15 +71,29 @@
         padding-bottom: 10px;
         // background-color: rgb(51, 108, 131);
         background-color: var(--sidebar);
+        z-index: 5;
     }
 
-    .tools{
+    .tools {
         cursor: pointer;
-        margin-bottom: 20px;
+        padding: 10px;
+        box-sizing: border-box;
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+
+        img{
+            filter: grayscale(100%);
+            width: 80%;
+        }
     }
 
-    .tools:hover{
+    .tools:hover {
         background-color: rgba($color: #000000, $alpha: .3);
     }
+
+
 
 </style>
