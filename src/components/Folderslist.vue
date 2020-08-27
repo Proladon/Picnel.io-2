@@ -6,6 +6,8 @@
             <p>{{ worksapce }}</p>
 
             <div class="list-control-btn-wrapper">
+                <button class="list-control-btn" >Save</button>
+                <button class="list-control-btn" >Save as</button>
                 <button class="list-control-btn" @click="addFoldersModal">ADD Folder</button>
                 <button class="list-control-btn" @click="addGroupModal">ADD Group</button>
             </div>
@@ -349,6 +351,16 @@ export default {
             this.$store.commit('UPDATE_LOG', {logger:'Copylog', log:`File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`})
         },
         movefile(targetpath){
+            if(targetpath === ''){
+                this.$notify({
+                    group: 'folderlist',
+                    type: 'error',
+                    title: 'Error',
+                    text: 'No target path'
+                })
+                return
+            }
+            
             const target = path.join(targetpath.replace(/\\/g, '/'), this.filename)
             if (this.filename === 'picnel.io.png'){
                 this.$notify({

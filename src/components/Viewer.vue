@@ -40,7 +40,7 @@
                 <img src="@/assets/icon/paper.svg">
             </div>
 
-            <div class="operate-btn" @click="del">
+            <div class="operate-btn" @click="deletefile">
                 <img src="@/assets/icon/delete.svg">
             </div>
 
@@ -88,7 +88,7 @@ import "viewerjs/dist/viewer.css";
 import fs from "fs-extra";
 // import path from 'path'
 import mime from "mime-types";
-import helper from "@/assets/func/helper.js";
+import {filesFilter, deletefileLogging} from "@/assets/func/helper.js";
 export default {
     name: "Viewer",
     components: {},
@@ -174,14 +174,14 @@ export default {
             this.$store.dispatch("NEXT_FILE");
         },
         goStart() {
-            const files = helper.filesFilter(this.files);
+            const files = filesFilter(this.files);
             this.$store.commit("SET_CURFILE", files[0]);
         },
         goEnd() {
-            const files = helper.filesFilter(this.files);
+            const files = filesFilter(this.files);
             this.$store.commit("SET_CURFILE", files[files.length - 1]);
         },
-        del() {
+        deletefile() {
             // 警告永久刪除
             this.$modal.show("dialog", {
                 title: "Delete File",
@@ -192,9 +192,20 @@ export default {
                         class: "dialog-red-btn dialog-btn",
                         handler: () => {
                             try {
-                                fs.removeSync("?")    
+                                fs.removeSync(this.curfile)
+                                this.$store.commit('UPDATE_LOG', {
+                                    logger: 'Deletelog',
+                                    log: deletefileLogging(this.filename, this.curfile)
+                                })
+
+                                if(this.mode === 'Random'){
+                                    this.$store.dispatch('RANDOM_FILE')
+                                }
+                                else if (this.mode === 'PreNext'){
+                                    this.$store.dispatch('NEXT_FILE')
+                                }
                             } catch (error) {
-                                console.log(error)
+                                alert(error)
                             }
                             
                             this.$modal.hide("dialog");
@@ -330,7 +341,7 @@ export default {
 }
 
 .operate-btn:hover{
-    background-color: cadetblue;
+    background-color: var(--sidebar);
 }
 
 // ---------------- //

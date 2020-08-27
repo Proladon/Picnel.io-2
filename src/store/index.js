@@ -3,7 +3,7 @@ import Vuex from "vuex";
 import fs from 'fs-extra'
 import mime from 'mime-types'
 import path from 'path'
-import helper from '@/assets/func/helper.js'
+import {filesFilter, getDirFiles} from '@/assets/func/helper.js'
 import log from './modules/logger.js'
 import app from './modules/app.js'
 
@@ -134,14 +134,16 @@ export default new Vuex.Store({
             function randomChoice(arr) {
                 return arr[Math.floor(Math.random() * arr.length)];
             }
-            let files_list = helper.getDirFiles(context.getters.getFolderPath)
-            const files = helper.filesFilter(files_list)
+            let files_list = getDirFiles(context.getters.getFolderPath)
+            const files = filesFilter(files_list)
             //? 如果資料夾內有多個檔案才執行
             if (files.length > 0) {
                 // Not repeat choice curfile
                 let random_file = randomChoice(files)
-                while (random_file === context.state.curFile) {
-                    random_file = randomChoice(files)
+                if (files.length > 1) {
+                    while (random_file === context.state.curFile) {
+                        random_file = randomChoice(files)
+                    }
                 }
                 context.commit('SET_CURFILE', random_file)
             }
@@ -152,8 +154,8 @@ export default new Vuex.Store({
 
         PRE_FILE: context => {
             let index = context.getters.getFileIndex
-            let files_list = helper.getDirFiles(context.getters.getFolderPath)
-            const files = helper.filesFilter(files_list)
+            let files_list = getDirFiles(context.getters.getFolderPath)
+            const files = filesFilter(files_list)
             
             if (files.length > 0 && index !== 0) {
                 context.commit('SET_CURFILE', files[index - 1])
@@ -161,10 +163,13 @@ export default new Vuex.Store({
         },
         NEXT_FILE: context => {
             let index = context.getters.getFileIndex
-            let files_list = helper.getDirFiles(context.getters.getFolderPath)
-            const files = helper.filesFilter(files_list)
+            let files_list = getDirFiles(context.getters.getFolderPath)
+            const files = filesFilter(files_list)
 
-            if (files.length > 0) {
+            if (files.length === 1) {
+                context.commit('SET_CURFILE', files[0])
+            }
+            else if (files.length > 0) {
                 let nextIndex = index + 1
                 if (nextIndex < files.length) {
                     context.commit('SET_CURFILE', files[index + 1])
@@ -219,7 +224,7 @@ export default new Vuex.Store({
         getFileIndex: (state, getters) => {
             const file = getters.getCurFilePath
             const files_list = getters.getFilesList
-            const files = helper.filesFilter(files_list)
+            const files = filesFilter(files_list)
             return files.indexOf(file)
         },
         //:: View Mode
@@ -237,7 +242,7 @@ export default new Vuex.Store({
             )
             
             
-            const readable = helper.filesFilter(files)
+            const readable = filesFilter(files)
 
             return `Directorys: ${folder_items.length} / Files: ${file_items.length} / Readable: ${readable.length}`
         },

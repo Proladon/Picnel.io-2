@@ -1,9 +1,8 @@
 <template>
     <div id="delete-log">
         <div class="log" v-for="(log, index) in logging" :key="index" :id="`log-${index}`">
-            <p>{{log.split('//')[0]}}</p>
-            <p>{{log.split('//')[1]}}</p>
-            <p>{{log.split('//')[2]}}</p>
+            <p>Deleted: {{log.split('//')[0]}}</p>
+            <p>Path: {{log.split('//')[1]}}</p>
         </div>
     </div>
 </template>
