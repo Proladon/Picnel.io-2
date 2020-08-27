@@ -18,9 +18,8 @@
 </template>
 
 <script>
-    // import fs from 'fs-extra'
     import path from 'path'
-    import {renameJoin} from '@/assets/func/helper.js'
+    import {renameJoin, renameLogging} from '@/assets/func/helper.js'
     export default {
         name: 'Renamefile',
         props: ['filepath', 'filename'],
@@ -29,6 +28,10 @@
                 let newName = this.$refs.fullinput.value
                 const newPath = renameJoin(this.filepath, this.filename, newName, this.extname)
                 this.$store.commit('SET_CURFILE', newPath)
+                this.$store.commit('UPDATE_LOG', {
+                    logger: 'Renamelog', 
+                    log: renameLogging(this.filepath, this.fname, newName)
+                })
                 this.$emit("close")
             },
             plusnum() {
@@ -38,11 +41,19 @@
                     let newName = this.fname.replace(/.$/, newnum)
                     const newPath = renameJoin(this.filepath, this.filename, newName, this.extname)
                     this.$store.commit('SET_CURFILE', newPath)
+                    this.$store.commit('UPDATE_LOG', {
+                        logger: 'Renamelog', 
+                        log: renameLogging(this.filepath, this.fname, newName)
+                    })
                 }
                 else{
                     let newName = this.fname + " 1"
                     const newPath = renameJoin(this.filepath, this.filename, newName, this.extname)
                     this.$store.commit('SET_CURFILE', newPath)
+                    this.$store.commit('UPDATE_LOG', {
+                        logger: 'Renamelog', 
+                        log: renameLogging(this.filepath, this.fname, newName)
+                    })
                 }
                 this.$emit("close")
             },
@@ -53,11 +64,19 @@
                     let newName = this.fname.replace(/\(([^)]+)\)$/, `(${newnum})`)
                     const newPath = renameJoin(this.filepath, this.filename, newName, this.extname)
                     this.$store.commit('SET_CURFILE', newPath)
+                    this.$store.commit('UPDATE_LOG', {
+                        logger: 'Renamelog', 
+                        log: renameLogging(this.filepath, this.fname, newName)
+                    })
                 }
                 else{
                     let newName = this.fname + ' (1)'
                     const newPath = renameJoin(this.filepath, this.filename, newName, this.extname)
                     this.$store.commit('SET_CURFILE', newPath)
+                    this.$store.commit('UPDATE_LOG', {
+                        logger: 'Renamelog', 
+                        log: renameLogging(this.filepath, this.fname, newName)
+                    })
                 }
                 this.$emit("close")
             },
@@ -65,6 +84,10 @@
                 let newName = this.fname + ` ${this.$refs.customplus.value}`
                 const newPath = renameJoin(this.filepath, this.filename, newName, this.extname)
                 this.$store.commit('SET_CURFILE', newPath)
+                this.$store.commit('UPDATE_LOG', {
+                    logger: 'Renamelog', 
+                    log: renameLogging(this.filepath, this.fname, newName)
+                })
                 this.$emit("close")
             }
         },

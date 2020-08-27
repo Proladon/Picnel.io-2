@@ -1,5 +1,6 @@
 import mime from 'mime-types'
 import fs from 'fs-extra'
+import path from 'path'
 export default {
 
     //:: Filter files inside folder, ignore folder、unsupport files
@@ -29,10 +30,18 @@ export default {
 
 }
 
+
 const renameJoin = (curPath, curfileName, newName, extName) => {
     fs.renameSync(curPath, curPath.replace(curfileName, newName + extName))
     return curPath.replace(curfileName, newName + extName)
 }
 
-export {renameJoin}
+const renameLogging = (curPath, curfileName, newName) => {
+    return `${path.dirname(curPath)}//${curfileName}//${newName}`
+}
+
+export {
+    renameJoin,
+    renameLogging
+}
 

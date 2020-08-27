@@ -1,9 +1,9 @@
 <template>
     <div id="rename-log">
         <div class="log" v-for="(log, index) in logging" :key="index">
-            <p>{{log.split('//')[0]}}</p>
-            <p>{{log.split('//')[1]}}</p>
-            <p>{{log.split('//')[2]}}</p>
+            <p>Path: {{log.split('//')[0]}}</p>
+            <p>Old: {{log.split('//')[1]}}</p>
+            <p>New: {{log.split('//')[2]}}</p>
         </div>
     </div>
 </template>
