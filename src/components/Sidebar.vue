@@ -1,7 +1,9 @@
 <template>
     <div id="sidebar" ref="sidebar">
+        
         <div class="tools" @click="changeMode">
-            <h1 align="center">M</h1>
+            <!-- <h1 align="center">M</h1> -->
+            <img src="@/assets/icon/manual.svg" style="filter: contrast(100%); ">
             <p align="center">{{viewmode}}</p>
         </div>
 
@@ -13,10 +15,6 @@
             <img src="@/assets/icon/info.svg" style="width:70%">
         </div>
         
-        <!-- <div class="tools">
-            <img src="@/assets/icon/paper.svg">
-        </div> -->
-
         <div class="tools">
             <img src="@/assets/icon/update.svg">
         </div>

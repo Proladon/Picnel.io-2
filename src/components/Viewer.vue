@@ -25,10 +25,28 @@
             ></audio>
         </div>
 
-        <div id="delete-btn">
-            <button @click="del">╳</button>
+        <!-- Controls -->
+        <div class="operate-btn-wrapper">
+            
+            <div class="operate-btn" @click="openfile">
+                <img src="@/assets/icon/openfolder.svg">
+            </div>
+            
+            <div class="operate-btn" @click="renamefile">
+                <img src="@/assets/icon/typing.svg">
+            </div>
+
+            <div class="operate-btn" @click="copyimage">
+                <img src="@/assets/icon/paper.svg">
+            </div>
+
+            <div class="operate-btn" @click="del">
+                <img src="@/assets/icon/delete.svg">
+            </div>
+
         </div>
 
+        <!-- StartEnd Btn -->
         <div id="start-index" class="view-control">
             <button @click="goStart">Start</button>
         </div>
@@ -36,11 +54,12 @@
         <div id="end-index" class="view-control">
             <button @click="goEnd">End</button>
         </div>
-
+        
+        <!-- Random Btn -->
         <div id="random-mode" class="view-control" v-show="mode === 'Random'">
             <button @click="random" ref="randombtn">Random</button>
         </div>
-
+        <!-- PreNext Btn -->
         <div id="prenext-mode" class="view-control" v-show="mode === 'PreNext'">
             <button @click="previous" ref="prebtn">← Previous</button>
             <button @click="next" ref="nextbtn">Next →</button>
@@ -57,14 +76,17 @@
             position="bottom right"
             animation-type="velocity"
         />
+
     </div>
 </template>
 
 <script>
+import {shell} from 'electron'
 import { mapGetters } from "vuex";
 import anime from "animejs";
 import "viewerjs/dist/viewer.css";
 import fs from "fs-extra";
+// import path from 'path'
 import mime from "mime-types";
 import helper from "@/assets/func/helper.js";
 export default {
@@ -188,6 +210,26 @@ export default {
                 ],
             });
         },
+        copyimage(){
+            const Copyfile = () => import("@/components/modal/Copyfile.vue")
+            this.$modal.show(
+                Copyfile,
+                {curfile: this.curfile, filename: this.filename},
+                {width:'400', classes: 'addfolders-modal'}
+            )
+        },
+        openfile(){
+            const filepath = this.curfile.replace(/[/]/g, '\\')
+            shell.showItemInFolder(filepath)
+        },
+        renamefile(){
+            const Renamefile = () => import("@/components/modal/Renamefile.vue")
+            this.$modal.show(
+                Renamefile,
+                {filepath:this.curfile, filename: this.filename},
+                {width:'400', classes: 'addfolders-modal'}
+            )
+        }
     },
     computed: {
         ...mapGetters({
@@ -254,30 +296,41 @@ export default {
 // ---------------- //
 //         Delete Btton        //
 // ---------------- //
-#delete-btn {
-    width: 30px;
-    height: 30px;
-    top: 10px;
-    right: 0;
+.operate-btn-wrapper{
     position: absolute;
+    top: 0;
+    width: 100%;
+    height: 70px;
+    background-color: white;
+    opacity: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: ease-in-out 0.3s;
+}
 
-    button {
-        width: 100%;
-        height: 100%;
-        color: transparent;
-        border: none;
-        outline: none;
-        background-color: transparent;
+.operate-btn-wrapper:hover{
+    opacity: 30%;
+}
+
+.operate-btn{
+    cursor: pointer;
+    width: 70px;
+    height: 70px;
+    margin-left: 10px;
+    margin-right: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    img{
+        filter: grayscale(100%);
+        width: 70%;
     }
 }
-#delete-btn:hover {
-    background-color: rgba($color: white, $alpha: 0.1);
-    button {
-        color: red;
-    }
-}
-#delete-btn:active {
-    background-color: rgba(200, 200, 200, 0.1);
+
+.operate-btn:hover{
+    background-color: cadetblue;
 }
 
 // ---------------- //

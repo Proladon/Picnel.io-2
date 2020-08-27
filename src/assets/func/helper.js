@@ -25,5 +25,14 @@ export default {
         })
         
         return files_list
-    }
+    },
+
 }
+
+const renameJoin = (curPath, curfileName, newName, extName) => {
+    fs.renameSync(curPath, curPath.replace(curfileName, newName + extName))
+    return curPath.replace(curfileName, newName + extName)
+}
+
+export {renameJoin}
+

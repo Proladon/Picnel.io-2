@@ -175,14 +175,6 @@ export default {
     height: 100%;
 }
 
-.modal-title {
-    font-size: 30px;
-    color: var(--lightyellow);
-    background-color: var(--popupdark);
-    border-radius: 5px;
-    text-align: center;
-}
-
 .upload-notice {
     text-align: center;
 }
