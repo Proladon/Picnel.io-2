@@ -37,7 +37,7 @@
 import path from 'path'
 export default {
     name: "Addfolders",
-    props: ["group", "folderlist"],
+    props: ["group", "folderlist", 'workspace'],
     methods: {
         uploadfolders(e) {
             
@@ -87,14 +87,24 @@ export default {
                         break;
                     }
                 }
+
+                const r = Math.floor(Math.random() * 256)
+                const g = Math.floor(Math.random() * 256)
+                const b = Math.floor(Math.random() * 256)
+
                 const folder = {
                     name: relpath,
                     path: root,
-                    color: 'white'
+                    color: `rgb(${r}, ${g}, ${b})`
                 }
                 
                 this.$store.commit('ADD_FOLDER', {group:this.group, folder: folder})
-    
+                if (! this.workspace.name.includes('*')){
+                    this.$store.commit("SET_WORKSPACE", {
+                        name: `${this.workspace.name}*`,
+                        path: this.workspace.path
+                    });
+                }
                 this.$notify({
                     group: 'onlyfolder',
                     type: 'success',
@@ -147,12 +157,22 @@ export default {
                     folders.splice(folders.indexOf(fpath), 1)
                 }
                 else{
+                    const r = Math.floor(Math.random() * 256)
+                    const g = Math.floor(Math.random() * 256)
+                    const b = Math.floor(Math.random() * 256)
+
                      let folder = {
                         name: fname,
                         path: fpath,
-                        color: 'white'
+                        color: `rgb(${r}, ${g}, ${b})`
                     }
                     this.$store.commit('ADD_FOLDER', {group: this.group, folder: folder})
+                    if (! this.workspace.name.includes('*')){
+                        this.$store.commit("SET_WORKSPACE", {
+                            name: `${this.workspace.name}*`,
+                            path: this.workspace.path
+                        });
+                    }
                 }
             }
             

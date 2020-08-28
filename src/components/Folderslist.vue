@@ -128,7 +128,7 @@ export default {
             const Addfolders = () => import("@/components/modal/Addfolders.vue")
             this.$modal.show(
                 Addfolders,
-                {group: this.activegroup, folderlist: this.folderlist},
+                {group: this.activegroup, folderlist: this.folderlist, workspace: this.workspace},
                 {resizable: true, classes: 'addfolders-modal'}
             )
         },
@@ -137,7 +137,7 @@ export default {
             const Addgroup = () => import("@/components/modal/Addgroup.vue")
             this.$modal.show(
                 Addgroup,
-                {foldergroups: this.foldergroups},
+                {foldergroups: this.foldergroups, workspace: this.workspace},
                 {width: "400", classes: 'addfolders-modal'}
             )
         },
@@ -205,6 +205,14 @@ export default {
                             if (this.groupname === this.activegroup) {
                                 this.$store.commit("CHANGE_ACTIVE_GROUP", null);
                             }
+
+                            if (! this.workspace.name.includes('*')){
+                                this.$store.commit("SET_WORKSPACE", {
+                                    name: `${this.workspace.name}*`,
+                                    path: this.workspace.path
+                                });
+                            }
+
                             this.$modal.hide("dialog");
 
                             this.groupname = null;
@@ -236,6 +244,12 @@ export default {
                             let folders = this.folderlist
                             folders.splice(this.folderindex, 1)
                             this.$store.commit('UPDATE_LISTS', folders)
+                            if (! this.workspace.name.includes('*')){
+                                this.$store.commit("SET_WORKSPACE", {
+                                    name: `${this.workspace.name}*`,
+                                    path: this.workspace.path
+                                });
+                            }
                             this.$modal.hide("dialog");
                         },
                     },
@@ -289,6 +303,12 @@ export default {
                                     "CHANGE_ACTIVE_GROUP",
                                     newName
                                 );
+                                if (! this.workspace.name.includes('*')){
+                                    this.$store.commit("SET_WORKSPACE", {
+                                        name: `${this.workspace.name}*`,
+                                        path: this.workspace.path
+                                    });
+                                }
                                 this.$modal.hide("dialog");
 
                                 this.groupname = newName;
@@ -461,6 +481,7 @@ export default {
             },
             set(data) {
                 this.$store.commit("UPDATE_LISTS", data);
+                
                 if (! this.workspace.name.includes('*')){
                     this.$store.commit("SET_WORKSPACE", {
                         name: `${this.workspace.name}*`,
@@ -493,9 +514,6 @@ export default {
             context_group.classList.remove("context-active");
         });
     },
-    watch:{
-
-    }
 };
 </script>
 

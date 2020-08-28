@@ -43,4 +43,11 @@ const deletefileLogging = (fileName, curPath, ) => {
     return `${fileName}//${curPath}`;
 };
 
-export {filesFilter, getDirFiles, renameJoin, renameLogging, deletefileLogging };
+
+export {
+    filesFilter,
+    getDirFiles,
+    renameJoin,
+    renameLogging,
+    deletefileLogging,
+};

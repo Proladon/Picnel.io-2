@@ -21,7 +21,7 @@
 <script>
 export default {
     name: "Addfolders",
-    props:['foldergroups'],
+    props:['foldergroups', 'workspace'],
     methods: {
         addgroup() {
             let el = document.getElementById("inputGroupName");
@@ -50,6 +50,13 @@ export default {
                 }
                 this.$store.commit('ADD_GROUP', data)
                 this.$store.commit('ADD_LIST', newName)
+                
+                if (! this.workspace.name.includes('*')){
+                    this.$store.commit("SET_WORKSPACE", {
+                        name: `${this.workspace.name}*`,
+                        path: this.workspace.path
+                    });
+                }
 
                 this.$notify({
                     group: 'foo',
