@@ -6,22 +6,26 @@
         @drop.prevent="drop"
     >
         <div id="view-area" v-viewer="{ navbar: false }">
+            <img class="files-viewer"
+                src="@/assets/icon/picnel.io.png"
+                v-if=" curfile === '' "
+            />
             <!-- Image Viewer -->
             <img class="files-viewer"
                 :src="`local-resource://${curfile}`"
-                v-show="curfile !== 'undefined' && filetype === 'image'"
+                v-if="curfile !== '' && filetype === 'image'"
             />
             <!-- Video Viewer -->
             <video class="files-viewer"
                 :src="`local-resource://${curfile}`"
                 controls
-                v-show="curfile !== 'undefined' && filetype === 'video'"
+                v-if="curfile !== '' && filetype === 'video'"
             ></video>
             <!-- Audio Viewer -->
             <audio class="files-viewer"
                 :src="`local-resource://${curfile}`"
                 controls
-                v-show="curfile !== 'undefined' && filetype === 'audio'"
+                v-if="curfile !== '' && filetype === 'audio'"
             ></audio>
         </div>
 
@@ -89,6 +93,7 @@ import fs from "fs-extra";
 // import path from 'path'
 import mime from "mime-types";
 import {filesFilter, deletefileLogging} from "@/assets/func/helper.js";
+import {plsUploadFolder} from "@/assets/func/notify.js";
 export default {
     name: "Viewer",
     components: {},
@@ -132,56 +137,51 @@ export default {
                         // Single File
                         this.$store.commit("SET_CURFILE", file.path);
                     }
-                    // Logging
-                    // this.$store.commit('UPDATE_LOG', "update folder")
                 }
             }
         },
         random() {
-            if (this.filename === "picnel.io.png") {
-                this.$notify({
-                    group: "random",
-                    type: "error",
-                    title: "Error",
-                    text: "Please open a main folder first.",
-                });
+            if (this.filename === "") {
+                this.$notify(plsUploadFolder);
                 return;
             }
             this.$store.dispatch("RANDOM_FILE");
         },
         previous() {
-            if (this.filename === "picnel.io.png") {
-                this.$notify({
-                    group: "random",
-                    type: "error",
-                    title: "Error",
-                    text: "Please open a main folder first.",
-                });
+            if (this.filename === "") {
+                this.$notify(plsUploadFolder);
                 return;
             }
             this.$store.dispatch("PRE_FILE");
         },
         next() {
-            if (this.filename === "picnel.io.png") {
-                this.$notify({
-                    group: "random",
-                    type: "error",
-                    title: "Error",
-                    text: "Please open a main folder first.",
-                });
+            if (this.filename === "") {
+                this.$notify(plsUploadFolder);
                 return;
             }
             this.$store.dispatch("NEXT_FILE");
         },
         goStart() {
+            if (this.filename === "") {
+                this.$notify(plsUploadFolder);
+                return;
+            }
             const files = filesFilter(this.files);
             this.$store.commit("SET_CURFILE", files[0]);
         },
         goEnd() {
+            if (this.filename === "") {
+                this.$notify(plsUploadFolder);
+                return;
+            }
             const files = filesFilter(this.files);
             this.$store.commit("SET_CURFILE", files[files.length - 1]);
         },
         deletefile() {
+            if (this.filename === "") {
+                this.$notify(plsUploadFolder);
+                return;
+            }
             // 警告永久刪除
             this.$modal.show("dialog", {
                 title: "Delete File",
@@ -222,6 +222,10 @@ export default {
             });
         },
         copyimage(){
+            if (this.filename === "") {
+                this.$notify(plsUploadFolder);
+                return;
+            }
             const Copyfile = () => import("@/components/modal/Copyfile.vue")
             this.$modal.show(
                 Copyfile,
@@ -230,10 +234,18 @@ export default {
             )
         },
         openfile(){
+            if (this.filename === "") {
+                this.$notify(plsUploadFolder);
+                return;
+            }
             const filepath = this.curfile.replace(/[/]/g, '\\')
             shell.showItemInFolder(filepath)
         },
         renamefile(){
+            if (this.filename === "") {
+                this.$notify(plsUploadFolder);
+                return;
+            }
             const Renamefile = () => import("@/components/modal/Renamefile.vue")
             this.$modal.show(
                 Renamefile,
@@ -243,6 +255,7 @@ export default {
         }
     },
     computed: {
+
         ...mapGetters({
             curfile: "getCurFilePath",
             filename: "getFileName",
@@ -255,8 +268,8 @@ export default {
         curfile: () => {
             anime({
                 targets: [".files-viewer"],
-                opacity: ["0", "100"],
-                duration: 5000,
+                opacity: ["0", "1"],
+                duration: 1000,
                 easing: "easeInOutQuad",
             });
         },
@@ -287,7 +300,7 @@ export default {
 
 .view-control {
     width: 100%;
-    height: 70px;
+    height: 50px;
     position: absolute;
     bottom: 0;
     opacity: 0;
@@ -308,7 +321,7 @@ export default {
     position: absolute;
     top: 0;
     width: 100%;
-    height: 70px;
+    height: 50px;
     background-color: white;
     opacity: 0;
     display: flex;
@@ -318,13 +331,13 @@ export default {
 }
 
 .operate-btn-wrapper:hover{
-    opacity: calc(100% - 70%);
+    opacity: 0.3;
 }
 
 .operate-btn{
     cursor: pointer;
-    width: 70px;
-    height: 70px;
+    width: 50px;
+    height: 50px;
     margin-left: 10px;
     margin-right: 10px;
     display: flex;
@@ -348,22 +361,24 @@ export default {
 #end-index {
     cursor: default;
     position: absolute;
-    width: 100px;
-    height: 100px;
+    width: 70px;
+    height: 70px;
     top: calc(50% - 50px);
 }
 
 #start-index:hover,
 #end-index:hover {
     background: white;
-    opacity: 30%;
+    opacity: 0.3;
 }
 
 #start-index {
+    font-size: 20px;
     left: 0;
 }
 
 #end-index {
+    font-size: 20px;
     right: 0;
 }
 
@@ -371,12 +386,13 @@ export default {
 //             Random            //
 // ---------------- //
 #random-mode button {
+    font-size: 20px;
     width: 100%;
     height: 100%;
 }
 
 #random-mode:hover {
-    opacity: 30%;
+    opacity: 0.3;
 }
 
 // ---------------- //
@@ -386,17 +402,17 @@ export default {
     display: flex;
 }
 #prenext-mode button {
-    font-size: 30px;
+    font-size: 20px;
     width: 100%;
     height: 100%;
 }
 
 #prenext-mode button:hover {
-    opacity: 70%;
+    opacity: 0.7;
 }
 
 #prenext-mode:hover {
-    opacity: 30%;
+    opacity: 0.3;
 }
 
 // ---------------- //

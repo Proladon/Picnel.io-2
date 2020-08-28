@@ -9,14 +9,14 @@
         <div class="upload-btn-wrapper status-button status-item" @contextmenu="mainfolderContext">
             <label class="directory-upload">
                 <input type="file" @change="uploaddir" webkitdirectory directory />
-                <p v-if="foldername === 'static'">Upload Folder</p>
-                <p v-if="foldername !== 'static'">{{this.foldername}}</p>
+                <p>{{this.foldername}}</p>
             </label>
         </div>
 
         <!-- Folder Info -->
         <div class="status-item folder-info">
-            <p>{{this.folderinfo}}</p>
+            <p v-if="file === '' ">Directorys: 0 / Files: 0 / Readable: 0</p>
+            <p v-if="file !== '' ">{{this.folderinfo}}</p>
         </div>
         <!-- File -->
         <div class="status-item cur-fileindex">
@@ -96,7 +96,7 @@
             },
             //:: Reset Folder
             resetfolder() {
-                if (this.foldername === 'static') {
+                if (this.filename === '') {
                     this.$notify({
                         group: 'home',
                         type: 'warn',
@@ -120,7 +120,7 @@
             },
 
             openfolder(){
-                if (this.folderpath == 'public/static'){
+                if (this.filename == ''){
                     this.$notify({
                         group: 'statusbar',
                         type: 'error',

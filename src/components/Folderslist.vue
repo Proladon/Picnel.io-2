@@ -153,8 +153,8 @@ export default {
                 ColorPicker,
                 { color: icolor, title: iname, index: index },
                 {
-                    width: "500px",
-                    height: "600px",
+                    width: "300px",
+                    height: "450px",
                     draggable: false,
                 }
             );
@@ -519,9 +519,10 @@ export default {
 // ---------------- //
 .list-control {
     width: 100%;
-    height: 30px;
+    height: 25px;
     box-sizing: border-box;
-    padding: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -537,7 +538,7 @@ export default {
         margin-left: 5px;
         background-color: transparent;
         border: var(--dark) solid 1px;
-        padding: 5px;
+        padding: 2px;
     }
 
     .list-control-btn:hover{
@@ -563,6 +564,8 @@ export default {
     cursor: default;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    height: 15px;
     margin: 15px;
     font-size: 20px;
     color: var(--lightyellow);
@@ -572,8 +575,9 @@ export default {
 
     .color-tag {
         cursor: pointer;
-        width: 10px;
-        height: auto;
+        width: 8px;
+        border-radius: 2px;
+        height: 100%;
     }
 
     p {
@@ -606,7 +610,7 @@ export default {
     cursor: pointer;
     text-align: center;
     margin: 10px;
-    font-size: 20px;
+    font-size: 15px;
     border: solid 1px var(--lightyellow);
     border-radius: 15px;
     color: var(--lightyellow);

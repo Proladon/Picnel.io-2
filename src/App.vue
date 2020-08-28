@@ -154,7 +154,6 @@
 
     *{
         // font-family: var(--font);
-        font-size: 12px;
         margin: 0;
         padding: 0;
     }
@@ -178,7 +177,7 @@
         position: fixed;
         background-color: var(--statusbar);
         width: 100%;
-        height: 40px;
+        height: 30px;
         top: 0;
         display: flex;
         align-items: center;
@@ -218,7 +217,7 @@
         .circle-outline{
             cx: 15;
             cy: 15;
-            r: 12;
+            r: 10;
             fill: white;
         }
 
@@ -240,7 +239,7 @@
         // height: 100%;
         box-sizing: border-box;
         position: absolute;
-        top: 40px;
+        top: 30px;
         left: 0;
         right: 0;
         bottom: 30px;

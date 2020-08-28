@@ -34,10 +34,18 @@ const alreadyExist = (group, target) => {
     }
 }
 
+const plsUploadFolder = {
+    group: "nofiles",
+    type: "error",
+    title: "Error",
+    text: "Please open a main folder first.",
+}
+
 
 export {
     saveFile,
     targetPathEmpty,
     noFile,
     alreadyExist,
+    plsUploadFolder,
 }

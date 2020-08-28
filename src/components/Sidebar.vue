@@ -24,7 +24,7 @@
         </div>
 
         <!-- Notify -->
-        <notifications group="mode" position="center center" width="500px" animation-type="velocity" />
+        <notifications group="mode" position="top center" width="300px" animation-type="velocity" />
 
     </div>
 </template>
@@ -62,8 +62,11 @@
 </script>
 
 <style scped lang="scss">
+    *{
+        font-size: 12px;
+    }
     #sidebar {
-        width: 70px;
+        width: 50px;
         height: 100%;
         box-sizing: border-box;
         padding-top: 10px;

@@ -32,9 +32,12 @@
         border-radius: 10px;
         box-sizing: border-box;
         padding: 15px;
-        font-size: 30px !important;
-        height: 100px;
-        color: var(--popupdark);
-        background: var(--lightyellow);
+        height: 70px;
+        margin-top: 25px;
+        color: cadetblue;
+        background: var(--popupdark);
+        .notification-title, .notification-content {
+            font-size: 20px !important;
+        }
     }
 }

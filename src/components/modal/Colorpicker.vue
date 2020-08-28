@@ -66,12 +66,11 @@
         display: flex;
         flex-direction: column;
         span{
-            margin-top: 30px;
-            font-size: 30px;
+            font-size: 15px;
         }
 
         input{
-            font-size: 30px;
+            font-size: 15px;
         }
     }
 
@@ -114,7 +113,7 @@
         }
 
         input{
-            height: 50px !important;
+            height: 30px !important;
             margin-top: 20px;
             margin-bottom: 20px;
             background-color: #4f5662;
@@ -125,8 +124,8 @@
         .vc-chrome-controls{
             align-items: center;
             .vc-chrome-color-wrap{
-                width: 70px;
-                height: 70px;
+                width: 50px;
+                height: 50px;
                 margin-right: 15px;
 
                 .vc-chrome-active-color, .vc-checkerboard{
@@ -147,7 +146,7 @@
         }
 
         .vc-chrome-toggle-btn{
-            margin-top: 100px;
+            margin-top: 10px;
             .vc-chrome-toggle-icon-highlight{
                 display: block !important;
             }

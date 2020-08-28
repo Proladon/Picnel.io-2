@@ -6,28 +6,36 @@
                 @click="tabActive('Copylog')"
                 :class="{tab_active:activetab==='Copylog'}">
                 <p>Copy Log</p>
-                <div class="unread" v-show="this.Copylog_Unread !== 0">{{this.Copylog_Unread}}</div>
+                <div class="unread" v-show="this.Copylog_Unread !== 0">
+                    <p>{{this.Copylog_Unread}}</p>
+                </div>
             </div>
             <!-- Move -->
             <div class="move-logger tab-item" 
                 @click="tabActive('Movelog')"
                 :class="{tab_active:activetab==='Movelog'}">
                 <p>Move Log</p>
-                <div class="unread" v-show="this.Movelog_Unread !== 0">{{this.Movelog_Unread}}</div>
+                <div class="unread" v-show="this.Movelog_Unread !== 0">
+                    <p>{{this.Movelog_Unread}}</p>
+                </div>
             </div>
             <!-- Delete -->
             <div class="move-logger tab-item" 
                 @click="tabActive('Deletelog')"
                 :class="{tab_active:activetab==='Deletelog'}">
                 <p>Delete Log</p>
-                <div class="unread" v-show="this.Deletelog_Unread !== 0">{{this.Deletelog_Unread}}</div>
+                <div class="unread" v-show="this.Deletelog_Unread !== 0">
+                    <p>{{this.Deletelog_Unread}}</p>
+                </div>
             </div>
             <!-- Rename -->
             <div class="move-logger tab-item" 
                 @click="tabActive('Renamelog')"
                 :class="{tab_active:activetab==='Renamelog'}">
                 <p>Rename Log</p>
-                <div class="unread" v-show="this.Renamelog_Unread !== 0">{{this.Renamelog_Unread}}</div>
+                <div class="unread" v-show="this.Renamelog_Unread !== 0">
+                    <p>{{this.Renamelog_Unread}}</p>
+                </div>
             </div>
 
             <div class="clear-log tab-item" @click="clearLog">
@@ -137,12 +145,14 @@
         position: sticky;
         top: 0;
         width: 100%;
-        height: 30px;
+        height: 20px;
         display: flex;
         background-color: var(--dark);
         border-bottom: solid 2px var(--popupdark);
 
         .tab-item {
+            height: 100%;
+            font-size: 12px;
             cursor: pointer;
             text-align: center;
             display: flex;
@@ -169,10 +179,14 @@
         }
 
         .unread{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 10px;
             margin-left: 10px;
             width: auto;
             height: 14px;
-            padding: 5px;
+            padding: 2px;
             color: black;
             border-radius: 20px;
             background-color: rgb(226, 90, 131);

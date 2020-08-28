@@ -13,7 +13,6 @@ export default new Vuex.Store({
     state: {
         
         mode: "Random",
-        home: 'public/static/picnel.io.png',
         curFile: '',
         
         activeGroup: "",
@@ -203,6 +202,9 @@ export default new Vuex.Store({
         },
         //:: File Type
         getFileType: (state, getters) => {
+            if (state.curFile === '') {
+                return ''
+            }
             return mime.lookup(getters.getCurFilePath).split('/')[0]
         },
         //:: File Foleder Path
@@ -211,6 +213,9 @@ export default new Vuex.Store({
         },
         //:: Folder Name
         getFolderName: (state, getters) => {
+            if (state.curFile === '') {
+                return 'Upload Folder'
+            }
             return path.basename(getters.getFolderPath)
         },
         //:: Folder Files_list
