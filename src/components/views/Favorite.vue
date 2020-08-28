@@ -1,6 +1,10 @@
 <template>
     <div id="favorite">
-        123
+        <div class="favorite-list-wrapper">
+            <div class="favorite-item">
+                <button>1010</button>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -15,15 +19,20 @@ export default {
             easing: "easeInOutQuad",
         })
     },
-    
+    computed:{
+    }
 };
 </script>
 
 <style scoped lang="scss">
 #favorite {
     width: 100%;
-    height: 100%;
     position: fixed;
+    top: 30px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
     background-color: var(--dark);
 }
 </style>

@@ -15,14 +15,14 @@
     left: -7px;
     right: -7px;
     height: 100%;
-    z-index: 10;
+    z-index: 1;
 }
 
 .splitpanes--horizontal > .splitpanes__splitter:before {
     top: -5px;
     bottom: -5px;
     width: 100%;
-    z-index: 10;
+    z-index: 1;
 }
 
 /* 分割線樣式 */

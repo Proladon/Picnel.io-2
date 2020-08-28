@@ -46,7 +46,9 @@
         <Statusbar />
 
         <!-- Views -->
-        <Favorite v-if="views.favoriteView"/>
+        <transition name="fade">
+            <Favorite v-if="views.favoriteView"/>
+        </transition>
 
         <!-- Notify -->
         <notifications group="home" position="bottom right" animation-type="velocity"/>
@@ -246,4 +248,10 @@
         margin: 0 auto;
     }
 
+    .fade-enter-active, .fade-leave-active {
+        transition: opacity .5s;
+    }
+    .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+        opacity: 0;
+    }
 </style>
