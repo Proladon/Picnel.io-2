@@ -14,7 +14,7 @@ export default new Vuex.Store({
         
         mode: "Random",
         home: 'public/static/picnel.io.png',
-        curFile: 'public/static/picnel.io.png',
+        curFile: '',
         
         activeGroup: "",
         folderGroups: [

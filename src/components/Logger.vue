@@ -129,7 +129,7 @@
         margin: 0;
         padding: 0;
         position: relative;
-        background-color: #1C1E26;
+        background-color: var(--dark);
         overflow: auto;
     }
 
@@ -139,7 +139,7 @@
         width: 100%;
         height: 30px;
         display: flex;
-        background-color: #1C1E26;
+        background-color: var(--dark);
         border-bottom: solid 2px var(--popupdark);
 
         .tab-item {

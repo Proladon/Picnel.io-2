@@ -3,11 +3,11 @@
 
         <!-- Control -->
         <div class="list-control">
-            <p>{{ worksapce }}</p>
+            <p>{{ workspace.name}}</p>
 
             <div class="list-control-btn-wrapper">
-                <button class="list-control-btn" >Save</button>
-                <button class="list-control-btn" >Save as</button>
+                <button class="list-control-btn" @click="save">Save</button>
+                <button class="list-control-btn" @click="saveAs">Save as</button>
                 <button class="list-control-btn" @click="addFoldersModal">ADD Folder</button>
                 <button class="list-control-btn" @click="addGroupModal">ADD Group</button>
             </div>
@@ -78,10 +78,12 @@ import anime from "animejs";
 // Context Menu
 import Foldercontext from "@/components/contextmenu/Foldercontext.vue";
 import Groupcontext from "@/components/contextmenu/Groupcontext.vue";
+// Notify
+import {saveFile, targetPathEmpty, noFile, alreadyExist} from '@/assets/func/notify.js'
 // Mods
 import fs from 'fs-extra'
 import path from 'path'
-import { shell } from 'electron'
+import { shell, remote } from 'electron'
 
 export default {
     name: "Folderslist",
@@ -102,20 +104,6 @@ export default {
         };
     },
     methods: {
-        drop(e) {
-            console.log(e)
-            if (e.dataTransfer.items) {
-                if (e.dataTransfer.items[0].kind === "file") {
-                    const file = e.dataTransfer.items[0].getAsFile()
-
-                    console.log(file)
-
-                    // Logging
-                    // this.$store.commit('UPDATE_LOG', "update folder")
-                }
-            }
-        },
-
         //:: Changing active group
         changeGroup(name, e) {
             // remove all element active class
@@ -281,12 +269,7 @@ export default {
                                 .folderGroups) {
                                 if (newName === oldName.name) {
                                     element.value = "";
-                                    this.$notify({
-                                        group: "foo",
-                                        type: "warn",
-                                        title: "Name Repeat",
-                                        text: `Group Name: ${newName} already existing`,
-                                    });
+                                    this.$notify(alreadyExist('folderlist',newName));
                                     return;
                                 }
                             }
@@ -341,6 +324,15 @@ export default {
         },
 
         copyfile(targetpath){
+            if (targetpath === ''){
+                this.$notify(targetPathEmpty('folderlist'))
+                return
+            }
+            else if (this.filename === 'picnel.io.png'){
+                this.$notify(noFile('folderlist', 'copy'))
+                return
+            }
+
             const target = path.join(targetpath, this.filename)
             try {
                 fs.copySync(this.filepath, target, {overwrite: false, errorOnExist: true})
@@ -351,26 +343,16 @@ export default {
             this.$store.commit('UPDATE_LOG', {logger:'Copylog', log:`File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`})
         },
         movefile(targetpath){
-            if(targetpath === ''){
-                this.$notify({
-                    group: 'folderlist',
-                    type: 'error',
-                    title: 'Error',
-                    text: 'No target path'
-                })
+            if (targetpath === ''){
+                this.$notify(targetPathEmpty('folderlist'))
+                return
+            }
+            else if (this.filename === 'picnel.io.png'){
+                this.$notify(noFile('folderlist', 'copy'))
                 return
             }
             
             const target = path.join(targetpath.replace(/\\/g, '/'), this.filename)
-            if (this.filename === 'picnel.io.png'){
-                this.$notify({
-                    group: 'folderlist',
-                    type: 'error',
-                    title: 'Error',
-                    text: 'No file can move'
-                })
-                return
-            }
             try {
                 fs.moveSync(this.filepath, target, {overwrite: false, errorOnExist: true})
             } catch (error) {
@@ -378,7 +360,6 @@ export default {
                 console.log("ME")
                 return            
             }
-            this.$store.commit('UPDATE_LOG', {logger:'Movelog', log:`File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`})
             
             if (this.mode === 'Random'){
                 this.$store.dispatch('RANDOM_FILE')
@@ -397,18 +378,64 @@ export default {
                 }
             }
             
-            // todo => Logging
+            this.$store.commit('UPDATE_LOG', {logger:'Movelog', log:`File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`})
         },
+        save(){
+            if (this.workspace.name === 'untitled' || this.workspace.name === 'untitled*'){
+                this.saveAs()
+                return
+            }
+            const workspace = this.workspace.name
+            fs.writeJson(this.workspace.path, this.$store.state, {spaces: 4})
+                .then(() => {
+                    this.$store.commit('SET_WORKSPACE', {
+                        name: this.workspace.name.replace('*', ''),
+                        path: this.workspace.path
+                    })
+                    this.$notify(saveFile('folderlist', workspace))
+                })
+        },
+        saveAs(){
+            const options = {
+                title: "Save as workspace",
+                filters: [{name: 'workspace', extensions: ['json']}]
+            }
+
+            let savePath = remote.dialog.showSaveDialog(options)
+            savePath.then((res)=>{
+                if (res.canceled){
+                    return
+                }
+                else{
+                    const savepath = res.filePath.split('\\')
+                    const saveName = savepath[savepath.length - 1]
+                    this.$store.commit('SET_WORKSPACE', {
+                        name: saveName.replace('.json', ''),
+                        path: res.filePath
+                    })
+                    fs.writeJson(res.filePath, this.allState, {spaces: 4})
+                        .then(() => {
+                            this.$notify(saveFile('folderlist', saveName.replace('.json', '')))
+                        })
+                        .catch(err => {
+                            console.error(err)
+                        })
+                }
+            })
+        }
     },
     computed: {
+        allState(){
+            return this.$store.state
+        },
         mode(){
             return this.$store.state.mode
         },
         fileindex(){
             return this.$store.getters.getFileIndex
         },
-        worksapce() {
-            return this.$store.state.app.worksapce;
+        workspace() {
+            return this.$store.state.app.workspace;
         },
         filepath(){
             return this.$store.state.curFile
@@ -434,6 +461,12 @@ export default {
             },
             set(data) {
                 this.$store.commit("UPDATE_LISTS", data);
+                if (! this.workspace.name.includes('*')){
+                    this.$store.commit("SET_WORKSPACE", {
+                        name: `${this.workspace.name}*`,
+                        path: this.workspace.path
+                    });
+                }
             },
         },
         activegroup() {
@@ -461,9 +494,7 @@ export default {
         });
     },
     watch:{
-        foldergroups: ()=>{
 
-        }
     }
 };
 </script>
@@ -495,17 +526,22 @@ export default {
     justify-content: space-between;
     align-items: center;
     background-color: var(--lightyellow);
-
 }
 
 .list-control-btn-wrapper{
     display: flex;
     justify-content: space-between;
+    
     .list-control-btn{
+        cursor: pointer;
         margin-left: 5px;
         background-color: transparent;
         border: var(--dark) solid 1px;
         padding: 5px;
+    }
+
+    .list-control-btn:hover{
+        background-color: cadetblue;
     }
 }
 

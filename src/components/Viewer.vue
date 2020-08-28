@@ -269,7 +269,7 @@ export default {
     width: 100%;
     height: 100%;
     position: relative;
-    background-color: #1c1e26;
+    background-color: var(--dark);
 }
 
 #view-area {
@@ -304,9 +304,6 @@ export default {
     }
 }
 
-// ---------------- //
-//         Delete Btton        //
-// ---------------- //
 .operate-btn-wrapper{
     position: absolute;
     top: 0;
@@ -321,7 +318,7 @@ export default {
 }
 
 .operate-btn-wrapper:hover{
-    opacity: 30%;
+    opacity: calc(100% - 70%);
 }
 
 .operate-btn{

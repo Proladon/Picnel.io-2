@@ -40,11 +40,13 @@
                     <Folderslist />
                 </pane>
             </splitpanes>
-
         </div>
 
         <!-- Statusbar -->
         <Statusbar />
+
+        <!-- Views -->
+        <Favorite v-if="views.favoriteView"/>
 
         <!-- Notify -->
         <notifications group="home" position="bottom right" animation-type="velocity"/>
@@ -67,6 +69,9 @@
     import Folderslist from './components/Folderslist.vue'
     import Statusbar from './components/Statusbar.vue'
 
+    // Views
+    import Favorite from './components/views/Favorite.vue'
+
     import {remote} from 'electron'
 
     export default {
@@ -79,6 +84,7 @@
             Logger,
             Folderslist,
             Statusbar,
+            Favorite,
         },
         data(){
             return{
@@ -102,11 +108,21 @@
                 }
             },
             quit(){
-                remote.app.exit()
+                if (this.workspace.name.includes('*')){
+                    this.$modal.show("dialog")
+                }
+                else{
+                    remote.app.exit()
+                }
             }
         },
         computed:{
-
+            views(){
+                return this.$store.state.app.views
+            },
+            workspace(){
+                return this.$store.state.app.workspace
+            }
         },
         mounted(){
 
@@ -124,7 +140,8 @@
 
     :root{
         --spliter: #423f3b;
-        --dark: #0F2232;
+        // --dark: #0F2232;
+        --dark: #1c1e26;
         --popupdark: rgb(31, 41, 53);
         --lightyellow: #CDC0B8;
         
@@ -137,6 +154,7 @@
 
     *{
         // font-family: var(--font);
+        font-size: 12px;
         margin: 0;
         padding: 0;
     }

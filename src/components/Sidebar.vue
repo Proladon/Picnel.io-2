@@ -7,7 +7,7 @@
             <p align="center">{{viewmode}}</p>
         </div>
 
-        <div class="tools">
+        <div class="tools" @click="toggleFavorite">
             <img src="@/assets/icon/book.svg">
         </div>
 
@@ -22,8 +22,6 @@
         <div class="tools">
             <img src="@/assets/icon/energy.svg">
         </div>
-
-        
 
         <!-- Notify -->
         <notifications group="mode" position="center center" width="500px" animation-type="velocity" />
@@ -50,6 +48,9 @@
                     title: 'Mode Change',
                     text: `${this.viewmode}`,
                 })
+            },
+            toggleFavorite(){
+                this.$store.commit('TOGGLE_VIEW', "favoriteView")
             }
         },
         computed: {

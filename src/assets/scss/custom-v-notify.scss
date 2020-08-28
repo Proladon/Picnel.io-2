@@ -20,6 +20,7 @@
     }
 
     &.success {
+        color: var(--popupdark);
         background: #68cd86;
         border-left-color: #42a85f;
     }
