@@ -20,7 +20,7 @@
                     <p>{{data.path}}</p>
 
                     <div class="worspace-control">
-                        <div class="load-workspace">Load</div>
+                        <div class="load-workspace" @click="loadworkspace">Load</div>
                         <div class="delete-workspace">Delete</div>
                     </div>
                 </div>
@@ -34,6 +34,7 @@
 
 <script>
     import Store from 'electron-store'
+    import fs from 'fs-extra'
     import anime from "animejs";
     export default {
         name: "Workspaces",
@@ -46,6 +47,16 @@
         methods: {
             choiceWorkspace(workspace) {
                 this.data = workspace
+            },
+            loadworkspace(){
+                fs.readJson(this.data.path)
+                    .then((res) => {
+                        this.$store.commit('SET_STATE', res)
+                        console.log("done")
+                    })
+                    .catch(error => {
+                        console.error(error)
+                    })
             }
         },
         computed: {},
@@ -162,12 +173,16 @@
             bottom: 0;
 
             .load-workspace, .delete-workspace{
+                cursor: pointer;
                 color: var(--dark);
                 text-align: center;
                 width: 100%;
                 font-size: 20px;
                 padding: 10px;
                 background-color: paleturquoise;
+            }
+            .load-workspace:hover, .delete-workspace:hover{
+                filter: brightness(70%);
             }
         }
 

@@ -11,63 +11,20 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
-        
         mode: "Random",
         curFile: '',
-        
         activeGroup: "",
-        folderGroups: [
-            {
-                name: "Wallpaper",
-            },
-            {
-                name: "ACG",
-            }
-        ],
+        folderGroups: [],
         folderLists: {
-            Wallpaper: [
-                {
-                    name: "Anime",
-                    path: "",
-                    color: "rgb(228, 216, 160)",
-                },
-                {
-                    name: "風景",
-                    path: "",
-                    color: "rgb(187, 228, 160)",
-                },
-                {
-                    name: "Art",
-                    path: "",
-                    color: "rgb(228, 160, 160)",
-                },
-                {
-                    name: "Nature",
-                    path: "",
-                    color: "rgb(160, 209, 228)",
-                },
-                {
-                    name: "TEST - 複製",
-                    path: "C:/Users/Proladon/Desktop/TEST - 複製",
-                    color: "rgb(160, 209, 228)",
-                }
-            ],
-            ACG: [
-                {
-                    name: "Games",
-                    path: "",
-                    color: "#22df8c",
-                },
-                {
-                    name: "Anime",
-                    path: "",
-                    color: "#54BBFF",
-                },
-            ],
+            Wallpaper: [],
+            ACG: [],
         },
         tempColor: Object,
     },
     mutations: {
+        SET_STATE: (state, data) => {
+            Object.assign(state, data)
+        },
         //:: Mode
         CHANGE_MODE: (state, mode) => {
             state.mode = mode

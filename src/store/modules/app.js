@@ -1,12 +1,16 @@
 import Vue from 'vue'
 const state = {
     isChanged: false,
+
     workspace: {
         name: "untitled",
         path: "",
     },
+    
     views: {
-        favoriteView: false,
+        workspacesView: false,
+        infoView: false,
+        updateView: false,
         settingsView: false,
     },
 }
@@ -18,6 +22,12 @@ const mutations = {
 
     SET_WORKSPACE: (state, workspace) => {
         state.workspace = workspace
+    },
+
+    HOME_VIEW: (state) => {
+        Object.keys(state.views).map(v => {
+            state.views[v] = false
+        })
     }
 }
 

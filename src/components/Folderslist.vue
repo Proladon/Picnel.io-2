@@ -85,6 +85,7 @@ import fs from 'fs-extra'
 import path from 'path'
 import { shell, remote } from 'electron'
 import Store from 'electron-store'
+import {savefilter} from '@/assets/func/savefilter.js'
 
 export default {
     name: "Folderslist",
@@ -406,14 +407,14 @@ export default {
                 this.saveAs()
                 return
             }
-            const workspace = this.workspace.name
-            fs.writeJson(this.workspace.path, this.$store.state, {spaces: 4})
+           this.$store.commit('SET_WORKSPACE', {
+                name: this.workspace.name.replace('*', ''),
+                path: this.workspace.path
+            })
+            // Save workspace Json to path
+            fs.writeJson(this.workspace.path, savefilter(this.allState), {spaces: 4})
                 .then(() => {
-                    this.$store.commit('SET_WORKSPACE', {
-                        name: this.workspace.name.replace('*', ''),
-                        path: this.workspace.path
-                    })
-                    this.$notify(saveFile('folderlist', workspace))
+                    this.$notify(saveFile('folderlist', this.workspace.name))
                 })
         },
         saveAs(){
@@ -429,25 +430,37 @@ export default {
                 }
                 else{
                     const savepath = res.filePath.split('\\')
-                    const saveName = savepath[savepath.length - 1]
+                    const saveName = savepath[savepath.length - 1].replace('.json', '')
                     this.$store.commit('SET_WORKSPACE', {
-                        name: saveName.replace('.json', ''),
+                        name: saveName,
                         path: res.filePath
                     })
                     
-                    // Save worksapce to config.json
-                    const store = new Store()
-                    let workspaces = store.get('workspaces')
-                    console.log(workspaces)
-                    workspaces.push({
-                        name: saveName.replace('.json', ''),
-                        path: res.filePath
-                    })
-                    store.set('workspaces', workspaces)
-
-                    fs.writeJson(res.filePath, this.allState, {spaces: 4})
+                    // Save workspace Json to path
+                    // Filter state which need to save
+                    fs.writeJson(res.filePath, savefilter(this.allState), {spaces: 4})
                         .then(() => {
-                            this.$notify(saveFile('folderlist', saveName.replace('.json', '')))
+                            this.$notify(saveFile('folderlist', saveName))
+                            
+                            // Save worksapce to config.json
+                            const store = new Store()
+                            let workspaces = store.get('workspaces')
+                            
+                            // check exist
+                            let repeat = false
+                            workspaces.forEach(wk => {
+                                if (wk.name === saveName){
+                                    repeat = true
+                                }
+                            })
+
+                            if (!repeat){
+                                workspaces.push({
+                                    name: saveName,
+                                    path: res.filePath
+                                })
+                                store.set('workspaces', workspaces)
+                            }
                         })
                         .catch(err => {
                             console.error(err)

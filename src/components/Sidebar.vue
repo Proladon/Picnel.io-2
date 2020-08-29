@@ -7,11 +7,11 @@
             <p align="center">{{viewmode}}</p>
         </div>
 
-        <div class="tools">
+        <div class="tools" @click="homeView">
             <img src="@/assets/icon/home.svg">
         </div>
 
-        <div class="tools" @click="toggleFavorite">
+        <div class="tools" @click="toggleWorksapces">
             <img src="@/assets/icon/book.svg">
         </div>
 
@@ -40,6 +40,10 @@
     export default {
         name: 'Sidebar',
         methods: {
+            
+            homeView(){
+                this.$store.commit('HOME_VIEW')
+            },
             changeMode() {
                 if (this.viewmode === 'Random') {
                     this.$store.commit('CHANGE_MODE', 'PreNext')
@@ -53,15 +57,21 @@
                     text: `${this.viewmode}`,
                 })
             },
-            toggleFavorite(){
-                this.$store.commit('TOGGLE_VIEW', "favoriteView")
+            toggleWorksapces(){
+                this.$store.commit('TOGGLE_VIEW', "workspacesView")
             }
         },
         computed: {
+            activeView(){
+                return this.$store.state.app.activeView
+            },
             ...mapGetters({
                 viewmode: 'getMode'
             })
         },
+        watch:{
+
+        }
     }
 </script>
 
@@ -97,6 +107,10 @@
     }
 
     .tools:hover {
+        background-color: rgba($color: #000000, $alpha: .3);
+    }
+
+    .active-view{
         background-color: rgba($color: #000000, $alpha: .3);
     }
 

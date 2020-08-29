@@ -47,7 +47,7 @@
 
         <!-- Views -->
         <transition name="fade">
-            <Workspaces v-if="views.favoriteView"/>
+            <Workspaces v-if="views.workspacesView"/>
         </transition>
 
         <!-- Notify -->
