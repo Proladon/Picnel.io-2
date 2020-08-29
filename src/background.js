@@ -109,3 +109,5 @@ if (isDevelopment) {
     })
   }
 }
+
+console.log(app.getPath('userData'))

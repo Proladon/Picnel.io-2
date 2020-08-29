@@ -47,7 +47,7 @@
 
         <!-- Views -->
         <transition name="fade">
-            <Favorite v-if="views.favoriteView"/>
+            <Workspaces v-if="views.favoriteView"/>
         </transition>
 
         <!-- Notify -->
@@ -72,7 +72,7 @@
     import Statusbar from './components/Statusbar.vue'
 
     // Views
-    import Favorite from './components/views/Favorite.vue'
+    import Workspaces from './components/views/Workspaces.vue'
 
     import {remote} from 'electron'
 
@@ -86,7 +86,7 @@
             Logger,
             Folderslist,
             Statusbar,
-            Favorite,
+            Workspaces,
         },
         data(){
             return{
@@ -249,7 +249,7 @@
     }
 
     .fade-enter-active, .fade-leave-active {
-        transition: opacity .5s;
+        transition: opacity 1s;
     }
     .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
         opacity: 0;

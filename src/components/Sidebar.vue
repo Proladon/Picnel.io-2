@@ -7,6 +7,10 @@
             <p align="center">{{viewmode}}</p>
         </div>
 
+        <div class="tools">
+            <img src="@/assets/icon/home.svg">
+        </div>
+
         <div class="tools" @click="toggleFavorite">
             <img src="@/assets/icon/book.svg">
         </div>

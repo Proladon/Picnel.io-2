@@ -84,6 +84,7 @@ import {saveFile, targetPathEmpty, noFile, alreadyExist} from '@/assets/func/not
 import fs from 'fs-extra'
 import path from 'path'
 import { shell, remote } from 'electron'
+import Store from 'electron-store'
 
 export default {
     name: "Folderslist",
@@ -433,6 +434,17 @@ export default {
                         name: saveName.replace('.json', ''),
                         path: res.filePath
                     })
+                    
+                    // Save worksapce to config.json
+                    const store = new Store()
+                    let workspaces = store.get('workspaces')
+                    console.log(workspaces)
+                    workspaces.push({
+                        name: saveName.replace('.json', ''),
+                        path: res.filePath
+                    })
+                    store.set('workspaces', workspaces)
+
                     fs.writeJson(res.filePath, this.allState, {spaces: 4})
                         .then(() => {
                             this.$notify(saveFile('folderlist', saveName.replace('.json', '')))
