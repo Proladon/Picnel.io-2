@@ -415,6 +415,20 @@ export default {
             fs.writeJson(this.workspace.path, savefilter(this.allState), {spaces: 4})
                 .then(() => {
                     this.$notify(saveFile('folderlist', this.workspace.name))
+                    // Save worksapce to config.json
+                    const store = new Store()
+                    let workspaces = store.get('workspaces')
+                    
+                    let wkindex = 0
+                    workspaces.forEach((wk, index) => {
+                        if (wk.name === this.workspace.name){
+                            wkindex = index
+                        }
+                    })
+
+                    workspaces[wkindex].main = this.filefolder
+                    store.set('workspaces', workspaces)
+
                 })
         },
         saveAs(){
@@ -457,7 +471,9 @@ export default {
                             if (!repeat){
                                 workspaces.push({
                                     name: saveName,
-                                    path: res.filePath
+                                    path: res.filePath,
+                                    main: this.filefolder,
+                                    cover: ""
                                 })
                                 store.set('workspaces', workspaces)
                             }
