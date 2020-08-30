@@ -16,8 +16,11 @@ const state = {
 }
 
 const mutations = {
-    TOGGLE_VIEW: (state, view) => {
-        Vue.set(state.views, view, !state.views[view])
+    CHANGE_VIEW: (state, view) => {
+        Object.keys(state.views).map(v => {
+            state.views[v] = false
+        })
+        Vue.set(state.views, view, true)
     },
 
     SET_WORKSPACE: (state, workspace) => {

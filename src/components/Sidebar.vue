@@ -1,29 +1,29 @@
 <template>
     <div id="sidebar" ref="sidebar">
         
-        <div class="tools" @click="changeMode">
+        <div class="views" @click="changeMode">
             <!-- <h1 align="center">M</h1> -->
             <img src="@/assets/icon/manual.svg" style="filter: contrast(100%); ">
             <p align="center">{{viewmode}}</p>
         </div>
 
-        <div class="tools" @click="homeView">
+        <div class="views" @click="homeView">
             <img src="@/assets/icon/home.svg">
         </div>
 
-        <div class="tools" @click="toggleWorksapces">
+        <div class="views" @click="worksapceView">
             <img src="@/assets/icon/book.svg">
         </div>
 
-        <div class="tools">
+        <div class="views" @click="infoView">
             <img src="@/assets/icon/info.svg" style="width:70%">
         </div>
         
-        <div class="tools">
+        <div class="views" @click="updateView">
             <img src="@/assets/icon/update.svg">
         </div>
         
-        <div class="tools">
+        <div class="views" @click="settingsView">
             <img src="@/assets/icon/energy.svg">
         </div>
 
@@ -39,9 +39,15 @@
     } from 'vuex'
     export default {
         name: 'Sidebar',
+        data(){
+            return{
+                target: "",
+            }
+        },
         methods: {
             
-            homeView(){
+            homeView(e){
+                this.target = e.target
                 this.$store.commit('HOME_VIEW')
             },
             changeMode() {
@@ -57,9 +63,22 @@
                     text: `${this.viewmode}`,
                 })
             },
-            toggleWorksapces(){
-                this.$store.commit('TOGGLE_VIEW', "workspacesView")
-            }
+            worksapceView(e){
+                this.target = e.target
+                this.$store.commit('CHANGE_VIEW', "workspacesView")
+            },
+            infoView(e){
+                this.target = e.target
+                this.$store.commit('CHANGE_VIEW', "infoView")
+            },
+            updateView(e){
+                this.target = e.target
+                this.$store.commit('CHANGE_VIEW', "updateView")
+            },
+            settingsView(e){
+                this.target = e.target
+                this.$store.commit('CHANGE_VIEW', "settingsView")
+            },
         },
         computed: {
             activeView(){
@@ -70,7 +89,12 @@
             })
         },
         watch:{
-
+            target: (e)=>{
+                document.getElementsByClassName('views').forEach(element => {
+                    element.classList.remove('active-view')
+                })
+                e.classList.add('active-view')
+            }
         }
     }
 </script>
@@ -90,7 +114,7 @@
         z-index: 5;
     }
 
-    .tools {
+    .views {
         cursor: pointer;
         padding: 10px;
         box-sizing: border-box;
@@ -101,12 +125,13 @@
         flex-direction: column;
 
         img{
+            pointer-events: none;
             filter: grayscale(100%);
             width: 80%;
         }
     }
 
-    .tools:hover {
+    .views:hover {
         background-color: rgba($color: #000000, $alpha: .3);
     }
 

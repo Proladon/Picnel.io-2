@@ -2,7 +2,7 @@
     <div id="statusbar">
         <!-- Folder Reset -->
         <div class="folder-reset status-button status-item" @click="resetfolder">
-            ♻
+            <p>♻</p>
         </div>
 
         <!-- Upload Folder -->
@@ -186,7 +186,13 @@
             background-color: rgba($color: white, $alpha: .2);
         }
     }
-
+    .folder-reset{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 30px;
+        height: 100%;
+    }
     .folder-info{
         color: lightgray !important;
     }
@@ -200,13 +206,16 @@
     // Input: directory
     .upload-btn-wrapper {
         height: 100%;
-        display: flex;
-        align-items: center;
     }
 
     .directory-upload {
+        width: 100%;
+        height: 100%;
         color: mediumspringgreen;
-        display: inline-block;
+        // display: inline-block;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         cursor: pointer;
 
         input[type="file"] {

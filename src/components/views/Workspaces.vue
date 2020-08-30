@@ -1,6 +1,6 @@
 <template>
-    <div id="workspaces">
-        <div class="workspaces-list-wrapper">
+    <div id="workspaces" class="views-page">
+        <div class="workspaces-list-wrapper views-page-wrapper" >
 
             <div class="workspaces-list">
 
@@ -189,39 +189,11 @@
 </script>
 
 <style scoped lang="scss">
-    #workspaces {
-        position: fixed;
-        width: 100%;
-        top: 30px;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: 2;
-        padding-bottom: 60px;
-        box-sizing: border-box;
-        background-color: var(--dark);
-    }
-
-    .workspaces-title {
-        color: white;
-        font-size: 50px;
-        padding-left: 100px;
-    }
+    // #workspaces {}
 
     .choice-cover {
         text-align: center;
         background-color: lightgray;
-    }
-
-    .workspaces-list-wrapper {
-        display: flex;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 50px;
-        right: 0;
-        box-sizing: border-box;
-        padding: 50px;
     }
 
     .workspaces-list {

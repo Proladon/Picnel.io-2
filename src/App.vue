@@ -48,6 +48,7 @@
         <!-- Views -->
         <transition name="fade">
             <Workspaces v-if="views.workspacesView"/>
+            <Info v-if="views.infoView"/>
         </transition>
 
         <!-- Notify -->
@@ -73,6 +74,7 @@
 
     // Views
     import Workspaces from './components/views/Workspaces.vue'
+    import Info from './components/views/Info.vue'
 
     import {remote} from 'electron'
 
@@ -87,6 +89,7 @@
             Folderslist,
             Statusbar,
             Workspaces,
+            Info,
         },
         data(){
             return{
@@ -139,6 +142,7 @@
 @import "assets/scss/custom-v-modal.scss";
 @import "assets/scss/custom-v-notify.scss";
 @import "assets/scss/custom-scrollbar.scss";
+@import "assets/scss/views.scss";
 
     :root{
         --spliter: #423f3b;
