@@ -16,6 +16,7 @@ Picnel.io-2 is using `vue-electron`(Vue 2). so unlike picnel.io building with C#
 - Target folders search、sort、filter
 - Auto Update
 - Theme preferences
+- Traditional Chinese support and more language support
 
 ## Contributes
 I'm just a beginner to coding and this my first time using electron. So it's really welcome and grateful if anyone can help improve this code quality or any anothors contributes.
