@@ -9,7 +9,8 @@ Picnel.io-2 is using `vue-electron`(Vue 2). so unlike picnel.io building with C#
 2. Cross platform
 2. Smoothly animetion transition increse the experience
 4. More readable and controlable logger
-5. export workspace to single `.json` file, that you can carry it
+5. Export workspace to single `.json` file, that you can carry it
+6. Support `video` and Audio files
 
 ## Todo
 - Target folders search、sort、filter
