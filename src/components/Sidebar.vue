@@ -7,7 +7,7 @@
             <p align="center">{{viewmode}}</p>
         </div>
 
-        <div class="views" @click="homeView">
+        <div class="views" id="homeview" @click="homeView">
             <img src="@/assets/icon/home.svg">
         </div>
 
@@ -34,9 +34,8 @@
 </template>
 
 <script>
-    import {
-        mapGetters
-    } from 'vuex'
+    import {mapGetters} from 'vuex'
+    import {remote} from 'electron'
     export default {
         name: 'Sidebar',
         data(){
@@ -71,13 +70,20 @@
                 this.target = e.target
                 this.$store.commit('CHANGE_VIEW', "infoView")
             },
-            updateView(e){
-                this.target = e.target
-                this.$store.commit('CHANGE_VIEW', "updateView")
+            updateView(){
+                remote.dialog.showMessageBox({
+                    message: "Sorry! this page is not done yet"
+                })
+
+                // this.target = e.target
+                // this.$store.commit('CHANGE_VIEW', "updateView")
             },
-            settingsView(e){
-                this.target = e.target
-                this.$store.commit('CHANGE_VIEW', "settingsView")
+            settingsView(){
+                remote.dialog.showMessageBox({
+                    message: "Sorry! this page is not done yet"
+                })
+                // this.target = e.target
+                // this.$store.commit('CHANGE_VIEW', "settingsView")
             },
         },
         computed: {
@@ -95,6 +101,9 @@
                 })
                 e.classList.add('active-view')
             }
+        },
+        mounted(){
+            document.getElementById('homeview').classList.add('active-view')
         }
     }
 </script>

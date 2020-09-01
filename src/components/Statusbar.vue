@@ -105,9 +105,7 @@
                     });
                     return
                 }
-                this.$store.commit('SET_CURFILE', this.home)
-                // logging
-                this.$store.commit('UPDATE_LOG', "reset folder")
+                this.$store.commit('SET_CURFILE', "")
             },
             mainfolderContext(e){
                 const element = document.getElementById("mainfolder-context");
@@ -134,9 +132,6 @@
             },
         },
         computed: {
-            home() {
-                return this.$store.state.home
-            },
             ...mapGetters({
                 file: 'getCurFilePath',
                 filename: 'getFileName',

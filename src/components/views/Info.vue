@@ -3,29 +3,39 @@
         <div class="info-content-wrapper views-page-wrapper">
             
             <div class="info-btn-wrapper">
-                <div class="info-btn">
+                <div class="info-btn" @click="release" :class="{active_info_btn : info==='release'}">
                     <p>Release</p>
                 </div>
 
-                <div class="info-btn">
-                    <p>Documentation 📚</p>
-                </div>
-
-                <div class="info-btn">
+                <div class="info-btn" @click="about" :class="{active_info_btn : info==='about'}">
                     <p>About 🔰</p>
                 </div>
+
+                <div class="info-btn" @click="docs">
+                    <p>Documentation 📚</p>
+                </div>
             </div>
+            
+
 
             <div class="info-content">
-                <div class="about" v-show="info === 'about'">
+
+                <div class="release-info" v-if="info === 'release'">
+                    <p class="content-h1">Release</p>
+                    <div class="content-block">
+                        <p class="content-h2">Ver. 1.0 Alpha</p>
+                    </div>
+                </div>
+
+
+                <div class="about" v-if="info === 'about'">
                     <p class="content-h1">About</p>
 
                     <div class="related-img content-block">
                         <img src="@/assets/img/electron.png" alt="">
                         <img src="@/assets/img/vuejs.png" alt="">
                     </div>   
-                    
-                    
+
                     <p class="content-h2">Developers</p>
                     <div class="profile-wrapper content-block">
                         <div class="profile-img" :style="{ backgroundImage: 'url(' + require('@/assets/img/Oreki.png') + ')' }"></div>
@@ -54,7 +64,18 @@
         name: 'Info',
         data(){
             return{
-                info: 'about',
+                info: 'release',
+            }
+        },
+        methods:{
+            release(){
+                this.info = 'release'
+            },
+            about(){
+                this.info = 'about'
+            },
+            docs(){
+                this.info = 'docs'
             }
         }
     }
@@ -64,6 +85,10 @@
     //    #info-view{}
 
     .info-content-wrapper {}
+
+    .active_info_btn{
+        background-color: mediumspringgreen !important;
+    }
 
     .info-btn-wrapper{
         width: 30%;
@@ -86,7 +111,7 @@
         }
 
         .info-btn:hover{
-            background-color: mediumspringgreen;
+            background-color: mediumspringgreen !important;
         }
     }
     
@@ -125,7 +150,8 @@
 
     .related-img{
         img{
-            width: 150px;
+            width: 170px;
+            height: 90px;
         }
     }
 

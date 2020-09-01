@@ -72,10 +72,6 @@
     import Folderslist from './components/Folderslist.vue'
     import Statusbar from './components/Statusbar.vue'
 
-    // Views
-    import Workspaces from './components/views/Workspaces.vue'
-    import Info from './components/views/Info.vue'
-
     import {remote} from 'electron'
 
     export default {
@@ -88,8 +84,8 @@
             Logger,
             Folderslist,
             Statusbar,
-            Workspaces,
-            Info,
+            Workspaces: () => import('./components/views/Workspaces.vue'),
+            Info: () => import('./components/views/Info.vue'),
         },
         data(){
             return{
