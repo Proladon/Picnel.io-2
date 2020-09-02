@@ -21,6 +21,7 @@ async function createWindow() {
         width: 1100,
         height: 600,
         frame: false,
+        show: false,
         webPreferences: {
             // Use pluginOptions.nodeIntegration, leave this alone
             // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
@@ -43,6 +44,7 @@ async function createWindow() {
         win = null;
     });
 }
+
 
 // Quit when all windows are closed.
 app.on("window-all-closed", () => {
@@ -75,6 +77,22 @@ app.on("ready", async () => {
     }
     registerLocalResourceProtocol();
     createWindow();
+
+    let splash = new BrowserWindow({
+        width: 600,
+        height: 300,
+        frame: false,
+    })
+
+    splash.loadURL(`app://./splash.html`)
+    
+    win.once("ready-to-show", () => {
+        splash.show()
+        setTimeout(() => {
+            splash.destroy()
+            win.show()
+        }, 1000);
+    })
 });
 
 function registerLocalResourceProtocol() {
