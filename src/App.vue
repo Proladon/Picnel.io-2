@@ -2,7 +2,10 @@
     <div id="app">
         
         <div class="menu" style="-webkit-app-region: drag;">
-            <img src="@/assets/icon/pic2.png" id="appicon" alt="" srcset="">
+            <div class="icon-wrapper">
+                <img src="@/assets/icon/pic2.png" id="appicon" alt="" srcset="">
+                <p>Picnel.io 2</p>
+            </div>
 
             <div class="window-controls-wrapper">
                 <svg style="-webkit-app-region: no-drag;" @click="winmin">
@@ -194,7 +197,13 @@
         padding-left: 15px;
         padding-right: 15px;
         color: skyblue;
-
+        
+        .icon-wrapper{
+            width: 50%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
     }
 
     .window-controls-wrapper{

@@ -35,7 +35,12 @@
 
                 <div class="about" v-if="info === 'about'">
                     <p class="content-h1">About</p>
-
+                    <div class="intro content-block">
+                        <img src="@/assets/icon/pic2.png" alt="">
+                        <div class="intro-content">
+                            <p>Version: 1.0.0 alpha</p>
+                        </div>
+                    </div>   
                     <div class="related-img content-block">
                         <img src="@/assets/img/electron 2.png" alt="">
                         <img src="@/assets/img/vue 2.png" alt="">
@@ -75,7 +80,10 @@ import {shell, remote} from 'electron'
         },
         methods:{
             release(){
-                this.info = 'release'
+                // this.info = 'release'
+                remote.dialog.showMessageBox({
+                    message: "Sorry, we don't have documentation yet :("
+                })
             },
             about(){
                 this.info = 'about'
@@ -170,6 +178,16 @@ import {shell, remote} from 'electron'
         }
     }
 
+    .intro{
+        display: flex;
+        align-items: center;
+        img{
+            width: 70px;
+        }
+        .intro-content{
+            color: lightgray;
+        }
+    }
 // ---------------- //
 //               Profile             //
 // ---------------- //
