@@ -10,6 +10,10 @@
                         <p>{{space.name}}</p>
                         <p>{{space.path}}</p>
                     </div>
+
+                    <div class="import-workspace-btn" @click="importworkspace">
+                        <p>import</p>
+                    </div>
                 </div>
 
                 <div class="workspace-info">
@@ -30,10 +34,11 @@
                     <p>Main Folder:</p>
                     <p class="wk-info-text">{{data.main}}</p>
 
-                    <div class="worspace-control">
+                    <div class="workspace-control">
                         <div class="load-workspace" @click="loadworkspace">Load</div>
                         <div class="delete-workspace" @click="deleteworkspace">Delete</div>
                     </div>
+                    
                 </div>
 
             </div>
@@ -96,13 +101,22 @@
                     this.cover = wk[index].cover
                 }
             },
-            loadworkspace() {
+            importworkspace(){
 
+            },
+            loadworkspace() {
+                
                 fs.readJson(this.data.path)
                     .then((res) => {
                         this.$store.commit('SET_STATE', res)
+                        this.$store.commit('HOME_VIEW')
+                        // document.getElementsByClassName('views').forEach(element => {
+                        //         element.classList.remove('active-view')
+                        //     })
+                        // document.getElementById('homeview').classList.add('active-view')
                     })
-                    .catch(() => {
+                    .catch((err) => {
+                        console.log(err)
                         this.$notify({
                             group: 'workspace',
                             type: 'error',
@@ -110,8 +124,17 @@
                             text: "Can't not load workspace"
                         })
                     })
+                
             },
             deleteworkspace(){
+                if (this.data === ''){
+                    this.$notify({
+                        group: 'workspace',
+                        type: 'error',
+                        title: 'Workspace Error',
+                        text: "Can't not load workspace"
+                    })
+                }
                 this.$modal.show('dialog', {
                     title: 'Delete Workspace',
                     text: 'This will delete workspace.json file permanently!',
@@ -170,6 +193,16 @@
                     }),
                     duration: 2000,
                 })
+
+                anime({
+                    targets: ".import-workspace-btn, .workspace-control",
+                    opacity: ['0', '1'],
+                    translateY: ['50', '0'],
+                    delay: anime.stagger(100, {
+                        start: 1300
+                    }),
+                    duration: 2000,
+                })
             });
             // Get all workspaces from config.json
             const store = new Store()
@@ -183,6 +216,14 @@
                 translateY: ['50', '0'],
                 delay: anime.stagger(50),
                 duration: 1000,
+            })
+
+            anime({
+                targets: ".import-workspace-btn, .workspace-control",
+                opacity: ['1', '0'],
+                translateY: ['0', '50'],
+                delay: anime.stagger(100),
+                duration: 2000,
             })
         }
     };
@@ -219,6 +260,29 @@
             .workspace-item:hover {
                 filter: brightness(80%);
             }
+
+            .import-workspace-btn{
+                cursor: pointer;
+                position: absolute;
+                bottom: 50px;
+                width: 150px;
+                height: 40px;
+                background-color: rgba($color: lightgray, $alpha: .3);
+                padding: 10px;
+                border-radius: 5px;
+                border: solid 2px var(--dark);
+                box-sizing: border-box;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                p{
+                    font-size: 20px;
+                }
+            }
+
+            .import-workspace-btn:hover{
+                background-color: mediumspringgreen;
+            }
         }
     }
 
@@ -233,6 +297,7 @@
         .cover-upload-wrapper {
             display: flex;
             align-items: center;
+            margin-bottom: 20px;
             background-color: lightgray;
         }
 
@@ -270,7 +335,7 @@
         }
     }
 
-    .worspace-control {
+    .workspace-control {
         position: absolute;
         display: flex;
         width: 100%;
@@ -300,7 +365,7 @@
         }
 
         .delete-workspace{
-            background-color: springgreen;
+            background-color: rgb(226, 90, 131);
         }
     }
 

@@ -3,16 +3,21 @@
         <div class="info-content-wrapper views-page-wrapper">
             
             <div class="info-btn-wrapper">
+
+                <div class="info-btn" @click="about" :class="{active_info_btn : info==='about'}">
+                    <p>🔰 About</p>
+                </div>
+
                 <div class="info-btn" @click="release" :class="{active_info_btn : info==='release'}">
                     <p>Release</p>
                 </div>
 
-                <div class="info-btn" @click="about" :class="{active_info_btn : info==='about'}">
-                    <p>About 🔰</p>
+                <div class="info-btn url-btn" @click="docs">
+                    <p>📚 Documentation</p>
                 </div>
 
-                <div class="info-btn" @click="docs">
-                    <p>Documentation 📚</p>
+                <div class="info-btn url-btn" @click="report" :class="{active_info_btn : info==='report'}">
+                    <p>🔥 Bugs report</p>
                 </div>
             </div>
             
@@ -32,8 +37,8 @@
                     <p class="content-h1">About</p>
 
                     <div class="related-img content-block">
-                        <img src="@/assets/img/electron.png" alt="">
-                        <img src="@/assets/img/vuejs.png" alt="">
+                        <img src="@/assets/img/electron 2.png" alt="">
+                        <img src="@/assets/img/vue 2.png" alt="">
                     </div>   
 
                     <p class="content-h2">Developers</p>
@@ -60,11 +65,12 @@
 </template>
 
 <script>
+import {shell, remote} from 'electron'
     export default {
         name: 'Info',
         data(){
             return{
-                info: 'release',
+                info: 'about',
             }
         },
         methods:{
@@ -75,7 +81,12 @@
                 this.info = 'about'
             },
             docs(){
-                this.info = 'docs'
+                remote.dialog.showMessageBox({
+                    message: "Sorry, we don't have documentation yet :("
+                })
+            },
+            report(){
+                shell.openExternal('https://github.com/Proladon/Picnel.io-2/issues/new')
             }
         }
     }
@@ -112,6 +123,10 @@
 
         .info-btn:hover{
             background-color: mediumspringgreen !important;
+        }
+
+        .url-btn{
+            // background-color: orange;
         }
     }
     

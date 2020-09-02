@@ -2,7 +2,7 @@
     <div id="app">
         
         <div class="menu" style="-webkit-app-region: drag;">
-            <p>Picnel.io 2</p>
+            <img src="@/assets/icon/pic2.png" id="appicon" alt="" srcset="">
 
             <div class="window-controls-wrapper">
                 <svg style="-webkit-app-region: no-drag;" @click="winmin">
@@ -173,6 +173,10 @@
         display: flex;
         flex-direction: column;
         position: relative;
+    }
+
+    #appicon{
+        height: 30px;
     }
 
     .menu{

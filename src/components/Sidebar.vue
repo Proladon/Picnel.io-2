@@ -87,14 +87,21 @@
             },
         },
         computed: {
-            activeView(){
-                return this.$store.state.app.activeView
+            workspacesView(){
+                return this.$store.state.app.views.workspacesView
             },
             ...mapGetters({
                 viewmode: 'getMode'
             })
         },
         watch:{
+            workspacesView:{
+                handler: function (view) {
+                    if(view === false){
+                        this.target = document.getElementById('homeview')
+                    }
+                }
+            },
             target: (e)=>{
                 document.getElementsByClassName('views').forEach(element => {
                     element.classList.remove('active-view')
