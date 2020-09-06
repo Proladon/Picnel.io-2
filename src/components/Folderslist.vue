@@ -355,14 +355,39 @@ export default {
                 return
             }
 
-            const target = path.join(targetpath, this.filename)
+            let target = path.join(targetpath, this.filename)
             try {
                 fs.copySync(this.filepath, target, {overwrite: false, errorOnExist: true})
+                this.$store.commit('UPDATE_LOG', {logger:'Copylog', log:`File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`})
             } catch (error) {
-                // TODO Copy Error handler
+                const extname = path.extname(this.filename)
+                this.$modal.show('dialog',{
+                    text:"<input type='text'/>",
+                    buttons: [
+                        {
+                            title: "+ 1",
+                            class: "dialog-btn dialog-green-btn",
+                            handler: () => {
+                                target = path.join(targetpath, this.filename.replace(extname, ` 1${extname}`))
+                                fs.copySync(this.filepath, target, {overwrite: false, errorOnExist: true})
+                                this.$store.commit('UPDATE_LOG', {logger:'Copylog', log:`File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`})
+                            }
+                        },
+                        {
+                            title: "+ (1)",
+                            class: "dialog-btn dialog-green-btn",
+                            handler: () => {
+                                
+                            }
+                        },
+                        {
+                            title: "Cancel",
+                            class: "dialog-btn dialog-red-btn"
+                        }
+                    ]
+                })
                 console.log("CE")
             }
-            this.$store.commit('UPDATE_LOG', {logger:'Copylog', log:`File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`})
         },
         movefile(targetpath){
             if (targetpath === ''){
@@ -459,24 +484,34 @@ export default {
                             // Save worksapce to config.json
                             const store = new Store()
                             let workspaces = store.get('workspaces')
-                            
-                            // check exist
-                            let repeat = false
-                            workspaces.forEach(wk => {
-                                if (wk.name === saveName){
-                                    repeat = true
-                                }
-                            })
-
-                            if (!repeat){
-                                workspaces.push({
-                                    name: saveName,
-                                    path: res.filePath,
-                                    main: this.filefolder,
-                                    cover: ""
+                            const savedata ={
+                                        name: saveName,
+                                        path: res.filePath,
+                                        main: this.filefolder,
+                                        cover: ""
+                                    }
+                            console.log(workspaces)
+                            if(workspaces !== undefined){
+                                // check exist
+                                let repeat = false
+                                workspaces.forEach(wk => {
+                                    if (wk.name === saveName){
+                                        repeat = true
+                                    }
                                 })
+    
+                                if (!repeat){
+                                    workspaces.push(savedata)
+                                    store.set('workspaces', workspaces)
+                                }
+                            }
+                            else{
+                                store.set('workspaces', [])
+                                let workspaces = store.get('workspaces')
+                                workspaces.push(savedata)
                                 store.set('workspaces', workspaces)
                             }
+                            
                         })
                         .catch(err => {
                             console.error(err)
@@ -593,6 +628,7 @@ export default {
     justify-content: space-between;
     
     .list-control-btn{
+        color: var(--dark);
         cursor: pointer;
         margin-left: 5px;
         background-color: transparent;
@@ -606,7 +642,7 @@ export default {
 }
 
 // ---------------- //
-//           draggable          //
+//      draggable      //
 // ---------------- //
 .active {
     color: var(--dark) !important;

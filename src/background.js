@@ -88,6 +88,7 @@ app.on("ready", async () => {
     
     win.once("ready-to-show", () => {
         splash.show()
+
         setTimeout(() => {
             splash.destroy()
             win.show()

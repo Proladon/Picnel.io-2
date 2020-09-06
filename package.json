@@ -12,7 +12,6 @@
         "postuninstall": "electron-builder install-app-deps",
         "dist": "electron-builder"
     },
-   
     "main": "background.js",
     "dependencies": {
         "animejs": "^3.2.0",
