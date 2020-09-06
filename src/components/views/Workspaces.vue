@@ -110,7 +110,45 @@
 
             },
             newworkspace(){
-
+                const newstate = {
+                    mode: "Random",
+                    curFile: '',
+                    activeGroup: "",
+                    folderGroups: [],
+                    folderLists: {
+                        Wallpaper: [],
+                        ACG: [],
+                    },
+                    tempColor: Object,
+                    app:{
+                        isChanged: false,
+                        workspace: {
+                            name: "untitled",
+                            path: "",
+                        },
+                        
+                        views: {
+                            workspacesView: false,
+                            infoView: false,
+                            updateView: false,
+                            settingsView: false,
+                        },
+                    },
+                    logger: {
+                        activeTab: "Copylog",
+                        Copylog: [],
+                        Movelog: [],
+                        Deletelog: [],
+                        Renamelog: [],
+                        
+                        Copylog_Unread: 0,
+                        Movelog_Unread: 0,
+                        Deletelog_Unread: 0,
+                        Renamelog_Unread: 0,
+                    }
+                }
+                this.$store.commit('SET_STATE', newstate)
+                this.$store.commit('HOME_VIEW')
             },
             loadworkspace() {
                 
@@ -118,10 +156,6 @@
                     .then((res) => {
                         this.$store.commit('SET_STATE', res)
                         this.$store.commit('HOME_VIEW')
-                        // document.getElementsByClassName('views').forEach(element => {
-                        //         element.classList.remove('active-view')
-                        //     })
-                        // document.getElementById('homeview').classList.add('active-view')
                     })
                     .catch((err) => {
                         console.log(err)

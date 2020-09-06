@@ -1,15 +1,20 @@
 <template>
     <div id="folderslist">
-
         <!-- Control -->
         <div class="list-control">
-            <p>{{ workspace.name}}</p>
+            <p>{{ workspace.name }}</p>
 
             <div class="list-control-btn-wrapper">
                 <button class="list-control-btn" @click="save">Save</button>
-                <button class="list-control-btn" @click="saveAs">Save as</button>
-                <button class="list-control-btn" @click="addFoldersModal">ADD Folder</button>
-                <button class="list-control-btn" @click="addGroupModal">ADD Group</button>
+                <button class="list-control-btn" @click="saveAs">
+                    Save as
+                </button>
+                <button class="list-control-btn" @click="addFoldersModal">
+                    ADD Folder
+                </button>
+                <button class="list-control-btn" @click="addGroupModal">
+                    ADD Group
+                </button>
             </div>
         </div>
         <splitpanes>
@@ -31,8 +36,12 @@
                             <p>{{ i.name }}</p>
 
                             <div class="folder-control-wrapper">
-                                <div class="copy" @click="copyfile(i.path)">C</div>
-                                <div class="move" @click="movefile(i.path)">M</div>
+                                <div class="copy" @click="copyfile(i.path)">
+                                    C
+                                </div>
+                                <div class="move" @click="movefile(i.path)">
+                                    M
+                                </div>
                             </div>
                         </div>
                     </transition-group>
@@ -60,12 +69,11 @@
         <Foldercontext @removefolder="removeFolder" @openfolder="openFolder" />
 
         <!-- Notify -->
-        <notifications 
-            group="folderlist" 
+        <notifications
+            group="folderlist"
             position="right bottom"
-            animation-type="velocity" 
+            animation-type="velocity"
         />
-
     </div>
 </template>
 
@@ -79,13 +87,18 @@ import anime from "animejs";
 import Foldercontext from "@/components/contextmenu/Foldercontext.vue";
 import Groupcontext from "@/components/contextmenu/Groupcontext.vue";
 // Notify
-import {saveFile, targetPathEmpty, noFile, alreadyExist} from '@/assets/func/notify.js'
+import {
+    saveFile,
+    targetPathEmpty,
+    noFile,
+    alreadyExist,
+} from "@/assets/func/notify.js";
 // Mods
-import fs from 'fs-extra'
-import path from 'path'
-import { shell, remote } from 'electron'
-import Store from 'electron-store'
-import {savefilter} from '@/assets/func/savefilter.js'
+import fs from "fs-extra";
+import path from "path";
+import { shell, remote } from "electron";
+import Store from "electron-store";
+import { savefilter } from "@/assets/func/savefilter.js";
 
 export default {
     name: "Folderslist",
@@ -126,22 +139,27 @@ export default {
                 });
             });
         },
-        addFoldersModal(){
-            const Addfolders = () => import("@/components/modal/Addfolders.vue")
+        addFoldersModal() {
+            const Addfolders = () =>
+                import("@/components/modal/Addfolders.vue");
             this.$modal.show(
                 Addfolders,
-                {group: this.activegroup, folderlist: this.folderlist, workspace: this.workspace},
-                {resizable: true, classes: 'addfolders-modal'}
-            )
+                {
+                    group: this.activegroup,
+                    folderlist: this.folderlist,
+                    workspace: this.workspace,
+                },
+                { resizable: true, classes: "addfolders-modal" }
+            );
         },
         //:: Show add new group modal
         addGroupModal() {
-            const Addgroup = () => import("@/components/modal/Addgroup.vue")
+            const Addgroup = () => import("@/components/modal/Addgroup.vue");
             this.$modal.show(
                 Addgroup,
-                {foldergroups: this.foldergroups, workspace: this.workspace},
-                {width: "400", classes: 'addfolders-modal'}
-            )
+                { foldergroups: this.foldergroups, workspace: this.workspace },
+                { width: "400", classes: "addfolders-modal" }
+            );
         },
 
         //:: Color Tag ColorPicker
@@ -163,9 +181,9 @@ export default {
         },
 
         //:: Folder context menu
-        foldercontext(e, index, fpath){
-            this.folderindex = index
-            this.folderpath = fpath
+        foldercontext(e, index, fpath) {
+            this.folderindex = index;
+            this.folderpath = fpath;
             const element = document.getElementById("folder-context");
             element.classList.remove("context-active");
             element.style.top = e.clientY + "px";
@@ -208,10 +226,10 @@ export default {
                                 this.$store.commit("CHANGE_ACTIVE_GROUP", null);
                             }
 
-                            if (! this.workspace.name.includes('*')){
+                            if (!this.workspace.name.includes("*")) {
                                 this.$store.commit("SET_WORKSPACE", {
                                     name: `${this.workspace.name}*`,
-                                    path: this.workspace.path
+                                    path: this.workspace.path,
                                 });
                             }
 
@@ -234,7 +252,7 @@ export default {
         },
 
         //:: Delete Folder Dialog
-        removeFolder(){
+        removeFolder() {
             this.$modal.show("dialog", {
                 title: "Warning",
                 text: "Remove Folder?",
@@ -243,13 +261,13 @@ export default {
                         title: "Remove",
                         class: "dialog-red-btn dialog-btn",
                         handler: () => {
-                            let folders = this.folderlist
-                            folders.splice(this.folderindex, 1)
-                            this.$store.commit('UPDATE_LISTS', folders)
-                            if (! this.workspace.name.includes('*')){
+                            let folders = this.folderlist;
+                            folders.splice(this.folderindex, 1);
+                            this.$store.commit("UPDATE_LISTS", folders);
+                            if (!this.workspace.name.includes("*")) {
                                 this.$store.commit("SET_WORKSPACE", {
                                     name: `${this.workspace.name}*`,
-                                    path: this.workspace.path
+                                    path: this.workspace.path,
                                 });
                             }
                             this.$modal.hide("dialog");
@@ -285,7 +303,9 @@ export default {
                                 .folderGroups) {
                                 if (newName === oldName.name) {
                                     element.value = "";
-                                    this.$notify(alreadyExist('folderlist',newName));
+                                    this.$notify(
+                                        alreadyExist("folderlist", newName)
+                                    );
                                     return;
                                 }
                             }
@@ -305,10 +325,10 @@ export default {
                                     "CHANGE_ACTIVE_GROUP",
                                     newName
                                 );
-                                if (! this.workspace.name.includes('*')){
+                                if (!this.workspace.name.includes("*")) {
                                     this.$store.commit("SET_WORKSPACE", {
                                         name: `${this.workspace.name}*`,
-                                        path: this.workspace.path
+                                        path: this.workspace.path,
                                     });
                                 }
                                 this.$modal.hide("dialog");
@@ -342,40 +362,53 @@ export default {
         },
 
         openFolder() {
-            shell.openPath(this.folderpath)
+            shell.openPath(this.folderpath);
         },
 
-        copyfile(targetpath){
-            if (targetpath === ''){
-                this.$notify(targetPathEmpty('folderlist'))
-                return
-            }
-            else if (this.filename === 'picnel.io.png'){
-                this.$notify(noFile('folderlist', 'copy'))
-                return
+        copyfile(targetpath) {
+            if (targetpath === "") {
+                this.$notify(targetPathEmpty("folderlist"));
+                return;
+            } else if (this.filename === "picnel.io.png") {
+                this.$notify(noFile("folderlist", "copy"));
+                return;
             }
 
-            let target = path.join(targetpath, this.filename)
+            let target = path.join(targetpath, this.filename);
             try {
-                fs.copySync(this.filepath, target, {overwrite: false, errorOnExist: true})
-                this.$store.commit('UPDATE_LOG', {logger:'Copylog', log:`File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`})
+                fs.copySync(this.filepath, target, {
+                    overwrite: false,
+                    errorOnExist: true,
+                });
+                this.$store.commit("UPDATE_LOG", {
+                    logger: "Copylog",
+                    log: `File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`,
+                });
             } catch (error) {
-                const extname = path.extname(this.filename)
-                let counter = 1
-                let repeat = true
-                target = path.join(targetpath, this.filename.replace(extname, `(${counter})${extname}`))
+                const extname = path.extname(this.filename);
+                let counter = 1;
+                let repeat = true;
+                target = path.join(
+                    targetpath,
+                    this.filename.replace(extname, `(${counter})${extname}`)
+                );
 
                 while (repeat) {
                     if (fs.existsSync(target)) {
-                        counter += 1
-                        target = path.join(targetpath, this.filename.replace(extname, `(${counter})${extname}`))
-                    }
-                    else{
-                        repeat = false
+                        counter += 1;
+                        target = path.join(
+                            targetpath,
+                            this.filename.replace(
+                                extname,
+                                `(${counter})${extname}`
+                            )
+                        );
+                    } else {
+                        repeat = false;
                     }
                 }
 
-                this.$modal.show('dialog',{
+                this.$modal.show("dialog", {
                     title: "Already Exist & Auto Rename",
                     text: `Auto rename to: ${path.basename(target)}`,
                     buttons: [
@@ -383,174 +416,242 @@ export default {
                             title: "Rename & Copy",
                             class: "dialog-btn dialog-green-btn",
                             handler: () => {
-                                fs.copySync(this.filepath, target, {overwrite: false, errorOnExist: true})
-                                this.$modal.hide("dialog")
-                            }
+                                fs.copySync(this.filepath, target, {
+                                    overwrite: false,
+                                    errorOnExist: true,
+                                });
+                                this.$modal.hide("dialog");
+                            },
                         },
                         {
                             title: "Cancel Copy",
                             class: "dialog-btn dialog-red-btn",
                             handler: () => {
-                                this.$modal.hide("dialog")
-                            }
+                                this.$modal.hide("dialog");
+                            },
                         },
-                    ]
-                })
-
+                    ],
+                });
             }
         },
-        movefile(targetpath){
-            if (targetpath === ''){
-                this.$notify(targetPathEmpty('folderlist'))
-                return
+        movefile(targetpath) {
+            if (targetpath === "") {
+                this.$notify(targetPathEmpty("folderlist"));
+                return;
+            } else if (this.filename === "picnel.io.png") {
+                this.$notify(noFile("folderlist", "copy"));
+                return;
             }
-            else if (this.filename === 'picnel.io.png'){
-                this.$notify(noFile('folderlist', 'copy'))
-                return
-            }
-            
-            const target = path.join(targetpath.replace(/\\/g, '/'), this.filename)
+            targetpath = targetpath.replace(/\\/g, "/");
+            let target = path.join(targetpath, this.filename);
             try {
-                fs.moveSync(this.filepath, target, {overwrite: false, errorOnExist: true})
+                fs.moveSync(this.filepath, target, {
+                    overwrite: false,
+                    errorOnExist: true,
+                });
             } catch (error) {
                 // TODO Move Error handler
-                console.log("ME")
-                return            
-            }
-            
-            if (this.mode === 'Random'){
-                this.$store.dispatch('RANDOM_FILE')
-            }
-            else{
-                this.$store.dispatch('NEXT_FILE')
-                let files_list = fs.readdirSync(this.$store.getters.getFolderPath).map(f => {
-                    return `${this.$store.getters.getFolderPath}/${f.replace(/\\/g, '/')}`
-                })
-                
-                if (files_list.length === 1){
-                    this.$store.commit('SET_CURFILE', files_list[0])
+                const extname = path.extname(this.filename);
+                let counter = 1;
+                let repeat = true;
+                target = path.join(
+                    targetpath,
+                    this.filename.replace(extname, `(${counter})${extname}`)
+                );
+
+                while (repeat) {
+                    if (fs.existsSync(target)) {
+                        counter += 1;
+                        target = path.join(
+                            targetpath,
+                            this.filename.replace(
+                                extname,
+                                `(${counter})${extname}`
+                            )
+                        );
+                    } else {
+                        repeat = false;
+                    }
                 }
-                else if (this.fileindex < files_list.length){
-                    this.$store.commit('SET_CURFILE', files_list[this.fileindex-1])
-                }
+
+                this.$modal.show("dialog", {
+                    title: "Already Exist & Auto Rename",
+                    text: `Auto rename to: ${path.basename(target)}`,
+                    buttons: [
+                        {
+                            title: "Rename & Move",
+                            class: "dialog-btn dialog-green-btn",
+                            handler: () => {
+                                fs.moveSync(this.filepath, target, {
+                                    overwrite: false,
+                                    errorOnExist: true,
+                                });
+                                this.$modal.hide("dialog");
+                                if (this.mode === "Random") {
+                                    this.$store.dispatch("RANDOM_FILE");
+                                } else {
+                                    this.$store.dispatch("NEXT_FILE");
+                                    let files_list = fs
+                                        .readdirSync(
+                                            this.$store.getters.getFolderPath
+                                        )
+                                        .map((f) => {
+                                            return `${
+                                                this.$store.getters.getFolderPath
+                                            }/${f.replace(/\\/g, "/")}`;
+                                        });
+
+                                    if (files_list.length === 1) {
+                                        this.$store.commit(
+                                            "SET_CURFILE",
+                                            files_list[0]
+                                        );
+                                    } else if (
+                                        this.fileindex < files_list.length
+                                    ) {
+                                        this.$store.commit(
+                                            "SET_CURFILE",
+                                            files_list[this.fileindex - 1]
+                                        );
+                                    }
+                                }
+
+                                this.$store.commit("UPDATE_LOG", {
+                                    logger: "Movelog",
+                                    log: `File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`,
+                                });
+                            },
+                        },
+                        {
+                            title: "Cancel Move",
+                            class: "dialog-btn dialog-red-btn",
+                            handler: () => {
+                                this.$modal.hide("dialog");
+                            },
+                        },
+                    ],
+                });
             }
-            
-            this.$store.commit('UPDATE_LOG', {logger:'Movelog', log:`File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`})
         },
-        save(){
-            if (this.workspace.name === 'untitled' || this.workspace.name === 'untitled*'){
-                this.saveAs()
-                return
+        save() {
+            if (
+                this.workspace.name === "untitled" ||
+                this.workspace.name === "untitled*"
+            ) {
+                this.saveAs();
+                return;
             }
-           this.$store.commit('SET_WORKSPACE', {
-                name: this.workspace.name.replace('*', ''),
-                path: this.workspace.path
-            })
+            this.$store.commit("SET_WORKSPACE", {
+                name: this.workspace.name.replace("*", ""),
+                path: this.workspace.path,
+            });
             // Save workspace Json to path
-            fs.writeJson(this.workspace.path, savefilter(this.allState), {spaces: 4})
-                .then(() => {
-                    this.$notify(saveFile('folderlist', this.workspace.name))
-                    // Save worksapce to config.json
-                    const store = new Store()
-                    let workspaces = store.get('workspaces')
-                    
-                    let wkindex = 0
-                    workspaces.forEach((wk, index) => {
-                        if (wk.name === this.workspace.name){
-                            wkindex = index
-                        }
-                    })
+            fs.writeJson(this.workspace.path, savefilter(this.allState), {
+                spaces: 4,
+            }).then(() => {
+                this.$notify(saveFile("folderlist", this.workspace.name));
+                // Save worksapce to config.json
+                const store = new Store();
+                let workspaces = store.get("workspaces");
 
-                    workspaces[wkindex].main = this.filefolder
-                    store.set('workspaces', workspaces)
+                let wkindex = 0;
+                workspaces.forEach((wk, index) => {
+                    if (wk.name === this.workspace.name) {
+                        wkindex = index;
+                    }
+                });
 
-                })
+                workspaces[wkindex].main = this.filefolder;
+                store.set("workspaces", workspaces);
+            });
         },
-        saveAs(){
+        saveAs() {
             const options = {
                 title: "Save as workspace",
-                filters: [{name: 'workspace', extensions: ['json']}]
-            }
+                filters: [{ name: "workspace", extensions: ["json"] }],
+            };
 
-            let savePath = remote.dialog.showSaveDialog(options)
-            savePath.then((res)=>{
-                if (res.canceled){
-                    return
-                }
-                else{
-                    const savepath = res.filePath.split('\\')
-                    const saveName = savepath[savepath.length - 1].replace('.json', '')
-                    this.$store.commit('SET_WORKSPACE', {
+            let savePath = remote.dialog.showSaveDialog(options);
+            savePath.then((res) => {
+                if (res.canceled) {
+                    return;
+                } else {
+                    const savepath = res.filePath.split("\\");
+                    const saveName = savepath[savepath.length - 1].replace(
+                        ".json",
+                        ""
+                    );
+                    this.$store.commit("SET_WORKSPACE", {
                         name: saveName,
-                        path: res.filePath
-                    })
-                    
+                        path: res.filePath,
+                    });
+
                     // Save workspace Json to path
                     // Filter state which need to save
-                    fs.writeJson(res.filePath, savefilter(this.allState), {spaces: 4})
+                    fs.writeJson(res.filePath, savefilter(this.allState), {
+                        spaces: 4,
+                    })
                         .then(() => {
-                            this.$notify(saveFile('folderlist', saveName))
-                            
+                            this.$notify(saveFile("folderlist", saveName));
+
                             // Save worksapce to config.json
-                            const store = new Store()
-                            let workspaces = store.get('workspaces')
-                            const savedata ={
-                                        name: saveName,
-                                        path: res.filePath,
-                                        main: this.filefolder,
-                                        cover: ""
-                                    }
-                            console.log(workspaces)
-                            if(workspaces !== undefined){
+                            const store = new Store();
+                            let workspaces = store.get("workspaces");
+                            const savedata = {
+                                name: saveName,
+                                path: res.filePath,
+                                main: this.filefolder,
+                                cover: "",
+                            };
+                            console.log(workspaces);
+                            if (workspaces !== undefined) {
                                 // check exist
-                                let repeat = false
-                                workspaces.forEach(wk => {
-                                    if (wk.name === saveName){
-                                        repeat = true
+                                let repeat = false;
+                                workspaces.forEach((wk) => {
+                                    if (wk.name === saveName) {
+                                        repeat = true;
                                     }
-                                })
-    
-                                if (!repeat){
-                                    workspaces.push(savedata)
-                                    store.set('workspaces', workspaces)
+                                });
+
+                                if (!repeat) {
+                                    workspaces.push(savedata);
+                                    store.set("workspaces", workspaces);
                                 }
+                            } else {
+                                store.set("workspaces", []);
+                                let workspaces = store.get("workspaces");
+                                workspaces.push(savedata);
+                                store.set("workspaces", workspaces);
                             }
-                            else{
-                                store.set('workspaces', [])
-                                let workspaces = store.get('workspaces')
-                                workspaces.push(savedata)
-                                store.set('workspaces', workspaces)
-                            }
-                            
                         })
-                        .catch(err => {
-                            console.error(err)
-                        })
+                        .catch((err) => {
+                            console.error(err);
+                        });
                 }
-            })
-        }
+            });
+        },
     },
     computed: {
-        allState(){
-            return this.$store.state
+        allState() {
+            return this.$store.state;
         },
-        mode(){
-            return this.$store.state.mode
+        mode() {
+            return this.$store.state.mode;
         },
-        fileindex(){
-            return this.$store.getters.getFileIndex
+        fileindex() {
+            return this.$store.getters.getFileIndex;
         },
         workspace() {
             return this.$store.state.app.workspace;
         },
-        filepath(){
-            return this.$store.state.curFile
+        filepath() {
+            return this.$store.state.curFile;
         },
-        filefolder(){
-            return this.$store.getters.getFolderPath
+        filefolder() {
+            return this.$store.getters.getFolderPath;
         },
-        filename(){
-            return this.$store.getters.getFileName
+        filename() {
+            return this.$store.getters.getFileName;
         },
         foldergroups: {
             get() {
@@ -567,11 +668,11 @@ export default {
             },
             set(data) {
                 this.$store.commit("UPDATE_LISTS", data);
-                
-                if (! this.workspace.name.includes('*')){
+
+                if (!this.workspace.name.includes("*")) {
                     this.$store.commit("SET_WORKSPACE", {
                         name: `${this.workspace.name}*`,
-                        path: this.workspace.path
+                        path: this.workspace.path,
                     });
                 }
             },
@@ -604,15 +705,12 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
 #folderslist {
     position: relative;
     width: 100%;
     height: 100%;
     background-color: #20232b;
 }
-
-
 
 .splitpanes__pane {
     overflow-y: auto;
@@ -633,11 +731,11 @@ export default {
     background-color: var(--lightyellow);
 }
 
-.list-control-btn-wrapper{
+.list-control-btn-wrapper {
     display: flex;
     justify-content: space-between;
-    
-    .list-control-btn{
+
+    .list-control-btn {
         color: var(--dark);
         cursor: pointer;
         margin-left: 5px;
@@ -646,7 +744,7 @@ export default {
         padding: 2px;
     }
 
-    .list-control-btn:hover{
+    .list-control-btn:hover {
         background-color: cadetblue;
     }
 }

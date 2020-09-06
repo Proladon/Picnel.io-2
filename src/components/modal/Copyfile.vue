@@ -53,4 +53,13 @@ import {clipboard, nativeImage} from 'electron'
        width: 100%;
        height: 100%;
    }
+   
+   .modal-select-btn{
+       .notice{
+           font-size: 15px;
+       }
+       p{
+           font-size: 20px;
+       }
+   }
 </style>
