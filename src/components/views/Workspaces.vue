@@ -11,8 +11,13 @@
                         <p>{{space.path}}</p>
                     </div>
 
-                    <div class="import-workspace-btn" @click="importworkspace">
-                        <p>import</p>
+                    <div class="workspace-btn">
+                        <div class="import-workspace-btn" @click="importworkspace">
+                            <p>import</p>
+                        </div>
+                        <div class="new-workspace-btn" @click="newworkspace">
+                            <p>New</p>
+                        </div>
                     </div>
                 </div>
 
@@ -102,6 +107,9 @@
                 }
             },
             importworkspace(){
+
+            },
+            newworkspace(){
 
             },
             loadworkspace() {
@@ -195,7 +203,7 @@
                 })
 
                 anime({
-                    targets: ".import-workspace-btn, .workspace-control",
+                    targets: [".workspace-btn", ".workspace-control"],
                     opacity: ['0', '1'],
                     translateY: ['50', '0'],
                     delay: anime.stagger(100, {
@@ -219,7 +227,7 @@
             })
 
             anime({
-                targets: ".import-workspace-btn, .workspace-control",
+                targets: [".workspace-btn", ".workspace-control"],
                 opacity: ['1', '0'],
                 translateY: ['0', '50'],
                 delay: anime.stagger(100),
@@ -261,29 +269,37 @@
                 filter: brightness(80%);
             }
 
-            .import-workspace-btn{
-                cursor: pointer;
-                position: absolute;
-                bottom: 50px;
-                width: 150px;
-                height: 40px;
-                background-color: rgba($color: lightgray, $alpha: .3);
-                padding: 10px;
-                border-radius: 5px;
-                border: solid 2px var(--dark);
-                box-sizing: border-box;
-                display: flex;
-                justify-content: center;
-                align-items: center;
+
+        }
+
+        .workspace-btn{
+            position: absolute;
+            bottom: 50px;
+            display: flex;
+
+            .import-workspace-btn, .new-workspace-btn{
+            cursor: pointer;
+            width: 150px;
+            height: 40px;
+            background-color: rgba($color: lightgray, $alpha: .3);
+            padding: 10px;
+            border-radius: 5px;
+            border: solid 2px var(--dark);
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
                 p{
-                    font-size: 20px;
+                font-size: 20px;
                 }
             }
 
-            .import-workspace-btn:hover{
+            .import-workspace-btn:hover, .new-workspace-btn:hover{
                 background-color: mediumspringgreen;
             }
+
         }
+        
     }
 
     .workspace-info {

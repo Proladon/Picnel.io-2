@@ -361,32 +361,42 @@ export default {
                 this.$store.commit('UPDATE_LOG', {logger:'Copylog', log:`File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`})
             } catch (error) {
                 const extname = path.extname(this.filename)
+                let counter = 1
+                let repeat = true
+                target = path.join(targetpath, this.filename.replace(extname, `(${counter})${extname}`))
+
+                while (repeat) {
+                    if (fs.existsSync(target)) {
+                        counter += 1
+                        target = path.join(targetpath, this.filename.replace(extname, `(${counter})${extname}`))
+                    }
+                    else{
+                        repeat = false
+                    }
+                }
+
                 this.$modal.show('dialog',{
-                    text:"<input type='text'/>",
+                    title: "Already Exist & Auto Rename",
+                    text: `Auto rename to: ${path.basename(target)}`,
                     buttons: [
                         {
-                            title: "+ 1",
+                            title: "Rename & Copy",
                             class: "dialog-btn dialog-green-btn",
                             handler: () => {
-                                target = path.join(targetpath, this.filename.replace(extname, ` 1${extname}`))
                                 fs.copySync(this.filepath, target, {overwrite: false, errorOnExist: true})
-                                this.$store.commit('UPDATE_LOG', {logger:'Copylog', log:`File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`})
+                                this.$modal.hide("dialog")
                             }
                         },
                         {
-                            title: "+ (1)",
-                            class: "dialog-btn dialog-green-btn",
+                            title: "Cancel Copy",
+                            class: "dialog-btn dialog-red-btn",
                             handler: () => {
-                                
+                                this.$modal.hide("dialog")
                             }
                         },
-                        {
-                            title: "Cancel",
-                            class: "dialog-btn dialog-red-btn"
-                        }
                     ]
                 })
-                console.log("CE")
+
             }
         },
         movefile(targetpath){
