@@ -41,7 +41,7 @@
 
                     <div class="workspace-control">
                         <div class="load-workspace" @click="loadworkspace">Load</div>
-                        <div class="delete-workspace" @click="deleteworkspace">Delete</div>
+                        <div class="delete-workspace" @click="deleteworkspace">Remove</div>
                     </div>
                     
                 </div>
@@ -60,6 +60,8 @@
     import Store from 'electron-store'
     import fs from 'fs-extra'
     import anime from "animejs";
+    import { remote } from 'electron';
+
     export default {
         name: "Workspaces",
         data() {
@@ -107,7 +109,39 @@
                 }
             },
             importworkspace(){
+                let select = remote.dialog.showOpenDialog({
+                    properties:['openFile'],
+                    filters:[{name: 'workspace', extensions:['json']}]
+                })
+                select.then(res => {
+                    const selectPath = res.filePaths[0]
+                    fs.readJson(selectPath)
+                        .then(res => {
+                            const selectWorkspace = res.app.workspace.name
+                            const store = new Store()
+                            let workspaces = store.get('workspaces')
+                            
+                            workspaces.forEach(element => {
+                                if (selectPath === element.path){
+                                    this.$notify({
+                                        group: 'workspace',
+                                        title: 'Workspace exist',
+                                        text: `${element.name} already exist`
+                                    })
+                                    return
+                                }
+                            })
 
+                            const data = {
+                                name: selectWorkspace,
+                                path: selectPath,
+                                cover: ''
+                            }
+                            workspaces.push(data)
+                            this.workspaces = workspaces
+                            store.set('workspaces', workspaces)
+                        })
+                })
             },
             newworkspace(){
                 const newstate = {
@@ -155,7 +189,8 @@
                 fs.readJson(this.data.path)
                     .then((res) => {
                         this.$store.commit('SET_STATE', res)
-                        this.$store.commit('HOME_VIEW')
+                        this.$store.commit('SET_VIEW', 'home')
+                        // this.$store.commit('HOME_VIEW')
                     })
                     .catch((err) => {
                         console.log(err)
@@ -178,31 +213,20 @@
                     })
                 }
                 this.$modal.show('dialog', {
-                    title: 'Delete Workspace',
-                    text: 'This will delete workspace.json file permanently!',
+                    title: 'Remove Workspace',
+                    text: "This only remove workspace from the list, you still can import it again",
                     buttons: [
                         {
-                            title: 'Delete',
+                            title: 'Remove',
                             class: "dialog-red-btn dialog-btn",
                             handler: () => {
-                                fs.remove(this.data.path)
-                                    .then(()=> {
-                                        const store = new Store()
-                                        let wks = store.get('workspaces')
-                                        wks.splice(this.index, 1)
-                                        store.set('workspaces', wks)
-                                        this.workspaces = wks
-                                        this.data = ""
-                                        this.cover = ""
-                                    })
-                                    .catch((res) => {
-                                        this.$notify({
-                                            group: 'workspace',
-                                            type: 'error',
-                                            title: 'Error',
-                                            text: res
-                                        })
-                                    })
+                                const store = new Store()
+                                let wks = store.get('workspaces')
+                                wks.splice(this.index, 1)
+                                store.set('workspaces', wks)
+                                this.workspaces = wks
+                                this.data = ""
+                                this.cover = ""
                                 this.$modal.hide('dialog')
                             }
                         },

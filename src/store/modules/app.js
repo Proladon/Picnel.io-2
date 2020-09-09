@@ -2,17 +2,19 @@ import Vue from 'vue'
 const state = {
     isChanged: false,
 
+    curView: 'home',
+
     workspace: {
         name: "untitled",
         path: "",
     },
     
-    views: {
-        workspacesView: false,
-        infoView: false,
-        updateView: false,
-        settingsView: false,
-    },
+    // views: {
+    //     workspacesView: false,
+    //     infoView: false,
+    //     updateView: false,
+    //     settingsView: false,
+    // },
 }
 
 const mutations = {
@@ -21,6 +23,10 @@ const mutations = {
             state.views[v] = false
         })
         Vue.set(state.views, view, true)
+    },
+
+    SET_VIEW: (state, view) => {
+        state.curView = view
     },
 
     SET_WORKSPACE: (state, workspace) => {

@@ -50,8 +50,8 @@
 
         <!-- Views -->
         <transition name="fade">
-            <Workspaces v-if="views.workspacesView"/>
-            <Info v-if="views.infoView"/>
+            <Workspaces v-if="views === 'workspaces'"/>
+            <Info v-if="views === 'info'"/>
         </transition>
 
         <!-- Notify -->
@@ -122,15 +122,12 @@
         },
         computed:{
             views(){
-                return this.$store.state.app.views
+                return this.$store.state.app.curView
             },
             workspace(){
                 return this.$store.state.app.workspace
             }
         },
-        mounted(){
-
-        }
     }
 </script>
 

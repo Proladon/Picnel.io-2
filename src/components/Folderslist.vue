@@ -410,7 +410,37 @@
                 }
             },
             movefile(targetpath) {
-                let success = false
+                const changeFile = ()=>{
+                    if (this.mode === "Random") {
+                        this.$store.dispatch("RANDOM_FILE")
+                    } else {
+                        this.$store.dispatch("NEXT_FILE")
+                        let files_list = fs
+                            .readdirSync(this.$store.getters.getFolderPath)
+                            .map((f) => {
+                                return `${this.$store.getters.getFolderPath}/${f.replace(/\\/g, "/")}`
+                            })
+                        if (files_list.length === 1) {
+                            this.$store.commit(
+                                "SET_CURFILE",
+                                files_list[0]
+                            )
+                        } else if (
+                            this.fileindex < files_list.length
+                        ) {
+                            this.$store.commit(
+                                "SET_CURFILE",
+                                files_list[this.fileindex - 1]
+                            )
+                        }
+                    }
+                    this.$store.commit("UPDATE_LOG", {
+                        logger: "Movelog",
+                        log: `File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`,
+                    });
+                }
+                
+                // let success = false
                 if (targetpath === "") {
                     this.$notify(targetPathEmpty("folderlist"));
                     return;
@@ -420,12 +450,14 @@
                 }
                 targetpath = targetpath.replace(/\\/g, "/");
                 let target = path.join(targetpath, this.filename);
+                
                 try {
                     fs.moveSync(this.filepath, target, {
                         overwrite: false,
                         errorOnExist: true,
                     });
-                    success = true
+                    changeFile()
+                    // success = true
                 } catch (error) {
                     const extname = path.extname(this.filename);
                     let counter = 1;
@@ -433,7 +465,8 @@
                     target = path.join(
                         targetpath,
                         this.filename.replace(extname, `(${counter})${extname}`)
-                    );
+                    )
+
                     while (repeat) {
                         if (fs.existsSync(target)) {
                             counter += 1;
@@ -459,7 +492,8 @@
                                         overwrite: false,
                                         errorOnExist: true,
                                     });
-                                    success = true
+                                    // success = true
+                                    changeFile()
                                     this.$modal.hide("dialog");
                                 },
                             },
@@ -475,39 +509,7 @@
                     });
                 }
 
-                if(success){
-                    if (this.mode === "Random") {
-                        this.$store.dispatch("RANDOM_FILE");
-                    } else {
-                        this.$store.dispatch("NEXT_FILE");
-                        let files_list = fs
-                            .readdirSync(
-                                this.$store.getters.getFolderPath
-                            )
-                            .map((f) => {
-                                return `${
-                                                    this.$store.getters.getFolderPath
-                                                }/${f.replace(/\\/g, "/")}`;
-                            });
-                        if (files_list.length === 1) {
-                            this.$store.commit(
-                                "SET_CURFILE",
-                                files_list[0]
-                            );
-                        } else if (
-                            this.fileindex < files_list.length
-                        ) {
-                            this.$store.commit(
-                                "SET_CURFILE",
-                                files_list[this.fileindex - 1]
-                            );
-                        }
-                    }
-                    this.$store.commit("UPDATE_LOG", {
-                        logger: "Movelog",
-                        log: `File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`,
-                    });
-                }
+
             },
             save() {
                 if (

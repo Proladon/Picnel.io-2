@@ -17,7 +17,7 @@
                 </div>
 
                 <div class="info-btn url-btn" @click="report" :class="{active_info_btn : info==='report'}">
-                    <p>🔥 Bugs report</p>
+                    <p>🔥 Issues report</p>
                 </div>
             </div>
             

@@ -7,23 +7,23 @@
             <p align="center">{{viewmode}}</p>
         </div>
 
-        <div class="views" id="homeview" @click="homeView">
+        <div class="views" id="homeview" @click="homeView" :class="{active_view: views === 'home'}">
             <img src="@/assets/icon/home.svg">
         </div>
 
-        <div class="views" @click="worksapceView">
+        <div class="views" @click="worksapceView" :class="{active_view: views === 'workspaces'}">
             <img src="@/assets/icon/book.svg">
         </div>
 
-        <div class="views" @click="infoView">
+        <div class="views" @click="infoView" :class="{active_view: views === 'info'}">
             <img src="@/assets/icon/info.svg" style="width:70%">
         </div>
         
-        <div class="views" @click="updateView">
+        <div class="views" @click="updateView" :class="{active_view: views === 'update'}">
             <img src="@/assets/icon/update.svg">
         </div>
         
-        <div class="views" @click="settingsView">
+        <div class="views" @click="settingsView" :class="{active_view: views === 'settings'}">
             <img src="@/assets/icon/energy.svg">
         </div>
 
@@ -47,7 +47,8 @@
             
             homeView(e){
                 this.target = e.target
-                this.$store.commit('HOME_VIEW')
+                this.$store.commit('SET_VIEW', "home")
+                // this.$store.commit('HOME_VIEW')
             },
             changeMode() {
                 if (this.viewmode === 'Random') {
@@ -63,55 +64,61 @@
                 })
             },
             worksapceView(e){
+                console.log("change workspace")
                 this.target = e.target
-                this.$store.commit('CHANGE_VIEW', "workspacesView")
+                this.$store.commit('SET_VIEW', "workspaces")
             },
             infoView(e){
+                console.log("change info")
                 this.target = e.target
-                this.$store.commit('CHANGE_VIEW', "infoView")
+                this.$store.commit('SET_VIEW', "info")
             },
             updateView(){
                 remote.dialog.showMessageBox({
                     message: "Sorry! this page is not done yet"
                 })
+                // this.$store.commit('SET_VIEW', "update")
 
                 // this.target = e.target
-                // this.$store.commit('CHANGE_VIEW', "updateView")
             },
             settingsView(){
                 remote.dialog.showMessageBox({
                     message: "Sorry! this page is not done yet"
                 })
+                // this.$store.commit('SET_VIEW', "settings")
+
                 // this.target = e.target
-                // this.$store.commit('CHANGE_VIEW', "settingsView")
             },
         },
         computed: {
             workspacesView(){
                 return this.$store.state.app.views.workspacesView
             },
+            views(){
+                return this.$store.state.app.curView
+            },
             ...mapGetters({
                 viewmode: 'getMode'
             })
         },
         watch:{
-            workspacesView:{
-                handler: function (view) {
-                    if(view === false){
-                        this.target = document.getElementById('homeview')
-                    }
-                }
-            },
-            target: (e)=>{
-                document.getElementsByClassName('views').forEach(element => {
-                    element.classList.remove('active-view')
-                })
-                e.classList.add('active-view')
-            }
+            // workspacesView:{
+            //     handler: function (view) {
+            //         if(view === false){
+            //             this.target = document.getElementById('homeview')
+            //         }
+            //     }
+            // },
+            // target: (e)=>{
+            //     document.getElementsByClassName('views').forEach(element => {
+            //         element.classList.remove('active_view')
+            //     })
+            //     e.classList.add('active_view')
+            // }
         },
-        mounted(){
-            document.getElementById('homeview').classList.add('active-view')
-        }
+        // mounted(){
+        //     document.getElementById('homeview').classList.add('active_view')
+        // }
     }
 </script>
 
@@ -151,7 +158,7 @@
         background-color: rgba($color: #000000, $alpha: .3);
     }
 
-    .active-view{
+    .active_view{
         background-color: rgba($color: #000000, $alpha: .3);
     }
 
