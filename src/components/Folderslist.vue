@@ -565,7 +565,7 @@ export default {
                 workspaces[wkindex].main = this.filefolder;
                 store.set("workspaces", workspaces);
 
-                if (q !== null){
+                if (q === 'quit'){
                     remote.app.exit()
                 }
             });
@@ -611,7 +611,6 @@ export default {
                                 main: this.filefolder,
                                 cover: "",
                             };
-                            console.log(workspaces);
                             if (workspaces !== undefined) {
                                 // check exist
                                 let repeat = false;
@@ -630,8 +629,7 @@ export default {
                                 workspaces.push(savedata);
                                 store.set("workspaces", workspaces);
                             }
-
-                            if (q !== null){
+                            if (q === 'quit'){
                                 remote.app.exit()
                             }
                         })
