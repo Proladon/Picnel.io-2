@@ -28,7 +28,7 @@
                 <div class="release-info" v-if="info === 'release'">
                     <p class="content-h1">Release</p>
                     <div class="content-block">
-                        <p class="content-h2">Ver. 1.0 Alpha</p>
+                        <p class="content-h2">Ver 1.0.2 Beta</p>
                     </div>
                 </div>
 

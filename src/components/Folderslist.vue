@@ -310,7 +310,17 @@ export default {
                                 }
                             }
                             // Check Empty
-                            if (newName !== "") {
+                            if (/^\d+$/.test(newName)){
+                                element.value = "";
+                                this.$notify({
+                                    group: 'folderlist',
+                                    type: 'warn',
+                                    title: 'Unexpected Name',
+                                    text: `Don't use number as name`
+                                })
+                                return;
+                            }
+                            else if (newName !== "") {
                                 // Change Group Name
                                 this.$store.commit("RENAME_GROUP", {
                                     index: this.groupIndex,

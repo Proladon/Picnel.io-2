@@ -11,7 +11,7 @@
 
         <!-- Notify -->
         <notifications
-            group="onlyfolder"
+            group="addgroup"
             position="bottom right"
             animation-type="velocity"
         />
@@ -38,13 +38,24 @@ export default {
             if (newName === "" || repeat === true) {
                 el.value = "";
                 this.$notify({
-                    group: 'foo',
+                    group: 'addgroup',
                     type: 'warn',
                     title: 'Repeat Warn',
                     text: `${newName} already in groups`
                 })
                 return;
-            } else {
+            } 
+            else if (/^\d+$/.test(newName)){
+                el.value = "";
+                this.$notify({
+                    group: 'addgroup',
+                    type: 'warn',
+                    title: 'Unexpected Name',
+                    text: `Don't use number as name`
+                })
+                return;
+            }
+            else {
                 const data = {
                     name: newName,
                 }
@@ -59,7 +70,7 @@ export default {
                 }
 
                 this.$notify({
-                    group: 'foo',
+                    group: 'addgroup',
                     title: 'Create group',
                     text: `Create group: ${newName} successful`
                 })
