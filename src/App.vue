@@ -113,7 +113,27 @@
             },
             quit(){
                 if (this.workspace.name.includes('*')){
-                    this.$modal.show("dialog")
+                    this.$modal.show("dialog", {
+                        title: 'Do you want to quit ?',
+                        text: 'Workspace have been changed and unsave.',
+                        buttons: [
+                            {
+                                title: 'Save & Quit',
+                                class: 'dialog-btn dialog-green-btn',
+                                handler: () => {
+                                    this.$bus.$emit('quit:save')
+                                    this.$modal.hide("dialog")
+                                }
+                            },
+                            {
+                                title: 'Unsave & Quit',
+                                class: 'dialog-btn dialog-red-btn',
+                                handler: () => {
+                                    remote.app.exit()
+                                }
+                            },
+                        ]
+                    })
                 }
                 else{
                     remote.app.exit()

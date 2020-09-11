@@ -160,13 +160,7 @@
                             name: "untitled",
                             path: "",
                         },
-                        
-                        views: {
-                            workspacesView: false,
-                            infoView: false,
-                            updateView: false,
-                            settingsView: false,
-                        },
+                        curView: 'home',
                     },
                     logger: {
                         activeTab: "Copylog",
@@ -182,7 +176,7 @@
                     }
                 }
                 this.$store.commit('SET_STATE', newstate)
-                this.$store.commit('HOME_VIEW')
+                // this.$store.commit('SET_VIEW', 'home')
             },
             loadworkspace() {
                 

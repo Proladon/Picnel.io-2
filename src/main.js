@@ -6,6 +6,7 @@ import Viewer from "v-viewer";
 import VModal from "vue-js-modal";
 import VNotifications from "vue-notification";
 import velocity from "velocity-animate";
+import './assets/func/bus'
 
 Vue.config.productionTip = false;
 Vue.use(Viewer);

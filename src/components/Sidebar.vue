@@ -64,12 +64,10 @@
                 })
             },
             worksapceView(e){
-                console.log("change workspace")
                 this.target = e.target
                 this.$store.commit('SET_VIEW', "workspaces")
             },
             infoView(e){
-                console.log("change info")
                 this.target = e.target
                 this.$store.commit('SET_VIEW', "info")
             },
