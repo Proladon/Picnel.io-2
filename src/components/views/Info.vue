@@ -38,7 +38,7 @@
                     <div class="intro content-block">
                         <img src="@/assets/icon/pic2.png" alt="">
                         <div class="intro-content">
-                            <p>Version: 1.0.0 alpha</p>
+                            <p>Version: 1.0.2 Beta</p>
                         </div>
                     </div>   
                     <div class="related-img content-block">
@@ -52,14 +52,14 @@
                         <div class="profile-content">
                             <p>Proladon</p>
                             <div class="link-wrapper">
-                                <a href="https://github.com/Proladon">Github Profile</a>
-                                <a href="https://github.com/Proladon">Discord Server</a>
+                                <a class="link" @click="openlink('https://github.com/Proladon')">Github Profile</a>
+                                <a class="link"  @click="openlink('https://shelter-zone.github.io/SHELTER-ZONE/#/')">Discord Server</a>
                             </div>
                         </div>
                     </div>
 
                     <p class="content-h2">OpenSource</p>
-                    <a href="https://github.com/Proladon/Picnel.io-2">Github</a>
+                    <a class="link" @click="openlink('https://github.com/Proladon/Picnel.io-2')">Github Repository</a>
 
                 </div>
 
@@ -79,6 +79,9 @@ import {shell, remote} from 'electron'
             }
         },
         methods:{
+            openlink(link){
+                shell.openExternal(link)
+            },
             release(){
                 // this.info = 'release'
                 remote.dialog.showMessageBox({
@@ -102,7 +105,14 @@ import {shell, remote} from 'electron'
 
 <style scoped lang="scss">
     //    #info-view{}
-
+    .link{
+        color: skyblue;
+        text-decoration: underline;
+        cursor: pointer;
+        font-size: 12px;
+        margin-top: 5px;
+        margin-right: 20px;
+    }
     .info-content-wrapper {}
 
     .active_info_btn{
@@ -213,6 +223,7 @@ import {shell, remote} from 'electron'
                 font-size: 30px;
                 color: white;
             }
+            
         }
     }
 </style>
