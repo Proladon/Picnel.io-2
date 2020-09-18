@@ -1,8 +1,14 @@
-# Picnel.io-2
-## [Documentation](https://proladon.github.io/Picnel.io-2_Documentation/)
-## [Download](https://github.com/Proladon/Picnel.io-2/releases)
+<p align="center">
+  <img src="https://github.com/Proladon/Picnel.io-2/blob/master/src/assets/icon/pic2.png" width="70" />
+</p>
+
+<h1 align="center">Picnel.io 2</h1>  
+
 ## Picnel.io 2 is rebuild of [Picnel.io](https://github.com/Proladon/Picnel.io)
 Picnel.io-2 is using `vue-electron`(Vue 2). so unlike picnel.io building with C# `WPF`, it's cross platform.
+
+#### [Documentation](https://proladon.github.io/Picnel.io-2_Documentation/)  
+#### [Download](https://github.com/Proladon/Picnel.io-2/releases)  
 
 ## Develop status: [Progress status](https://github.com/Proladon/Picnel.io-2/projects/1)
 
