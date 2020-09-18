@@ -83,18 +83,13 @@ import {shell, remote} from 'electron'
                 shell.openExternal(link)
             },
             release(){
-                // this.info = 'release'
-                remote.dialog.showMessageBox({
-                    message: "Sorry, we don't have documentation yet :("
-                })
+                shell.openExternal('https://github.com/Proladon/Picnel.io-2/releases')
             },
             about(){
                 this.info = 'about'
             },
             docs(){
-                remote.dialog.showMessageBox({
-                    message: "Sorry, we don't have documentation yet :("
-                })
+                shell.openExternal('https://proladon.github.io/Picnel.io-2_Documentation/')
             },
             report(){
                 shell.openExternal('https://github.com/Proladon/Picnel.io-2/issues/new')
