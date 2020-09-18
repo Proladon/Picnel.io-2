@@ -61,3 +61,35 @@
 .info-content::-webkit-scrollbar-corner {
     background: transparent;
 }
+
+// ---------------- //
+//            Workspace        //
+// ---------------- //
+
+/* width */
+.workspace-item-wrapper::-webkit-scrollbar {
+    width: 12px;
+}
+
+.workspace-item-wrapper::-webkit-scrollbar:horizontal {
+    height: 5px;
+}
+
+/* Track */
+.workspace-item-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* Handle */
+.workspace-item-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Handle on hover */
+.workspace-item-wrapper::-webkit-scrollbar-thumb:hover {
+    background: rgb(25, 200, 206);
+}
+
+.workspace-item-wrapper::-webkit-scrollbar-corner {
+    background: transparent;
+}

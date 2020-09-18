@@ -104,7 +104,7 @@ export default new Vuex.Store({
                 context.commit('SET_CURFILE', random_file)
             }
             else {
-                context.commit('SET_CURFILE', context.state.home)
+                context.commit('SET_CURFILE', '')
             }
         },
 
@@ -132,7 +132,7 @@ export default new Vuex.Store({
                 }
             }
             else {
-                context.commit('SET_CURFILE', context.state.home)
+                context.commit('SET_CURFILE', '')
             }
         },
 

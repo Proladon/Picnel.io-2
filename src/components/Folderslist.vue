@@ -20,7 +20,7 @@
         <splitpanes>
             <!-- Folders -->
             <pane size="70">
-                <draggable v-model="folderlist" v-bind="dragOptions">
+                <draggable v-model="folderlist" v-bind="dragOptions" :move="checkmove">
                     <transition-group type="transition">
                         <div
                             v-for="(i, index) in folderlist"
@@ -50,7 +50,7 @@
 
             <!-- Group -->
             <pane>
-                <draggable v-model="foldergroups" v-bind="dragOptions">
+                <draggable v-model="foldergroups" v-bind="dragOptions" :move="checkmove">
                     <div
                         class="draggable-group"
                         v-for="(group, index) in foldergroups"
@@ -424,58 +424,43 @@ export default {
                                     overwrite: false,
                                     errorOnExist: true,
                                 });
-                                this.$modal.hide("dialog");
+                                this.$modal.hide("dialog")
                             },
                         },
                         {
                             title: "Cancel Copy",
                             class: "dialog-btn dialog-red-btn",
                             handler: () => {
-                                this.$modal.hide("dialog");
+                                this.$modal.hide("dialog")
                             },
                         },
                     ],
-                });
+                })
             }
         },
         movefile(targetpath) {
             const changeFile = () => {
                 if (this.mode === "Random") {
-                    this.$store.dispatch("RANDOM_FILE");
+                    this.$store.dispatch("RANDOM_FILE")
                 } else {
-                    this.$store.dispatch("NEXT_FILE");
-                    let files_list = fs
-                        .readdirSync(this.$store.getters.getFolderPath)
-                        .map((f) => {
-                            return `${
-                                this.$store.getters.getFolderPath
-                            }/${f.replace(/\\/g, "/")}`;
-                        });
-                    if (files_list.length === 1) {
-                        this.$store.commit("SET_CURFILE", files_list[0]);
-                    } else if (this.fileindex < files_list.length) {
-                        this.$store.commit(
-                            "SET_CURFILE",
-                            files_list[this.fileindex - 1]
-                        );
-                    }
+                    this.$store.dispatch("NEXT_FILE")
                 }
                 this.$store.commit("UPDATE_LOG", {
                     logger: "Movelog",
                     log: `File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`,
-                });
+                })
             };
 
             // let success = false
             if (targetpath === "") {
-                this.$notify(targetPathEmpty("folderlist"));
-                return;
+                this.$notify(targetPathEmpty("folderlist"))
+                return
             } else if (this.filename === "picnel.io.png") {
-                this.$notify(noFile("folderlist", "copy"));
-                return;
+                this.$notify(noFile("folderlist", "copy"))
+                return
             }
-            targetpath = targetpath.replace(/\\/g, "/");
-            let target = path.join(targetpath, this.filename);
+            targetpath = targetpath.replace(/\\/g, "/")
+            let target = path.join(targetpath, this.filename)
 
             try {
                 fs.moveSync(this.filepath, target, {
@@ -485,13 +470,13 @@ export default {
                 changeFile();
                 // success = true
             } catch (error) {
-                const extname = path.extname(this.filename);
-                let counter = 1;
-                let repeat = true;
+                const extname = path.extname(this.filename)
+                let counter = 1
+                let repeat = true
                 target = path.join(
                     targetpath,
                     this.filename.replace(extname, `(${counter})${extname}`)
-                );
+                )
 
                 while (repeat) {
                     if (fs.existsSync(target)) {
@@ -502,7 +487,7 @@ export default {
                                 extname,
                                 `(${counter})${extname}`
                             )
-                        );
+                        )
                     } else {
                         repeat = false;
                     }
@@ -533,7 +518,7 @@ export default {
                             },
                         },
                     ],
-                });
+                })
             }
         },
         save(q = null) {
@@ -639,6 +624,14 @@ export default {
                 }
             });
         },
+        checkmove(el){
+            if (el.dragged.classList[0]==='draggable-folder' && el.related.classList[0] === 'draggable-group'){
+                return false
+            }
+            else if (el.dragged.classList[0] === 'draggable-group' && el.related.classList[0] === 'draggable-folder'){
+                return false
+            }
+        }
     },
     computed: {
         allState() {
