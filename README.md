@@ -16,7 +16,7 @@ Picnel.io-2 is using `vue-electron`(Vue 2). so unlike picnel.io building with C#
 - ## [Documentation](https://proladon.github.io/Picnel.io-2_Documentation/)  
 - ## [Download](https://github.com/Proladon/Picnel.io-2/releases)  
 
-## Develop status: [Progress status](https://github.com/Proladon/Picnel.io-2/projects/1)
+<!-- ## Develop status: [Progress status](https://github.com/Proladon/Picnel.io-2/projects/1) -->
 
 ## Features add
 1. Allow dragdrop to reorder target folder position
