@@ -66,7 +66,7 @@
 
         <!-- Context Menu -->
         <Groupcontext @deletegroup="deleteGroup" @renamegroup="renameGroup" />
-        <Foldercontext @removefolder="removeFolder" @openfolder="openFolder" />
+        <Foldercontext @removefolder="removeFolder" @openfolder="openFolder" @setmainfolder="setMainFolder" />
 
         <!-- Notify -->
         <notifications
@@ -99,6 +99,7 @@ import path from "path";
 import { shell, remote } from "electron";
 import Store from "electron-store";
 import { savefilter } from "@/assets/func/savefilter.js";
+import {filesFilter, globDirFiles} from "@/assets/func/helper.js";
 
 export default {
     name: "Folderslist",
@@ -372,11 +373,66 @@ export default {
         openFolder() {
             shell.openPath(this.folderpath);
         },
+        setMainFolder(){
+            let target = this.folderpath.replace(/\\/g, '/')
+            
+            if(this.filefolder  === target) {
+                this.$notify({
+                    group: 'folderlist',
+                    type: 'notice',
+                    title: 'Notice',
+                    text: 'Current Main Folder is this folder'
+                });
+                return
+            }
+
+            this.$store.commit('CLEAR_TEMP_FILES_LIST', target)
+
+            const files = globDirFiles(target)
+            const readable = filesFilter(files)
+            if(readable.length >= 3000){
+                this.$store.commit('OVERIDE_TEMP_FILES_LIST', files)
+                this.$store.commit('SET_CURFILE', readable[0])
+                this.$modal.show("dialog", {
+                    title: '🚧 Cache Files List Auto Enable',
+                    text: "When directory have over 3000 files, it will use cache files list, that means it won't update directory with all operation outside Picnel.io 2, untill you click 'Refresh'.",
+                    buttons:[
+                        {
+                            title: "Got it",
+                            class: "dialog-btn dialog-green-btn",
+                            handler: () => {
+                                this.$modal.hide("dialog")
+                            }
+                        },
+                        {
+                            title: "Learn more",
+                            class: "dialog-btn dialog-red-btn",
+                            handler: () => {
+                                remote.shell.openExternal("https://proladon.github.io/Picnel.io-2_Documentation/cache/")
+                                this.$modal.hide("dialog")
+                            }
+                        }
+                    ]
+                })
+            }
+            else if (readable.length > 0) {
+                this.$store.commit('SET_CURFILE', readable[0])
+            }
+            else if (readable.length === 0) {
+                this.$notify({
+                    group: 'folderlist',
+                    type: 'warn',
+                    title: 'Warn',
+                    text: 'No readable files in the directory'
+                });
+            }
+            
+        },
         copyfile(targetpath) {
             if (targetpath === "") {
                 this.$notify(targetPathEmpty("folderlist"));
                 return;
-            } else if (this.filename === "picnel.io.png") {
+            } else if (this.filepath === "") {
                 this.$notify(noFile("folderlist", "copy"));
                 return;
             }
@@ -439,37 +495,46 @@ export default {
             }
         },
         movefile(targetpath) {
+            let index = this.fileindex
             const changeFile = () => {
+                if (this.tempfileslist.length > 3000){
+                    this.$store.commit('REMOVE_TEMP_FILES_ITEM', index)
+                }
+                
                 if (this.mode === "Random") {
                     this.$store.dispatch("RANDOM_FILE")
                 } else {
-                    this.$store.dispatch("NEXT_FILE")
+                    this.$store.dispatch("AFTER_MOVE_NEXT", index)
                 }
+
                 this.$store.commit("UPDATE_LOG", {
                     logger: "Movelog",
                     log: `File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`,
                 })
             };
 
-            // let success = false
+            // 排除空白目的位址
             if (targetpath === "") {
                 this.$notify(targetPathEmpty("folderlist"))
                 return
-            } else if (this.filename === "picnel.io.png") {
-                this.$notify(noFile("folderlist", "copy"))
+            } else if (this.filepath === "") {
+                this.$notify(noFile("folderlist", "move"))
                 return
             }
+            
             targetpath = targetpath.replace(/\\/g, "/")
+            let curpath = this.filepath
             let target = path.join(targetpath, this.filename)
 
             try {
-                fs.moveSync(this.filepath, target, {
+                fs.moveSync(curpath, target, {
                     overwrite: false,
                     errorOnExist: true,
                 });
                 changeFile();
-                // success = true
+
             } catch (error) {
+                
                 const extname = path.extname(this.filename)
                 let counter = 1
                 let repeat = true
@@ -500,12 +565,12 @@ export default {
                             title: "Rename & Move",
                             class: "dialog-btn dialog-green-btn",
                             handler: () => {
-                                fs.moveSync(this.filepath, target, {
+                                fs.move(this.filepath, target, {
                                     overwrite: false,
                                     errorOnExist: true,
-                                });
-                                // success = true
-                                changeFile();
+                                }).then(()=>{
+                                    changeFile();
+                                })
                                 this.$modal.hide("dialog");
                             },
                         },
@@ -655,6 +720,9 @@ export default {
         filename() {
             return this.$store.getters.getFileName;
         },
+        tempfileslist(){
+            return this.$store.state.cache.tempFilesList;
+        },
         foldergroups: {
             get() {
                 return this.$store.state.folderGroups;
@@ -690,7 +758,7 @@ export default {
             };
         },
         tempColor() {
-            return this.$store.state.tempColor;
+            return this.$store.state.cache.tempColor;
         },
     },
     mounted() {

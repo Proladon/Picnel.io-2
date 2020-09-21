@@ -180,11 +180,40 @@
             },
             loadworkspace() {
                 
+                this.$store.commit('CLEAR_TEMP_FILES_LIST')
+
                 fs.readJson(this.data.path)
                     .then((res) => {
                         this.$store.commit('SET_STATE', res)
                         this.$store.commit('SET_VIEW', 'home')
-                        // this.$store.commit('HOME_VIEW')
+
+                        this.$store.commit('SET_TEMP_FILES_LIST', this.filefolder)
+                        if (this.tempfileslist.length < 3000){
+                            this.$store.commit('CLEAR_TEMP_FILES_LIST', this.filefolder)
+                        }
+                        else if (this.tempfileslist.length >= 3000) {
+                            this.$modal.show("dialog", {
+                                title: '🚧 Cache Files List Auto Enable',
+                                text: "When directory have over 3000 files, it will use cache files list, that means it won't update directory with all operation outside Picnel.io 2, untill you click 'Refresh'.",
+                                buttons:[
+                                    {
+                                        title: "Got it",
+                                        class: "dialog-btn dialog-green-btn",
+                                        handler: () => {
+                                            this.$modal.hide("dialog")
+                                        }
+                                    },
+                                    {
+                                        title: "Learn more",
+                                        class: "dialog-btn dialog-red-btn",
+                                        handler: () => {
+                                            remote.shell.openExternal("https://proladon.github.io/Picnel.io-2_Documentation/cache/")
+                                            this.$modal.hide("dialog")
+                                        }
+                                    }
+                                ]
+                            })
+                        }
                     })
                     .catch((err) => {
                         console.log(err)
@@ -195,6 +224,8 @@
                             text: "Can't not load workspace"
                         })
                     })
+
+                
                 
             },
             deleteworkspace(){
@@ -235,7 +266,14 @@
                 })
             }
         },
-        computed: {},
+        computed: {
+            filefolder(){
+                return this.$store.getters.getFolderPath;
+            },
+            tempfileslist(){
+                return this.$store.state.cache.tempFilesList
+            }
+        },
         mounted() {
             anime({
                 targets: "#workspaces",

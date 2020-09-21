@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import {shell} from 'electron'
+import {shell, remote} from 'electron'
 import { mapGetters } from "vuex";
 import anime from "animejs";
 import "viewerjs/dist/viewer.css";
@@ -107,20 +107,22 @@ export default {
                     if (fs.lstatSync(file.path).isDirectory()) {
                         // Directory
                         let readable = ["image", "video", "audio"];
-                        let readablelist = fs
-                            .readdirSync(file.path)
-                            .filter((f) => {
+                        
+
+                        this.$store.commit('SET_TEMP_FILES_LIST', file.path.replace(/\\/g, '/'))
+                        console.log(this.tempfileslist)
+
+
+                        let readablelist = this.tempfileslist.filter((f) => {
                                 let type = mime.lookup(f);
-                                if (
-                                    type !== false &&
-                                    readable.includes(type.split("/")[0])
-                                ) {
+                                if (type !== false &&readable.includes(type.split("/")[0])) {
                                     return f;
                                 }
                             });
 
                         // No readable files
                         if (readablelist.length === 0) {
+                            this.$store.commit('CLEAR_TEMP_FILES_LIST')
                             this.$notify({
                                 group: "nofiles",
                                 type: "error",
@@ -128,10 +130,34 @@ export default {
                                 text: "No readable files in the directory",
                             });
                         } else {
-                            this.$store.commit(
-                                "SET_CURFILE",
-                                `${file.path}/${readablelist[0]}`
-                            );
+                            this.$store.commit("SET_CURFILE",readablelist[0])
+
+                            if (this.tempfileslist.length > 3000){
+                                this.$modal.show("dialog", {
+                                    title: '🚧 Cache Files List Auto Enable',
+                                    text: "When directory have over 3000 files, it will use cache files list, that means it won't update directory with all operation outside Picnel.io 2, untill you click 'Refresh'.",
+                                    buttons:[
+                                        {
+                                            title: "Got it",
+                                            class: "dialog-btn dialog-green-btn",
+                                            handler: () => {
+                                                this.$modal.hide("dialog")
+                                            }
+                                        },
+                                        {
+                                            title: "Learn more",
+                                            class: "dialog-btn dialog-red-btn",
+                                            handler: () => {
+                                                remote.shell.openExternal("https://proladon.github.io/Picnel.io-2_Documentation/cache/")
+                                                this.$modal.hide("dialog")
+                                            }
+                                        }
+                                    ]
+                                })
+                            }
+                            else{
+                                this.$store.commit('CLEAR_TEMP_FILES_LIST')
+                            }
                         }
                     } else {
                         // Single File
@@ -191,22 +217,23 @@ export default {
                         title: "Delete",
                         class: "dialog-red-btn dialog-btn",
                         handler: () => {
-                            try {
-                                fs.removeSync(this.curfile)
-                                this.$store.commit('UPDATE_LOG', {
-                                    logger: 'Deletelog',
-                                    log: deletefileLogging(this.filename, this.curfile)
+                            let index = this.fileindex
+                            fs.remove(this.curfile)
+                                .then(()=>{
+                                    if(this.tempfileslist.length > 3000){
+                                        this.$store.commit('REMOVE_TEMP_FILES_ITEM', index)
+                                    }
+                                    if(this.mode === 'Random'){
+                                        this.$store.dispatch('RANDOM_FILE')
+                                    }
+                                    else if (this.mode === 'PreNext'){
+                                        this.$store.dispatch("AFTER_MOVE_NEXT", index)
+                                    }
                                 })
-
-                                if(this.mode === 'Random'){
-                                    this.$store.dispatch('RANDOM_FILE')
-                                }
-                                else if (this.mode === 'PreNext'){
-                                    this.$store.dispatch('NEXT_FILE')
-                                }
-                            } catch (error) {
-                                alert(error)
-                            }
+                            this.$store.commit('UPDATE_LOG', {
+                                logger: 'Deletelog',
+                                log: deletefileLogging(this.filename, this.curfile)
+                            })
                             
                             this.$modal.hide("dialog");
                         },
@@ -255,10 +282,13 @@ export default {
         }
     },
     computed: {
-
+            tempfileslist(){
+                return this.$store.state.cache.tempFilesList
+            },
         ...mapGetters({
             curfile: "getCurFilePath",
             filename: "getFileName",
+            fileindex: 'getFileIndex',
             filetype: "getFileType",
             files: "getFilesList",
             mode: "getMode",

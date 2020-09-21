@@ -3,9 +3,10 @@ import Vuex from "vuex";
 import fs from 'fs-extra'
 import mime from 'mime-types'
 import path from 'path'
-import {filesFilter, getDirFiles} from '@/assets/func/helper.js'
+import {filesFilter, globDirFiles, getDirFiles} from '@/assets/func/helper.js'
 import log from './modules/logger.js'
 import app from './modules/app.js'
+import cache from './modules/cache.js'
 
 Vue.use(Vuex);
 
@@ -19,7 +20,7 @@ export default new Vuex.Store({
             Wallpaper: [],
             ACG: [],
         },
-        tempColor: Object,
+
     },
     mutations: {
         SET_STATE: (state, data) => {
@@ -32,6 +33,12 @@ export default new Vuex.Store({
 
         SET_CURFILE: (state, data) => {
             state.curFile = data
+            if (!state.app.workspace.name.includes("*")) {
+                state.app.workspace = {
+                    name: `${state.app.workspace.name}*`,
+                    path: state.app.workspace.path,
+                }
+            }
         },
 
        
@@ -78,19 +85,23 @@ export default new Vuex.Store({
             state.activeGroup = group
         },
         
-        //:: Color
-        COLOR_UPDATE: (state, color) => {
-            state.tempColor = color
-        },      
     },
     actions: {
 
         //:: 隨機挑選圖片
-        RANDOM_FILE: (context) => {
+        RANDOM_FILE: context => {
             function randomChoice(arr) {
                 return arr[Math.floor(Math.random() * arr.length)];
             }
-            let files_list = getDirFiles(context.getters.getFolderPath)
+            let files_list = null
+            // Re-get all files in current folder
+            if (context.state.cache.tempFilesList.length > 3000) {
+                files_list = context.state.cache.tempFilesList
+            }
+            else {
+                files_list = getDirFiles(context.getters.getFolderPath)
+            }
+
             const files = filesFilter(files_list)
             //? 如果資料夾內有多個檔案才執行
             if (files.length > 0) {
@@ -110,18 +121,38 @@ export default new Vuex.Store({
 
         PRE_FILE: context => {
             let index = context.getters.getFileIndex
-            let files_list = getDirFiles(context.getters.getFolderPath)
+
+            let files_list = context.getters.getFilesList
+
             const files = filesFilter(files_list)
             
             if (files.length > 0 && index !== 0) {
                 context.commit('SET_CURFILE', files[index - 1])
             }
         },
-        NEXT_FILE: context => {
-            let index = context.getters.getFileIndex
-            let files_list = getDirFiles(context.getters.getFolderPath)
+        NEXT_FILE: (context, oldindex=null) => {
+            let index = 0
+            let files_list = null
+
+            if (oldindex !== null) index = oldindex
+            else {
+                index = context.getters.getFileIndex
+            }
+
+            if (context.state.cache.tempFilesList.length > 3000) {
+                files_list = context.state.cache.tempFilesList
+            }
+            else {
+                files_list = getDirFiles(context.getters.getFolderPath)
+            }
+
             const files = filesFilter(files_list)
 
+            if (oldindex !== null) {
+                context.commit('SET_CURFILE', files[index])
+                return
+            }
+            
             if (files.length === 1) {
                 context.commit('SET_CURFILE', files[0])
             }
@@ -141,12 +172,34 @@ export default new Vuex.Store({
                 if (err) return console.error(err);
                 console.log("success!")
             });
-        }
+        },
+
+        AFTER_MOVE_NEXT: (context, index) => {
+            let files_list = null
+            if (context.state.cache.tempFilesList.length > 3000) {
+                files_list = context.state.cache.tempFilesList
+            }
+            else {
+                files_list = getDirFiles(context.getters.getFolderPath)
+            }
+            const files = filesFilter(files_list)
+            if (files.length === 0) {
+                context.commit('SET_CURFILE', '')
+            }
+            else if (index + 1 < files.length) {
+                context.commit('SET_CURFILE', files[index])
+            }
+            else if (index + 1 > files.length) {
+                context.commit('SET_CURFILE', files[files.length - 1])
+            }
+        },
+        
 
     },
     modules: {
         app,
         log,
+        cache,
     },
     getters: {
         //:: File Path
@@ -177,10 +230,12 @@ export default new Vuex.Store({
         },
         //:: Folder Files_list
         getFilesList: (state, getters) => {
-            const files = fs.readdirSync(getters.getFolderPath).map(f => {
-                return `${getters.getFolderPath}/${f.replace(/\\/g, '/')}`
-            })
-            return files
+            if (state.cache.tempFilesList.length > 3000) {
+                return state.cache.tempFilesList
+            }
+            else {
+                return globDirFiles(getters.getFolderPath)
+            }
         },
         //:: File Index
         getFileIndex: (state, getters) => {
@@ -202,7 +257,6 @@ export default new Vuex.Store({
             let folder_items = files.filter(i =>
                 fs.lstatSync(i).isDirectory()
             )
-            
             
             const readable = filesFilter(files)
 

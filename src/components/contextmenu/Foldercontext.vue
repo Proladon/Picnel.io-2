@@ -1,7 +1,8 @@
 <template>
    <div id="folder-context">
        <div class="context-item-wrapper">
-            <p class="context-item" @click="$emit('openfolder')">Open Folder</p>
+            <p class="context-item" @click="$emit('openfolder')">Open folder</p>
+            <p class="context-item" @click="$emit('setmainfolder')">Set as main folder</p>
             <p class="context-item" @click="$emit('removefolder')">Remove</p>
         </div>
    </div>
@@ -36,6 +37,7 @@
 
     .context-item {
         cursor: pointer;
+        margin-bottom: 5px;
     }
 
     .context-item:hover {

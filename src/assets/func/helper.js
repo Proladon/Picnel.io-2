@@ -1,5 +1,6 @@
 import mime from "mime-types";
 import fs from "fs-extra";
+import fg from 'fast-glob'
 import path from "path";
 
 //:: Filter files inside folder, ignore folder、unsupport files
@@ -18,7 +19,7 @@ const filesFilter =  (files_list) => {
     return readable_files;
 };
 
-//:: Get all files in the folder
+//:: Get all files in the folder => fs
 const getDirFiles = (dirPath) => {
     let files_list = fs.readdirSync(dirPath).map((f) => {
         return `${dirPath}/${f.replace(/\\/g, "/")}`;
@@ -27,7 +28,13 @@ const getDirFiles = (dirPath) => {
     return files_list;
 };
 
+//:: Get all files in the folder => glob
+const globDirFiles = (dirPath) => {
+    return fg.sync(dirPath + '/*', { dot: false })
+};
+
 const renameJoin = (curPath, curfileName, newName, extName) => {
+    
     fs.renameSync(curPath, curPath.replace(curfileName, newName + extName));
     return curPath.replace(curfileName, newName + extName);
 };
@@ -47,6 +54,7 @@ const deletefileLogging = (fileName, curPath, ) => {
 export {
     filesFilter,
     getDirFiles,
+    globDirFiles,
     renameJoin,
     renameLogging,
     deletefileLogging,

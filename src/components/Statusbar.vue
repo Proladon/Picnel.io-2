@@ -5,6 +5,10 @@
             <p>♻</p>
         </div>
 
+        <div class="folder-refresh status-button status-item" @click="refreshfolder">
+            <p>Refresh</p>
+        </div>
+
         <!-- Upload Folder -->
         <div class="upload-btn-wrapper status-button status-item" @contextmenu="mainfolderContext">
             <label class="directory-upload">
@@ -39,10 +43,10 @@
 
 <script>
     import {mapGetters} from 'vuex'
-    import fs from 'fs-extra'
-    import path from 'path'
+    // import fs from 'fs-extra'
+    // import path from 'path'
     import mime from 'mime-types'
-    import { shell } from 'electron'
+    import { shell, remote } from 'electron'
     import Mainfoldercontext from  '@/components/contextmenu/Mainfoldercontext.vue'
 
     export default {
@@ -69,17 +73,21 @@
                         break
                     }
                 }
+                
+                this.$store.commit('SET_TEMP_FILES_LIST', root)
 
-                fs.readdirSync(root).map(f => {
-                    let type = mime.lookup(path.join(root, f))
+                this.tempfileslist.map(f => {
+                    let type = mime.lookup(f)
                     if(type !== false){
                         if(readable.includes(type.split('/')[0])){
-                            readablefiles.push(path.join(root, f))
+                            readablefiles.push(f)
                         }
                     }
                 })
+
                 // No readable files
                 if (readablefiles.length === 0){
+                    this.$store.commit('CLEAR_TEMP_FILES_LIST')
                     this.$notify({
                         group: 'statusbar',
                         type: 'warn',
@@ -89,9 +97,36 @@
                 }
                 else{
                     this.$store.commit('SET_CURFILE', readablefiles[0])
+
+                    if (this.tempfileslist.length > 3000){
+                        this.$modal.show("dialog", {
+                            title: '🚧 Cache Files List Auto Enable',
+                            text: "When directory have over 3000 files, it will use cache files list, that means it won't update directory with all operation outside Picnel.io 2, untill you click 'Refresh'.",
+                            buttons:[
+                                {
+                                    title: "Got it",
+                                    class: "dialog-btn dialog-green-btn",
+                                    handler: () => {
+                                        this.$modal.hide("dialog")
+                                    }
+                                },
+                                {
+                                    title: "Learn more",
+                                    class: "dialog-btn dialog-red-btn",
+                                    handler: () => {
+                                        remote.shell.openExternal("https://proladon.github.io/Picnel.io-2_Documentation/cache/")
+                                        this.$modal.hide("dialog")
+                                    }
+                                }
+                            ]
+                        })
+                    }
+                    else{
+                        this.$store.commit('CLEAR_TEMP_FILES_LIST')
+                    }
                 }
 
-                // reset selected file, or it won't be firing onchange event!
+                // reset selected file, or it won't be firing onchange event later!
                 e.target.value = null
             },
             //:: Reset Folder
@@ -106,6 +141,11 @@
                     return
                 }
                 this.$store.commit('SET_CURFILE', "")
+            },
+            refreshfolder(){
+                if (this.tempfileslist.length > 3000){
+                    this.$store.commit('SET_TEMP_FILES_LIST', this.folderpath)
+                }
             },
             mainfolderContext(e){
                 const element = document.getElementById("mainfolder-context");
@@ -132,6 +172,9 @@
             },
         },
         computed: {
+            tempfileslist(){
+                return this.$store.state.cache.tempFilesList
+            },
             ...mapGetters({
                 file: 'getCurFilePath',
                 filename: 'getFileName',
@@ -173,6 +216,8 @@
 
         .status-button {
             cursor: pointer;
+            padding-left: 5px;
+            padding-right: 5px;
             background-color: transparent;
             transition: ease-in-out .3s;
         }
@@ -181,11 +226,12 @@
             background-color: rgba($color: white, $alpha: .2);
         }
     }
-    .folder-reset{
+    .folder-reset, .folder-refresh{
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 30px;
+        // width: 30px;
+        
         height: 100%;
     }
     .folder-info{

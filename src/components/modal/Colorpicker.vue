@@ -33,6 +33,12 @@
             changeTagColor(){
                 this.folderlist[this.index].color = this.tempColor.hex
                 this.$store.commit('UPDATE_LISTS', this.folderlist)
+                if (!this.workspace.name.includes("*")) {
+                    this.$store.commit("SET_WORKSPACE", {
+                        name: `${this.workspace.name}*`,
+                        path: this.workspace.path,
+                    });
+                }
                 this.$emit('close')
             }
         },
@@ -44,9 +50,12 @@
             activegroup(){
                 return this.$store.state.activeGroup
             },
+            workspace() {
+                return this.$store.state.app.workspace;
+            },
             tempColor:{
                 get(){
-                    return this.$store.state.tempColor
+                    return this.$store.state.cache.tempColor
                 },
                 set(color){
                     this.$store.commit('COLOR_UPDATE', color)

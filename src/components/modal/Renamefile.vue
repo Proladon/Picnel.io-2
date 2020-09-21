@@ -27,6 +27,10 @@
             renamefull() {
                 let newName = this.$refs.fullinput.value
                 const newPath = renameJoin(this.filepath, this.filename, newName, this.extname)
+                // Handle cache files list
+                if (this.tempfileslist.length > 3000){
+                    this.$store.commit('RENAME_TEMP_FILES_ITEM', {index:this.fileindex, data:newPath})
+                }
                 this.$store.commit('SET_CURFILE', newPath)
                 this.$store.commit('UPDATE_LOG', {
                     logger: 'Renamelog', 
@@ -40,6 +44,10 @@
                     let newnum = lastword + 1
                     let newName = this.fname.replace(/.$/, newnum)
                     const newPath = renameJoin(this.filepath, this.filename, newName, this.extname)
+                    // Handle cache files list
+                    if (this.tempfileslist.length > 3000){
+                        this.$store.commit('RENAME_TEMP_FILES_ITEM', {index:this.fileindex, data:newPath})
+                    }
                     this.$store.commit('SET_CURFILE', newPath)
                     this.$store.commit('UPDATE_LOG', {
                         logger: 'Renamelog', 
@@ -49,40 +57,64 @@
                 else{
                     let newName = this.fname + " 1"
                     const newPath = renameJoin(this.filepath, this.filename, newName, this.extname)
+                    // Handle cache files list
+                    if (this.tempfileslist.length > 3000){
+                        this.$store.commit('RENAME_TEMP_FILES_ITEM', {index:this.fileindex, data:newPath})
+                    }
                     this.$store.commit('SET_CURFILE', newPath)
                     this.$store.commit('UPDATE_LOG', {
                         logger: 'Renamelog', 
                         log: renameLogging(this.filepath, this.fname, newName)
                     })
                 }
+
                 this.$emit("close")
             },
             pluswithbracket(){
-                const match = this.fname.match(/\(([^)]+)\)$/)
-                if (match !== null && Number.isInteger(+ match[1])){
-                    let newnum = (+ match[1]) + 1
-                    let newName = this.fname.replace(/\(([^)]+)\)$/, `(${newnum})`)
-                    const newPath = renameJoin(this.filepath, this.filename, newName, this.extname)
-                    this.$store.commit('SET_CURFILE', newPath)
-                    this.$store.commit('UPDATE_LOG', {
-                        logger: 'Renamelog', 
-                        log: renameLogging(this.filepath, this.fname, newName)
-                    })
+                let newName = this.fname + ' (1)'
+                const newPath = renameJoin(this.filepath, this.filename, newName, this.extname)
+                
+
+                // Handle cache files list
+                if (this.tempfileslist.length > 3000){
+                    this.$store.commit('RENAME_TEMP_FILES_ITEM', {index:this.fileindex, data:newPath})
                 }
-                else{
-                    let newName = this.fname + ' (1)'
-                    const newPath = renameJoin(this.filepath, this.filename, newName, this.extname)
-                    this.$store.commit('SET_CURFILE', newPath)
-                    this.$store.commit('UPDATE_LOG', {
-                        logger: 'Renamelog', 
-                        log: renameLogging(this.filepath, this.fname, newName)
-                    })
-                }
+                
+                this.$store.commit('SET_CURFILE', newPath)
+                this.$store.commit('UPDATE_LOG', {
+                    logger: 'Renamelog', 
+                    log: renameLogging(this.filepath, this.fname, newName)
+                })
+                // const match = this.fname.match(/\(([^)]+)\)$/)
+                // if (match !== null && Number.isInteger(+ match[1])){
+                    
+                //     let newnum = (+ match[1]) + 1
+                //     let newName = this.fname.replace(/\(([^)]+)\)$/, `(${newnum})`)
+                //     const newPath = renameJoin(this.filepath, this.filename, newName, this.extname)
+                //     this.$store.commit('SET_CURFILE', newPath)
+                //     this.$store.commit('UPDATE_LOG', {
+                //         logger: 'Renamelog', 
+                //         log: renameLogging(this.filepath, this.fname, newName)
+                //     })
+                // }
+                // else{
+                //     let newName = this.fname + ' (1)'
+                //     const newPath = renameJoin(this.filepath, this.filename, newName, this.extname)
+                //     this.$store.commit('SET_CURFILE', newPath)
+                //     this.$store.commit('UPDATE_LOG', {
+                //         logger: 'Renamelog', 
+                //         log: renameLogging(this.filepath, this.fname, newName)
+                //     })
+                // }
                 this.$emit("close")
             },
             customplus(){
                 let newName = this.fname + ` ${this.$refs.customplus.value}`
                 const newPath = renameJoin(this.filepath, this.filename, newName, this.extname)
+                // Handle cache files list
+                if (this.tempfileslist.length > 3000){
+                    this.$store.commit('RENAME_TEMP_FILES_ITEM', {index:this.fileindex, data:newPath})
+                }
                 this.$store.commit('SET_CURFILE', newPath)
                 this.$store.commit('UPDATE_LOG', {
                     logger: 'Renamelog', 
@@ -92,6 +124,12 @@
             }
         },
         computed: {
+            fileindex(){
+                return this.$store.getters.getFileIndex
+            },
+            tempfileslist(){
+                return this.$store.state.cache.tempFilesList
+            },
             fname() {
                 return this.filename.replace(path.extname(this.filename), '')
             },
