@@ -8,6 +8,7 @@
 ![](https://img.shields.io/github/downloads/Proladon/Picnel.io-2/total?color=orange&label=Download&style=for-the-badge)
 ![](https://img.shields.io/github/v/release/Proladon/Picnel.io-2?color=6BD089&include_prereleases&label=Version&style=for-the-badge)
 ![](https://img.shields.io/github/issues-raw/Proladon/Picnel.io-2?color=Yellow&style=for-the-badge)
+![](https://img.shields.io/github/issues-closed-raw/Proladon/Picnel.io-2?color=A6A6A6&style=for-the-badge)
 ![](https://img.shields.io/powershellgallery/p/DNS.1.1.1.1?color=skyblue&style=for-the-badge)
 
 ## Picnel.io 2 is rebuild of [Picnel.io](https://github.com/Proladon/Picnel.io)
