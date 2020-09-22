@@ -164,6 +164,7 @@
         --spliter: #423f3b;
         // --dark: #0F2232;
         --dark: #1c1e26;
+        --red: rgb(212, 91, 128);
         --popupdark: rgb(31, 41, 53);
         --lightyellow: #CDC0B8;
         

@@ -132,18 +132,11 @@ export default new Vuex.Store({
         },
         NEXT_FILE: (context, oldindex=null) => {
             let index = 0
-            let files_list = null
+            let files_list = context.getters.getFilesList
 
             if (oldindex !== null) index = oldindex
             else {
                 index = context.getters.getFileIndex
-            }
-
-            if (context.state.cache.tempFilesList.length > 3000) {
-                files_list = context.state.cache.tempFilesList
-            }
-            else {
-                files_list = getDirFiles(context.getters.getFolderPath)
             }
 
             const files = filesFilter(files_list)

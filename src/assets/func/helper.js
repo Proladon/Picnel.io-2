@@ -17,7 +17,7 @@ const filesFilter =  (files_list) => {
         }
     }
     return readable_files;
-};
+}
 
 //:: Get all files in the folder => fs
 const getDirFiles = (dirPath) => {
@@ -26,28 +26,28 @@ const getDirFiles = (dirPath) => {
     });
 
     return files_list;
-};
+}
 
 //:: Get all files in the folder => glob
 const globDirFiles = (dirPath) => {
     return fg.sync(dirPath + '/*', { dot: false })
-};
+}
 
 // :: Path Operate
 const renameJoin = (curPath, curfileName, newName, extName) => {
     
     fs.renameSync(curPath, curPath.replace(curfileName, newName + extName));
     return curPath.replace(curfileName, newName + extName);
-};
+}
 
 const getRootPath = (absPath, relPath) => {
     let root = ""
     
     for (let p of absPath) {
-        if (p !== relPath){
+        if (p !== relPath) {
             root += p + '/'
         }
-        else if (p === relPath){
+        else if (p === relPath) {
             root += p
             break
         }
@@ -56,16 +56,38 @@ const getRootPath = (absPath, relPath) => {
     return root.replace(/\\/g, '/')
 }
 
+// Check if exist same filename and auto rename 
+// filename + (num)
+const repeatAutoRename = (filePath, folderPath) => {
+    const extname = path.extname(filePath)
+    let repeat = true
+    let counter = 1
+    let newPath = ""
+
+    while (repeat) {
+        newPath = path.join(
+            folderPath,
+            filePath.replace(extname, ` (${counter})${extname}`)
+        )
+        counter += 1
+        if (!fs.existsSync(newPath)) {
+            repeat = false
+        }
+    }
+
+    return newPath
+}
+
 //:: Logging
 // => Rename
 const renameLogging = (curPath, curfileName, newName) => {
     return `${path.dirname(curPath)}//${curfileName}//${newName}`;
-};
+}
 
 // => Delete
 const deletefileLogging = (fileName, curPath, ) => {
     return `${fileName}//${curPath}`;
-};
+}
 
 
 export {
@@ -76,7 +98,9 @@ export {
     
     renameJoin,
     getRootPath,
+    
+    repeatAutoRename,
 
     renameLogging,
     deletefileLogging,
-};
+}

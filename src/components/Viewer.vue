@@ -94,7 +94,6 @@ import fs from "fs-extra";
 import mime from "mime-types";
 import {filesFilter, deletefileLogging} from "@/assets/func/helper.js";
 import {plsUploadFolder} from "@/assets/func/notify.js";
-import fg from 'fast-glob'
 
 
 export default {

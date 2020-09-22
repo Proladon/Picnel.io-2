@@ -20,7 +20,11 @@
         <splitpanes>
             <!-- Folders -->
             <pane size="70">
-                <draggable v-model="folderlist" v-bind="dragOptions" :move="checkmove">
+                <draggable
+                    v-model="folderlist"
+                    v-bind="dragOptions"
+                    :move="checkmove"
+                >
                     <transition-group type="transition">
                         <div
                             v-for="(i, index) in folderlist"
@@ -50,7 +54,11 @@
 
             <!-- Group -->
             <pane>
-                <draggable v-model="foldergroups" v-bind="dragOptions" :move="checkmove">
+                <draggable
+                    v-model="foldergroups"
+                    v-bind="dragOptions"
+                    :move="checkmove"
+                >
                     <div
                         class="draggable-group"
                         v-for="(group, index) in foldergroups"
@@ -66,7 +74,11 @@
 
         <!-- Context Menu -->
         <Groupcontext @deletegroup="deleteGroup" @renamegroup="renameGroup" />
-        <Foldercontext @removefolder="removeFolder" @openfolder="openFolder" @setmainfolder="setMainFolder" />
+        <Foldercontext
+            @removefolder="removeFolder"
+            @openfolder="openFolder"
+            @setmainfolder="setMainFolder"
+        />
 
         <!-- Notify -->
         <notifications
@@ -100,8 +112,18 @@ import {
 } from "@/assets/func/notify.js"
 
 // Helper
-import { savefilter } from "@/assets/func/savefilter.js"
-import {filesFilter, globDirFiles} from "@/assets/func/helper.js"
+import { statefilter } from "@/assets/func/statefilter.js"
+import {
+    filesFilter,
+    globDirFiles,
+    repeatAutoRename,
+    deletefileLogging,
+} from "@/assets/func/helper.js"
+
+import {
+    deleteMessage,
+    overideMessage,
+} from "@/assets/func/notify.js"
 
 // Mods
 import fs from "fs-extra"
@@ -110,20 +132,20 @@ import { shell, remote } from "electron"
 import Store from "electron-store"
 
 // Vuex
-import {mapState, mapGetters} from 'vuex'
+import { mapState, mapGetters } from "vuex"
 
 export default {
     name: "Folderslist",
-   
-   components: {
+
+    components: {
         Splitpanes,
         Pane,
         draggable,
         Groupcontext,
         Foldercontext,
     },
-   
-   data() {
+
+    data() {
         return {
             folderindex: 0,
             folderpath: "",
@@ -132,8 +154,8 @@ export default {
             targetgroup: HTMLDivElement,
         }
     },
-      
-   methods: {
+
+    methods: {
         //:: Changing active group
         changeGroup(name, e) {
             // remove all element active class
@@ -145,9 +167,9 @@ export default {
 
             // group active highlight
             e.target.classList.add("active")
-            
+
             this.$store.commit("CHANGE_ACTIVE_GROUP", name)
-            
+
             // Target Folder item animation
             setTimeout(() => {
                 anime({
@@ -157,13 +179,13 @@ export default {
                 })
             })
         },
-        
-        
+
         //:: Show add folders modal
         addFoldersModal() {
             // import dynamic modal
-            const Addfolders = () => import("@/components/modal/Addfolders.vue")
-            
+            const Addfolders = () =>
+                import("@/components/modal/Addfolders.vue")
+
             // Show modal
             this.$modal.show(
                 Addfolders,
@@ -182,13 +204,12 @@ export default {
                 }
             )
         },
-        
-        
+
         //:: Show add new group modal
         addGroupModal() {
             // import dynamic modal
             const Addgroup = () => import("@/components/modal/Addgroup.vue")
-            
+
             // Show modal
             this.$modal.show(
                 Addgroup,
@@ -206,24 +227,24 @@ export default {
                 }
             )
         },
-        
-        
+
         //:: Show ColorPicker Modal
         choiceColor(iname, icolor, index) {
             // import dynamic modal
-            const ColorPicker = () => import("@/components/modal/Colorpicker.vue")
-            
+            const ColorPicker = () =>
+                import("@/components/modal/Colorpicker.vue")
+
             // Show modal
             this.$modal.show(
                 ColorPicker,
-                
+
                 // Send Props
                 {
                     color: icolor,
                     title: iname,
                     index: index,
                 },
-                
+
                 // Options
                 {
                     width: "300px",
@@ -232,41 +253,38 @@ export default {
                 }
             )
         },
-        
-        
+
         //:: Target Folder context menu
         foldercontext(e, index, fpath) {
             this.folderindex = index
             this.folderpath = fpath
-            
+
             const element = document.getElementById("folder-context")
             element.classList.remove("context-active")
             element.style.top = e.clientY + "px"
             element.style.left = e.clientX + "px"
-            
+
             setTimeout(() => {
                 element.classList.add("context-active")
             }, 150)
         },
-        
-        
+
         //:: Group context menu
         groupcontext(e, index) {
             this.groupIndex = index
             this.groupname = e.target.innerText
             this.targetgroup = e.target
+
             const element = document.getElementById("group-context")
-            
             element.classList.remove("context-active")
             element.style.top = e.clientY + "px"
             element.style.left = e.clientX + "px"
-            
+
             setTimeout(() => {
                 element.classList.add("context-active")
             }, 150)
         },
-        
-        
+
         //:: Delete Group Dialog
         deleteGroup() {
             this.$modal.show("dialog", {
@@ -283,7 +301,7 @@ export default {
 
                             this.$store.commit("SET_LIST", folders)
                             this.$store.commit("DELETE_GROUP", this.groupIndex)
-                            
+
                             if (this.groupname === this.activegroup) {
                                 this.$store.commit("CHANGE_ACTIVE_GROUP", null)
                             }
@@ -311,8 +329,7 @@ export default {
                 ],
             })
         },
-        
-        
+
         //:: Delete Folder Dialog
         removeFolder() {
             this.$modal.show("dialog", {
@@ -349,8 +366,7 @@ export default {
                 ],
             })
         },
-        
-        
+
         //:: Rename Group
         renameGroup() {
             this.$modal.show("dialog", {
@@ -361,10 +377,12 @@ export default {
                         title: "Rename",
                         class: "dialog-red-btn dialog-btn",
                         handler: () => {
-                            const element = document.getElementsByName("dialog-input")[0]
-                            
+                            const element = document.getElementsByName(
+                                "dialog-input"
+                            )[0]
+
                             let newName = element.value.trim(" ")
-                            
+
                             // Check Repeat
                             for (let oldName of this.$store.state
                                 .folderGroups) {
@@ -376,42 +394,41 @@ export default {
                                     return
                                 }
                             }
-                            
+
                             // Check Empty
-                            if (/^\d+$/.test(newName)){
+                            if (/^\d+$/.test(newName)) {
                                 element.value = ""
                                 this.$notify(digitNamingWarn("folderlist"))
-                                
+
                                 return
-                            }
-                            else if (newName !== "") {
+                            } else if (newName !== "") {
                                 // Change Group Name
                                 this.$store.commit("RENAME_GROUP", {
                                     index: this.groupIndex,
                                     name: element.value,
                                 })
-                                
+
                                 // Change Group Links Folders Name
                                 this.$store.commit("RENAME_LIST", {
                                     oldName: this.groupname,
                                     newName: newName,
                                 })
-                                
+
                                 this.$store.commit(
                                     "CHANGE_ACTIVE_GROUP",
                                     newName
                                 )
-                                
+
                                 if (!this.workspace.name.includes("*")) {
                                     this.$store.commit("SET_WORKSPACE", {
                                         name: `${this.workspace.name}*`,
                                         path: this.workspace.path,
                                     })
                                 }
-                                
+
                                 this.$modal.hide("dialog")
                                 this.groupname = newName
-                                
+
                                 setTimeout(() => {
                                     // Re-add active class to current activeGroup
                                     const elList = document.getElementsByClassName(
@@ -438,147 +455,68 @@ export default {
                 ],
             })
         },
-        
-        
+
         openFolder() {
             shell.openPath(this.folderpath)
         },
-        
-        
-        setMainFolder(){
-            let target = this.folderpath.replace(/\\/g, '/')
-            
-            if(this.filefolder  === target) {
+
+        setMainFolder() {
+            let target = this.folderpath.replace(/\\/g, "/")
+
+            if (this.filefolder === target) {
                 this.$notify(isMainfolder("folderlist"))
                 return
             }
 
-            this.$store.commit('CLEAR_TEMP_FILES_LIST', target)
+            this.$store.commit("CLEAR_TEMP_FILES_LIST", target)
 
             const files = globDirFiles(target)
             const readable = filesFilter(files)
-            
-            if(readable.length >= 3000){
-                this.$store.commit('OVERIDE_TEMP_FILES_LIST', files)
-                this.$store.commit('SET_CURFILE', readable[0])
-                
+
+            if (readable.length >= 3000) {
+                this.$store.commit("OVERIDE_TEMP_FILES_LIST", files)
+                this.$store.commit("SET_CURFILE", readable[0])
+
                 this.$modal.show("dialog", {
-                    title: '🚧 Cache Files List Auto Enable',
-                    text: "When directory have over 3000 files, it will use cache files list, that means it won't update directory with all operation outside Picnel.io 2, untill you click 'Refresh'.",
-                    buttons:[
+                    title: "🚧 Cache Files List Auto Enable",
+                    text:
+                        "When directory have over 3000 files, it will use cache files list, that means it won't update directory with all operation outside Picnel.io 2, untill you click 'Refresh'.",
+                    buttons: [
                         {
                             title: "Got it",
                             class: "dialog-btn dialog-green-btn",
                             handler: () => {
                                 this.$modal.hide("dialog")
-                            }
+                            },
                         },
                         {
                             title: "Learn more",
                             class: "dialog-btn dialog-red-btn",
                             handler: () => {
-                                remote.shell.openExternal("https://proladon.github.io/Picnel.io-2_Documentation/cache/")
-                                this.$modal.hide("dialog")
-                            }
-                        }
-                    ]
-                })
-            }
-            else if (readable.length > 0) {
-                this.$store.commit('SET_CURFILE', readable[0])
-            }
-            else if (readable.length === 0) {
-                this.$notify(noReadable("folderlist"))
-            }
-            
-        },
-        
-        
-        copyfile(targetpath) {
-            if (targetpath === "") {
-                this.$notify(targetPathEmpty("folderlist"))
-                return
-            } 
-            else if (this.filepath === "") {
-                this.$notify(noFile("folderlist", "copy"))
-                return
-            }
-            
-            let target = path.join(targetpath, this.filename)
-            
-            try {
-                fs.copySync(this.filepath, target, {
-                    overwrite: false,
-                    errorOnExist: true,
-                })
-                
-                this.$store.commit("UPDATE_LOG", {
-                    logger: "Copylog",
-                    log: `File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`,
-                })
-            } 
-            catch (error) {
-                const extname = path.extname(this.filename)
-                
-                let counter = 1
-                let repeat = true
-                
-                target = path.join(
-                    targetpath,
-                    this.filename.replace(extname, `(${counter})${extname}`)
-                )
-                
-                while (repeat) {
-                    if (fs.existsSync(target)) {
-                        counter += 1
-                        target = path.join(
-                            targetpath,
-                            this.filename.replace(
-                                extname,
-                                `(${counter})${extname}`
-                            )
-                        )
-                    } 
-                    else {
-                        repeat = false
-                    }
-                }
-                
-                this.$modal.show("dialog", {
-                    title: "Already Exist & Auto Rename",
-                    text: `Auto rename to: ${path.basename(target)}`,
-                    buttons: [
-                        {
-                            title: "Rename & Copy",
-                            class: "dialog-btn dialog-green-btn",
-                            handler: () => {
-                                fs.copySync(this.filepath, target, {
-                                    overwrite: false,
-                                    errorOnExist: true,
-                                })
-                                this.$modal.hide("dialog")
-                            },
-                        },
-                        {
-                            title: "Cancel Copy",
-                            class: "dialog-btn dialog-red-btn",
-                            handler: () => {
+                                remote.shell.openExternal(
+                                    "https://proladon.github.io/Picnel.io-2_Documentation/cache/"
+                                )
                                 this.$modal.hide("dialog")
                             },
                         },
                     ],
                 })
+            } else if (readable.length > 0) {
+                this.$store.commit("SET_CURFILE", readable[0])
+            } else if (readable.length === 0) {
+                this.$notify(noReadable("folderlist"))
             }
         },
         
-        
-        movefile(targetpath) {
+        fileOperate(opType, targetpath){
+  
             let index = this.fileindex
+
             const changeFile = () => {
-                if (this.tempfileslist.length > 3000){
-                    this.$store.commit('REMOVE_TEMP_FILES_ITEM', index)
+                if (this.tempfileslist.length > 3000) {
+                    this.$store.commit("REMOVE_TEMP_FILES_ITEM", index)
                 }
-                
+
                 if (this.mode === "Random") {
                     this.$store.dispatch("RANDOM_FILE")
                 } else {
@@ -595,77 +533,153 @@ export default {
             if (targetpath === "") {
                 this.$notify(targetPathEmpty("folderlist"))
                 return
-            } else if (this.filepath === "") {
-                this.$notify(noFile("folderlist", "move"))
+            } 
+            else if (this.filepath === "") {
+                if(opType === 'Copy'){
+                    this.$notify(noFile("folderlist", "copy"))
+                }
+                else if (opType === 'Move'){
+                    this.$notify(noFile("folderlist", "move"))
+                }
                 return
             }
-            
+
             targetpath = targetpath.replace(/\\/g, "/")
-            let curpath = this.filepath
+            // let curpath = this.filepath
             let target = path.join(targetpath, this.filename)
 
             try {
-                fs.moveSync(curpath, target, {
-                    overwrite: false,
-                    errorOnExist: true,
-                })
-                changeFile()
-
-            } catch (error) {
-                
-                const extname = path.extname(this.filename)
-                let counter = 1
-                let repeat = true
-                target = path.join(
-                    targetpath,
-                    this.filename.replace(extname, `(${counter})${extname}`)
-                )
-
-                while (repeat) {
-                    if (fs.existsSync(target)) {
-                        counter += 1
-                        target = path.join(
-                            targetpath,
-                            this.filename.replace(
-                                extname,
-                                `(${counter})${extname}`
-                            )
-                        )
-                    } else {
-                        repeat = false
-                    }
+                if (opType === 'Move'){
+                    fs.moveSync(this.filepath, target, {
+                        overwrite: false,
+                        errorOnExist: true,
+                    })
+                    changeFile()
                 }
+                else if (opType === 'Copy'){
+                    fs.copySync(this.filepath, target, {
+                        overwrite: false,
+                        errorOnExist: true,
+                    })
+
+                    this.$store.commit("UPDATE_LOG", {
+                        logger: "Copylog",
+                        log: `File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`,
+                    })
+                }
+            } catch (error) {
+                let exist = target
+                target = repeatAutoRename(this.filename, targetpath)
+
                 this.$modal.show("dialog", {
-                    title: "Already Exist & Auto Rename",
-                    text: `Auto rename to: ${path.basename(target)}`,
+                    title: "Existing & Auto Rename",
+                    text: `
+                    <div class="repeat-compare-modal">
+                        <p class="op-type">${opType}</p>
+                        <p>Already same filename in <strong>${path.basename(path.dirname(exist))}</strong></p>
+                        <div class="img-wrapper">
+                            <img class="new-file" src="local-resource://${this.filepath}"  />
+                            <img class="exist-file" src="local-resource://${exist}"  />
+                        </div>
+
+                        <div class="contain-wrapper">
+                            <p>Current</p>
+                            <p>Existing</p>
+                        </div>
+                        <p>Auto-Rename:</p>
+                        <p><strong>${path.basename(target)}</strong></p>
+                    </div>
+                    `,
                     buttons: [
                         {
-                            title: "Rename & Move",
+                            title: "Rename",
                             class: "dialog-btn dialog-green-btn",
                             handler: () => {
-                                fs.move(this.filepath, target, {
-                                    overwrite: false,
-                                    errorOnExist: true,
-                                }).then(()=>{
+                                if (opType === 'Move'){
+                                    fs.moveSync(this.filepath, target, {
+                                        overwrite: false,
+                                        errorOnExist: true,
+                                    })
                                     changeFile()
-                                })
-                                this.$modal.hide("dialog") 
+                                }
+                                else if (opType === 'Copy'){
+                                    fs.copySync(this.filepath, target, {
+                                        overwrite: false,
+                                        errorOnExist: true,
+                                    })
+
+                                    this.$store.commit("UPDATE_LOG", {
+                                        logger: "Copylog",
+                                        log: `File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`,
+                                    })
+                                }
+
+                                this.$modal.hide("dialog")
                             },
                         },
                         {
-                            title: "Cancel Move",
+                            title: "Delete Current",
                             class: "dialog-btn dialog-red-btn",
                             handler: () => {
-                                this.$modal.hide("dialog") 
-                                return 
+                                remote.dialog.showMessageBox(deleteMessage)
+                                    .then((res) => {
+                                        if (res.response === 0) {
+                                            fs.remove(this.filepath).then(() => {
+                                                changeFile()
+                                            }
+                                            )
+                                            this.$store.commit("UPDATE_LOG", {
+                                                logger: "Deletelog",
+                                                log: deletefileLogging(
+                                                    this.filename,
+                                                    this.filepath
+                                                ),
+                                            })
+
+                                            this.$modal.hide("dialog")
+                                        }
+                                    })
+                            },
+                        },
+                        {
+                            title: "Overide",
+                            class: "dialog-btn dialog-orange-btn",
+                            handler: () => {
+                                remote.dialog.showMessageBox(overideMessage)
+                                    .then((res) => {
+                                        if (res.response === 0){
+
+                                            fs.moveSync(this.filepath, exist, {
+                                                overwrite: true,
+                                                errorOnExist: false,
+                                            })
+
+                                            changeFile()
+
+                                            this.$modal.hide("dialog")
+                                        }
+                                    })
+                            },
+                        },
+                        {
+                            title: "Cancel",
+                            class: "dialog-btn dialog-gray-btn",
+                            handler: () => {
+                                this.$modal.hide("dialog")
                             },
                         },
                     ],
                 })
             }
         },
-        
-        
+        copyfile(targetpath) {
+            this.fileOperate("Copy", targetpath)
+        },
+
+        movefile(targetpath) {
+            this.fileOperate("Move", targetpath)
+        },
+
         save(q = null) {
             if (
                 this.workspace.name === "untitled" ||
@@ -677,12 +691,12 @@ export default {
             this.$store.commit("SET_WORKSPACE", {
                 name: this.workspace.name.replace("*", ""),
                 path: this.workspace.path,
-            }) 
+            })
             // Save workspace Json to path
-            fs.writeJson(this.workspace.path, savefilter(this.allState), {
+            fs.writeJson(this.workspace.path, statefilter(this.allState), {
                 spaces: 4,
             }).then(() => {
-                this.$notify(saveFile("folderlist", this.workspace.name)) 
+                this.$notify(saveFile("folderlist", this.workspace.name))
                 // Save worksapce to config.json
                 const store = new Store()
                 let workspaces = store.get("workspaces")
@@ -695,14 +709,12 @@ export default {
                 workspaces[wkindex].main = this.filefolder
                 store.set("workspaces", workspaces)
 
-                if (q === 'quit'){
+                if (q === "quit") {
                     remote.app.exit()
                 }
             })
-
         },
-        
-        
+
         saveAs(q = null) {
             const options = {
                 title: "Save as workspace",
@@ -729,7 +741,7 @@ export default {
                     })
                     // Save workspace Json to path
                     // Filter state which need to save
-                    fs.writeJson(res.filePath, savefilter(this.allState), {
+                    fs.writeJson(res.filePath, statefilter(this.allState), {
                         spaces: 4,
                     })
                         .then(() => {
@@ -761,7 +773,7 @@ export default {
                                 workspaces.push(savedata)
                                 store.set("workspaces", workspaces)
                             }
-                            if (q === 'quit'){
+                            if (q === "quit") {
                                 remote.app.exit()
                             }
                         })
@@ -771,46 +783,50 @@ export default {
                 }
             })
         },
-        
-        
-        checkmove(el){
-            if (el.dragged.classList[0]==='draggable-folder' && el.related.classList[0] === 'draggable-group'){
+
+        checkmove(el) {
+            if (
+                el.dragged.classList[0] === "draggable-folder" &&
+                el.related.classList[0] === "draggable-group"
+            ) {
+                return false
+            } else if (
+                el.dragged.classList[0] === "draggable-group" &&
+                el.related.classList[0] === "draggable-folder"
+            ) {
                 return false
             }
-            else if (el.dragged.classList[0] === 'draggable-group' && el.related.classList[0] === 'draggable-folder'){
-                return false
-            }
-        }
+        },
     },
-    
+
     computed: {
         allState() {
             return this.$store.state
         },
-        
+
         ...mapState({
             // Mode
-            mode: state => state.mode,
-            
+            mode: (state) => state.mode,
+
             // File
-            filepath: state => state.curFile,
+            filepath: (state) => state.curFile,
 
             // Worksapce
-            workspace: state => state.app.workspace,
+            workspace: (state) => state.app.workspace,
 
             // Cache
-            tempfileslist: state => state.cache.tempfileslist,
-            tempColor: state => state.cache.tempColor,
+            tempfileslist: (state) => state.cache.tempFilesList,
+            tempColor: (state) => state.cache.tempColor,
 
             // Group
-            activegroup: state => state.activeGroup,
+            activegroup: (state) => state.activeGroup,
         }),
 
         ...mapGetters({
             // File
-            fileindex: 'getFileIndex',
-            filefolder: 'getFolderPath',
-            filename: 'getFileName',
+            fileindex: "getFileIndex",
+            filefolder: "getFolderPath",
+            filename: "getFileName",
         }),
 
         foldergroups: {
@@ -821,7 +837,7 @@ export default {
                 this.$store.commit("UPDATE_GROUP", data)
             },
         },
-        
+
         folderlist: {
             get() {
                 let act = this.$store.state.activeGroup
@@ -847,13 +863,12 @@ export default {
                 ghostClass: "ghost",
             }
         },
-
     },
     mounted() {
         //:: Hide all context menu event
         const context_folder = document.getElementById("folder-context")
         const context_group = document.getElementById("group-context")
-        
+
         window.addEventListener("click", () => {
             context_folder.classList.remove("context-active")
             context_group.classList.remove("context-active")
@@ -862,7 +877,7 @@ export default {
     created() {
         // Quit app event
         this.$bus.$on("quit:save", () => {
-             this.save("quit")
+            this.save("quit")
         })
     },
 }

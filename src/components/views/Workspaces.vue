@@ -6,16 +6,16 @@
 
                 <div class="workspace-item-wrapper">
                     <div class="workspace-item" v-for="(space, index) in workspaces" :key="space.name"
-                        @click="choiceWorkspace(space, index)">
+                        @click="selectWorkspace($event, space, index)">
                         <p>{{space.name}}</p>
                         <p>{{space.path}}</p>
                     </div>
 
                     <div class="workspace-btn">
-                        <div class="import-workspace-btn" @click="importworkspace">
+                        <div class="import-workspace-btn" @click="importWorkspace">
                             <p>import</p>
                         </div>
-                        <div class="new-workspace-btn" @click="newworkspace">
+                        <div class="new-workspace-btn" @click="newWorkspace">
                             <p>New</p>
                         </div>
                     </div>
@@ -40,8 +40,8 @@
                     <p class="wk-info-text">{{data.main}}</p>
 
                     <div class="workspace-control">
-                        <div class="load-workspace" @click="loadworkspace">Load</div>
-                        <div class="delete-workspace" @click="deleteworkspace">Remove</div>
+                        <div class="load-workspace" @click="loadWorkspace">Load</div>
+                        <div class="delete-workspace" @click="removeWorkspace">Remove</div>
                     </div>
                     
                 </div>
@@ -57,10 +57,16 @@
 </template>
 
 <script>
-    import Store from 'electron-store'
-    import fs from 'fs-extra'
-    import anime from "animejs";
-    import { remote } from 'electron';
+    import Store from "electron-store"
+    import fs from "fs-extra"
+    import anime from "animejs"
+    import { remote } from "electron"
+
+    // Helper
+    import { newstate } from "@/assets/func/statefilter.js"
+
+    // Notify
+    import { noSelectedWorkspace, unexpectedError, alreadyExist } from "@/assets/func/notify.js"
 
     export default {
         name: "Workspaces",
@@ -68,117 +74,116 @@
             return {
                 workspaces: "",
                 data: "",
-                index: String,
+                index: Number,
                 cover: "",
+                target: null,
             }
         },
         methods: {
+            
             altcover(){
                 this.$refs.cover.src = require("@/assets/img/kr2.gif")
             },
+
+            noSelected(){
+                if (this.data === ''){
+                    this.$notify(noSelectedWorkspace("workspace"))
+                    return true
+                }
+            },
+            
+            
+            // :: Choice Cover
             choiceCover(e) {
-                if (this.data !== ''){
+                if (this.noSelected()) return
+                else{
                     const cover = e.target.files[0].path
                     this.cover = cover
                     this.$refs.cover.src = `local-resource://${cover}`
 
                     const store = new Store()
                     let workspace = store.get('workspaces')
+
                     workspace[this.index].cover = cover
                     store.set('workspaces', workspace)
+
                     e.target.value = null
-                }else{
-                    this.$notify({
-                        group: "workspace",
-                        type: 'error',
-                        title: 'No Workspace',
-                        text: 'No selected workspace'
-                    })
                 }
             },
-            choiceWorkspace(workspace, index) {
+
+            
+            // :: Select Workspace
+            selectWorkspace(e, workspace, index) {
                 const store = new Store()
                 const wk = store.get('workspaces')
+                
                 this.data = wk[index]
                 this.index = index
+                
                 if (wk[index].cover === ""){
                     this.$refs.cover.src = require("@/assets/img/kr2.gif")
                 }
                 else{
                     this.cover = wk[index].cover
                 }
+
+                console.log(this.target)
+                if(this.target !== null){
+                    this.target.classList.remove("item-active")
+                }
+                e.target.classList.add("item-active")
+                this.target = e.target
             },
-            importworkspace(){
+
+            
+            // :: Import Workspace
+            importWorkspace(){
                 let select = remote.dialog.showOpenDialog({
                     properties:['openFile'],
                     filters:[{name: 'workspace', extensions:['json']}]
                 })
+
                 select.then(res => {
                     const selectPath = res.filePaths[0]
+
                     fs.readJson(selectPath)
                         .then(res => {
                             const selectWorkspace = res.app.workspace.name
                             const store = new Store()
                             let workspaces = store.get('workspaces')
-                            
+
+                            let repeat = false
                             workspaces.forEach(element => {
                                 if (selectPath === element.path){
-                                    this.$notify({
-                                        group: 'workspace',
-                                        title: 'Workspace exist',
-                                        text: `${element.name} already exist`
-                                    })
+                                    this.$notify(alreadyExist("workspace", element.name))
+                                    repeat = true
                                     return
                                 }
                             })
+                            
+                            if (!repeat){
+                                const data = {
+                                    name: selectWorkspace,
+                                    path: selectPath,
+                                    cover: ''
+                                }
 
-                            const data = {
-                                name: selectWorkspace,
-                                path: selectPath,
-                                cover: ''
+                                workspaces.push(data)
+                                store.set('workspaces', workspaces)
+                                this.workspaces = workspaces
                             }
-                            workspaces.push(data)
-                            this.workspaces = workspaces
-                            store.set('workspaces', workspaces)
                         })
                 })
             },
-            newworkspace(){
-                const newstate = {
-                    mode: "Random",
-                    curFile: '',
-                    activeGroup: "",
-                    folderGroups: [],
-                    folderLists: {
-                        Wallpaper: [],
-                        ACG: [],
-                    },
-                    tempColor: Object,
-                    app:{
-                        isChanged: false,
-                        workspace: {
-                            name: "untitled",
-                            path: "",
-                        },
-                        curView: 'home',
-                    },
-                    logger: {
-                        activeTab: "Copylog",
-                        Copylog: [],
-                        Movelog: [],
-                        Deletelog: [],
-                        Renamelog: [],
-                        
-                        Copylog_Unread: 0,
-                        Movelog_Unread: 0,
-                        Deletelog_Unread: 0,
-                        Renamelog_Unread: 0,
-                    }
-                }
-                this.$store.commit('SET_STATE', newstate)
-                // this.$store.commit('SET_VIEW', 'home')
+
+            // :: Create New Workspace
+            newWorkspace(){
+                this.$store.commit('SET_STATE', newstate())
             },
-            loadworkspace() {
+
+            // :: Load Workspace
+            loadWorkspace() {
+                if (this.noSelected()) return
                 
                 this.$store.commit('CLEAR_TEMP_FILES_LIST')
 
@@ -186,8 +191,8 @@
                     .then((res) => {
                         this.$store.commit('SET_STATE', res)
                         this.$store.commit('SET_VIEW', 'home')
-
                         this.$store.commit('SET_TEMP_FILES_LIST', this.filefolder)
+                        
                         if (this.tempfileslist.length < 3000){
                             this.$store.commit('CLEAR_TEMP_FILES_LIST', this.filefolder)
                         }
@@ -217,26 +222,14 @@
                     })
                     .catch((err) => {
                         console.log(err)
-                        this.$notify({
-                            group: 'workspace',
-                            type: 'error',
-                            title: 'Workspace Error',
-                            text: "Can't not load workspace"
-                        })
+                        this.$notify(unexpectedError("workspace"))
                     })
-
-                
-                
             },
-            deleteworkspace(){
-                if (this.data === ''){
-                    this.$notify({
-                        group: 'workspace',
-                        type: 'error',
-                        title: 'Workspace Error',
-                        text: "Can't not load workspace"
-                    })
-                }
+
+
+            removeWorkspace(){
+                if (this.noSelected()) return
+
                 this.$modal.show('dialog', {
                     title: 'Remove Workspace',
                     text: "This only remove workspace from the list, you still can import it again",
@@ -246,9 +239,11 @@
                             class: "dialog-red-btn dialog-btn",
                             handler: () => {
                                 const store = new Store()
+                                
                                 let wks = store.get('workspaces')
                                 wks.splice(this.index, 1)
                                 store.set('workspaces', wks)
+                                
                                 this.workspaces = wks
                                 this.data = ""
                                 this.cover = ""
@@ -266,6 +261,7 @@
                 })
             }
         },
+
         computed: {
             filefolder(){
                 return this.$store.getters.getFolderPath;
@@ -274,6 +270,7 @@
                 return this.$store.state.cache.tempFilesList
             }
         },
+
         mounted() {
             anime({
                 targets: "#workspaces",
@@ -281,7 +278,9 @@
                 easing: "easeInOutCubic",
                 duration: 1200,
             })
+
             setTimeout(() => {
+                // workspace-item
                 anime({
                     targets: ".workspace-item",
                     opacity: ['0', '1'],
@@ -291,7 +290,8 @@
                     }),
                     duration: 2000,
                 })
-
+                
+                // workspace-btn
                 anime({
                     targets: [".workspace-btn", ".workspace-control"],
                     opacity: ['0', '1'],
@@ -302,12 +302,15 @@
                     duration: 2000,
                 })
             });
+            
             // Get all workspaces from config.json
             const store = new Store()
             this.workspaces = store.get('workspaces')
             this.$refs.cover.src = require("@/assets/img/kr2.gif")
         },
+
         beforeDestroy() {
+            // workspace-item
             anime({
                 targets: ".workspace-item",
                 opacity: ['1', '0'],
@@ -316,6 +319,7 @@
                 duration: 1000,
             })
 
+            // workspace-btn
             anime({
                 targets: [".workspace-btn", ".workspace-control"],
                 opacity: ['1', '0'],
@@ -324,11 +328,10 @@
                 duration: 2000,
             })
         }
-    };
+    }
 </script>
 
 <style scoped lang="scss">
-    // #workspaces {}
 
     .choice-cover {
         text-align: center;
@@ -476,8 +479,13 @@
     }
 
     p {
+        pointer-events: none;
         font-size: 15px;
         overflow: hidden;
         color: var(--popupdark);
+    }
+
+    .item-active{
+        background-color: skyblue !important;
     }
 </style>

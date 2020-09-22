@@ -35,7 +35,16 @@ const targetPathEmpty = (group) => {
     }
 }
 
-const noFile= (group, verb) => {
+const notFound = (group, obj) => {
+    return {
+        group: group,
+        type: 'error',
+        title: 'Error',
+        text: `Not found ${obj}`
+    }
+}
+
+const noFile = (group, verb) => {
     return {
         group: group,
         type: 'error',
@@ -53,12 +62,21 @@ const noReadable= (group) => {
     }
 }
 
+const noSelectedWorkspace= (group) => {
+    return {
+        group: group,
+        type: 'warn',
+        title: 'Warn',
+        text: `No selected workspace`
+    }
+}
+
 const alreadyExist = (group, target) => {
     return {
         group: group,
         type: "warn",
-        title: "Name Repeat",
-        text: `Name: ${target} already existing`
+        title: "Repeat",
+        text: `${target} already existing`
     }
 }
 
@@ -71,6 +89,15 @@ const digitNamingWarn = (group) => {
     }
 }
 
+const unexpectedError = (group) => {
+    return {
+        group: group,
+        type: 'error',
+        title: 'Unexpected Error',
+        text: `Sorry, we got unexpected error, pls report the issues as you can`
+    }
+}
+
 const plsUploadFolder = {
     group: "nofiles",
     type: "error",
@@ -79,14 +106,37 @@ const plsUploadFolder = {
 }
 
 
+const deleteMessage = {
+    type: 'question',
+    buttons: ['Yes, Delete', 'Cancel',],
+    title: 'Warning',
+    message: 'Do you want to do Delete?',
+    detail: 'It will permanently delete, are you sure?',
+}
+
+const overideMessage = {
+    type: 'question',
+    buttons: ['Yes, Overide', 'Cancel',],
+    title: 'Warning',
+    message: 'Do you want to do Overide?',
+    detail: 'It will overide existing file, are you sure?',
+}
+
+
+
 export {
     isMainfolder,
     noReset,
     saveFile,
     targetPathEmpty,
+    notFound,
     noFile,
     noReadable,
+    noSelectedWorkspace,
     digitNamingWarn,
     alreadyExist,
     plsUploadFolder,
+    unexpectedError,
+    deleteMessage,
+    overideMessage,
 }

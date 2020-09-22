@@ -1,4 +1,8 @@
+// ---------------- //
+//               Global             //
+// ---------------- //
 .vue-dialog {
+    background-color: rgba($color: white, $alpha: .9) !important;
     font-size: 20px !important;
     color: var(--dark);
     border-radius: 10px !important;
@@ -11,6 +15,7 @@
 }
 
 .dialog-btn {
+    font-weight: bold !important;
     font-size: inherit;
     background-color: transparent;
     padding: 0;
@@ -31,8 +36,14 @@
 .dialog-red-btn {
     background-color: rgb(212, 91, 128);
 }
+.dialog-orange-btn {
+    background-color: rgb(212, 129, 91);
+}
 .dialog-green-btn {
     background-color: cadetblue;
+}
+.dialog-gray-btn {
+    background-color: lightslategray;
 }
 
 input{
@@ -41,4 +52,63 @@ input{
     font-size: 20px;
     text-align: center;
     box-sizing: border-box;
+}
+
+// ---------------- //
+//     Repeat-compare   //
+// ---------------- //
+.repeat-compare-modal{
+    color: var(--dark);
+    padding: 10px;
+    box-sizing: border-box;
+    
+    span{
+        text-align: center;
+    }
+
+    .img-wrapper{  
+            width: 100%;
+            height: 100px;
+            margin-top: 10px;
+            
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        p{
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        .op-type{
+            font-size: 20px;
+            text-decoration: underline;
+        }
+
+
+        .contain-wrapper{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            p{
+                width: calc(50% - 5px);
+            }
+        
+            p:nth-child(1){
+                color: mediumturquoise;
+            }
+            p:nth-child(2){
+                color: var(--red);
+            }
+        }
+        
+        
+        img{
+            pointer-events: none;
+            width: calc(50% - 5px);
+            height: 100%;
+            // object-fit: contain;
+        }
 }

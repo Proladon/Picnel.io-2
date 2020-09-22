@@ -14,11 +14,7 @@
        name: 'Saveas',
        methods:{
            selectFolder(){
-            //    let folderpath = remote.dialog.showOpenDialog({
-            //        properties: ['openDirectory']
-            //    })
                let folderpath = remote.dialog.showSaveDialog()
-               console.log(folderpath)
            }
        }
    }

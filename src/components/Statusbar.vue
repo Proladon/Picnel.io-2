@@ -5,7 +5,10 @@
             <p>♻</p>
         </div>
 
-        <div class="folder-refresh status-button status-item" @click="refreshfolder">
+        <div
+            v-if="tempfileslist.length >= 3000" 
+            class="folder-refresh status-button status-item" 
+            @click="refreshfolder">
             <p>Refresh</p>
         </div>
 
@@ -13,7 +16,7 @@
         <div class="upload-btn-wrapper status-button status-item" @contextmenu="mainfolderContext">
             <label class="directory-upload">
                 <input type="file" @change="uploaddir" webkitdirectory directory />
-                <p>{{this.foldername}}</p>
+                <p>{{this.foldername}} <span v-if="tempfileslist.length >= 3000" class="cache-mode">(Cache)</span></p>
             </label>
         </div>
 
@@ -48,12 +51,10 @@
     import Mainfoldercontext from  '@/components/contextmenu/Mainfoldercontext.vue'
     
     // Notify
-    import { noReset } from '@/assets/func/notify.js'
+    import { noReset, noReadable, notFound } from '@/assets/func/notify.js'
 
     // Helper
     import { getRootPath } from '@/assets/func/helper.js'
-
-    import fg from 'fast-glob'
 
     export default {
         name: 'Statusbar',
@@ -90,12 +91,7 @@
                 // No readable files
                 if (readablefiles.length === 0){
                     this.$store.commit('CLEAR_TEMP_FILES_LIST')
-                    this.$notify({
-                        group: 'statusbar',
-                        type: 'warn',
-                        title: 'Warn',
-                        text: 'No readable files in the directory'
-                    })
+                    this.$notify(noReadable("statusbar"))
                 }
                 else{
                     this.$store.commit('SET_CURFILE', readablefiles[0])
@@ -131,43 +127,48 @@
                 // reset selected file, or it won't be firing onchange event later!
                 e.target.value = null
             },
+            
+            
             //:: Reset Folder
             resetfolder() {
                 if (this.filename === '') {
                     this.$notify(noReset("home"))
                     return
                 }
+
                 this.$store.commit('SET_CURFILE', "")
             },
+            
+            
             refreshfolder(){
                 if (this.tempfileslist.length > 3000){
                     this.$store.commit('SET_TEMP_FILES_LIST', this.folderpath)
                 }
             },
+            
+            
             mainfolderContext(e){
                 const element = document.getElementById("mainfolder-context")
                 element.classList.remove("context-active")
                 element.style.top = parseInt(e.clientY)-50  + "px"
                 element.style.left = e.clientX + "px"
+                
                 setTimeout(() => {
                     element.classList.add("context-active")
                 }, 150)
             },
 
+
             openfolder(){
                 if (this.filename == ''){
-                    this.$notify({
-                        group: 'statusbar',
-                        type: 'error',
-                        title: 'Error',
-                        text: 'No found directory'
-                    })
+                    this.$notify(notFound("statusbar", "directory"))
                 }
                 else{
                     shell.openPath(this.folderpath)
                 }
             },
         },
+
         computed: {
             tempfileslist(){
                 return this.$store.state.cache.tempFilesList
@@ -182,8 +183,10 @@
                 foldername: 'getFolderName',
             })
         },
+
         mounted(){
             const element = document.getElementById("mainfolder-context")
+            
             window.addEventListener("click", () => {
                 element.classList.remove("context-active")
             })
@@ -264,5 +267,9 @@
 
     .context-active {
         transform: scale(1) !important;
+    }
+
+    .cache-mode{
+        color: orange;
     }
 </style>
