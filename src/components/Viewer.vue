@@ -94,6 +94,9 @@ import fs from "fs-extra";
 import mime from "mime-types";
 import {filesFilter, deletefileLogging} from "@/assets/func/helper.js";
 import {plsUploadFolder} from "@/assets/func/notify.js";
+import fg from 'fast-glob'
+
+
 export default {
     name: "Viewer",
     components: {},
@@ -110,9 +113,7 @@ export default {
                         
 
                         this.$store.commit('SET_TEMP_FILES_LIST', file.path.replace(/\\/g, '/'))
-                        console.log(this.tempfileslist)
-
-
+                        
                         let readablelist = this.tempfileslist.filter((f) => {
                                 let type = mime.lookup(f);
                                 if (type !== false &&readable.includes(type.split("/")[0])) {

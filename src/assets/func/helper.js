@@ -33,11 +33,28 @@ const globDirFiles = (dirPath) => {
     return fg.sync(dirPath + '/*', { dot: false })
 };
 
+// :: Path Operate
 const renameJoin = (curPath, curfileName, newName, extName) => {
     
     fs.renameSync(curPath, curPath.replace(curfileName, newName + extName));
     return curPath.replace(curfileName, newName + extName);
 };
+
+const getRootPath = (absPath, relPath) => {
+    let root = ""
+    
+    for (let p of absPath) {
+        if (p !== relPath){
+            root += p + '/'
+        }
+        else if (p === relPath){
+            root += p
+            break
+        }
+    }
+    
+    return root.replace(/\\/g, '/')
+}
 
 //:: Logging
 // => Rename
@@ -53,9 +70,13 @@ const deletefileLogging = (fileName, curPath, ) => {
 
 export {
     filesFilter,
+    
     getDirFiles,
     globDirFiles,
+    
     renameJoin,
+    getRootPath,
+
     renameLogging,
     deletefileLogging,
 };

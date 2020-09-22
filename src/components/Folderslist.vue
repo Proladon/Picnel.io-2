@@ -79,141 +79,194 @@
 
 <script>
 // Splitpanes
-import { Splitpanes, Pane } from "splitpanes";
-import draggable from "vuedraggable";
-import "splitpanes/dist/splitpanes.css";
-import anime from "animejs";
+import { Splitpanes, Pane } from "splitpanes"
+import draggable from "vuedraggable"
+import "splitpanes/dist/splitpanes.css"
+import anime from "animejs"
+
 // Context Menu
-import Foldercontext from "@/components/contextmenu/Foldercontext.vue";
-import Groupcontext from "@/components/contextmenu/Groupcontext.vue";
+import Foldercontext from "@/components/contextmenu/Foldercontext.vue"
+import Groupcontext from "@/components/contextmenu/Groupcontext.vue"
+
 // Notify
 import {
+    isMainfolder,
     saveFile,
     targetPathEmpty,
     noFile,
+    noReadable,
+    digitNamingWarn,
     alreadyExist,
-} from "@/assets/func/notify.js";
+} from "@/assets/func/notify.js"
+
+// Helper
+import { savefilter } from "@/assets/func/savefilter.js"
+import {filesFilter, globDirFiles} from "@/assets/func/helper.js"
+
 // Mods
-import fs from "fs-extra";
-import path from "path";
-import { shell, remote } from "electron";
-import Store from "electron-store";
-import { savefilter } from "@/assets/func/savefilter.js";
-import {filesFilter, globDirFiles} from "@/assets/func/helper.js";
+import fs from "fs-extra"
+import path from "path"
+import { shell, remote } from "electron"
+import Store from "electron-store"
+
+// Vuex
+import {mapState, mapGetters} from 'vuex'
 
 export default {
     name: "Folderslist",
-    components: {
+   
+   components: {
         Splitpanes,
         Pane,
         draggable,
         Groupcontext,
         Foldercontext,
     },
-    data() {
+   
+   data() {
         return {
             folderindex: 0,
             folderpath: "",
             groupIndex: 0,
             groupname: "",
             targetgroup: HTMLDivElement,
-        };
+        }
     },
-    methods: {
+      
+   methods: {
         //:: Changing active group
         changeGroup(name, e) {
             // remove all element active class
             document
                 .getElementsByClassName("draggable-group")
                 .forEach((element) => {
-                    element.classList.remove("active");
-                });
-            // add clicked element active class
-            e.target.classList.add("active");
-            this.$store.commit("CHANGE_ACTIVE_GROUP", name);
+                    element.classList.remove("active")
+                })
+
+            // group active highlight
+            e.target.classList.add("active")
+            
+            this.$store.commit("CHANGE_ACTIVE_GROUP", name)
+            
+            // Target Folder item animation
             setTimeout(() => {
                 anime({
                     targets: [".draggable-folder"],
                     translateX: ["-500", "0"],
                     delay: anime.stagger(100),
-                });
-            });
+                })
+            })
         },
+        
+        
+        //:: Show add folders modal
         addFoldersModal() {
-            const Addfolders = () =>
-                import("@/components/modal/Addfolders.vue");
+            // import dynamic modal
+            const Addfolders = () => import("@/components/modal/Addfolders.vue")
+            
+            // Show modal
             this.$modal.show(
                 Addfolders,
+
+                // Send Props
                 {
                     group: this.activegroup,
                     folderlist: this.folderlist,
                     workspace: this.workspace,
                 },
+
+                // Options
                 {
                     resizable: true,
                     classes: "addfolders-modal",
                 }
-            );
+            )
         },
+        
+        
         //:: Show add new group modal
         addGroupModal() {
-            const Addgroup = () => import("@/components/modal/Addgroup.vue");
+            // import dynamic modal
+            const Addgroup = () => import("@/components/modal/Addgroup.vue")
+            
+            // Show modal
             this.$modal.show(
                 Addgroup,
+
+                // Send Props
                 {
                     foldergroups: this.foldergroups,
                     workspace: this.workspace,
                 },
+
+                // Options
                 {
                     width: "400",
                     classes: "addfolders-modal",
                 }
-            );
+            )
         },
-        //:: Color Tag ColorPicker
+        
+        
+        //:: Show ColorPicker Modal
         choiceColor(iname, icolor, index) {
-            /* webpackChunkName: "Colorpicker" */
-            const ColorPicker = () =>
-                import("@/components/modal/Colorpicker.vue");
+            // import dynamic modal
+            const ColorPicker = () => import("@/components/modal/Colorpicker.vue")
+            
+            // Show modal
             this.$modal.show(
                 ColorPicker,
+                
+                // Send Props
                 {
                     color: icolor,
                     title: iname,
                     index: index,
                 },
+                
+                // Options
                 {
                     width: "300px",
                     height: "450px",
                     draggable: false,
                 }
-            );
+            )
         },
-        //:: Folder context menu
+        
+        
+        //:: Target Folder context menu
         foldercontext(e, index, fpath) {
-            this.folderindex = index;
-            this.folderpath = fpath;
-            const element = document.getElementById("folder-context");
-            element.classList.remove("context-active");
-            element.style.top = e.clientY + "px";
-            element.style.left = e.clientX + "px";
+            this.folderindex = index
+            this.folderpath = fpath
+            
+            const element = document.getElementById("folder-context")
+            element.classList.remove("context-active")
+            element.style.top = e.clientY + "px"
+            element.style.left = e.clientX + "px"
+            
             setTimeout(() => {
-                element.classList.add("context-active");
-            }, 150);
+                element.classList.add("context-active")
+            }, 150)
         },
+        
+        
         //:: Group context menu
         groupcontext(e, index) {
-            this.groupIndex = index;
-            this.groupname = e.target.innerText;
-            this.targetgroup = e.target;
-            const element = document.getElementById("group-context");
-            element.classList.remove("context-active");
-            element.style.top = e.clientY + "px";
-            element.style.left = e.clientX + "px";
+            this.groupIndex = index
+            this.groupname = e.target.innerText
+            this.targetgroup = e.target
+            const element = document.getElementById("group-context")
+            
+            element.classList.remove("context-active")
+            element.style.top = e.clientY + "px"
+            element.style.left = e.clientX + "px"
+            
             setTimeout(() => {
-                element.classList.add("context-active");
-            }, 150);
+                element.classList.add("context-active")
+            }, 150)
         },
+        
+        
         //:: Delete Group Dialog
         deleteGroup() {
             this.$modal.show("dialog", {
@@ -224,35 +277,42 @@ export default {
                         title: "Delete",
                         class: "dialog-red-btn dialog-btn",
                         handler: () => {
-                            let folders = this.$store.state.folderLists;
-                            delete folders[this.groupname];
-                            this.$store.commit("SET_LIST", folders);
-                            this.$store.commit("DELETE_GROUP", this.groupIndex);
+                            let folders = this.$store.state.folderLists
+
+                            delete folders[this.groupname]
+
+                            this.$store.commit("SET_LIST", folders)
+                            this.$store.commit("DELETE_GROUP", this.groupIndex)
+                            
                             if (this.groupname === this.activegroup) {
-                                this.$store.commit("CHANGE_ACTIVE_GROUP", null);
+                                this.$store.commit("CHANGE_ACTIVE_GROUP", null)
                             }
+
                             if (!this.workspace.name.includes("*")) {
                                 this.$store.commit("SET_WORKSPACE", {
                                     name: `${this.workspace.name}*`,
                                     path: this.workspace.path,
-                                });
+                                })
                             }
-                            this.$modal.hide("dialog");
-                            this.groupname = null;
-                            this.groupIndex = null;
-                            this.targetgroup = null;
+
+                            this.$modal.hide("dialog")
+                            this.groupname = null
+                            this.groupIndex = null
+                            this.targetgroup = null
                         },
                     },
                     {
                         title: "Cancel",
                         class: "dialog-green-btn dialog-btn",
                         handler: () => {
-                            this.$modal.hide("dialog");
+                            this.$modal.hide("dialog")
                         },
                     },
                 ],
-            });
+            })
         },
+        
+        
         //:: Delete Folder Dialog
         removeFolder() {
             this.$modal.show("dialog", {
@@ -263,28 +323,34 @@ export default {
                         title: "Remove",
                         class: "dialog-red-btn dialog-btn",
                         handler: () => {
-                            let folders = this.folderlist;
-                            folders.splice(this.folderindex, 1);
-                            this.$store.commit("UPDATE_LISTS", folders);
+                            let folders = this.folderlist
+
+                            folders.splice(this.folderindex, 1)
+
+                            this.$store.commit("UPDATE_LISTS", folders)
+
                             if (!this.workspace.name.includes("*")) {
                                 this.$store.commit("SET_WORKSPACE", {
                                     name: `${this.workspace.name}*`,
                                     path: this.workspace.path,
-                                });
+                                })
                             }
-                            this.$modal.hide("dialog");
+
+                            this.$modal.hide("dialog")
                         },
                     },
                     {
                         title: "Cancel",
                         class: "dialog-green-btn dialog-btn",
                         handler: () => {
-                            this.$modal.hide("dialog");
+                            this.$modal.hide("dialog")
                         },
                     },
                 ],
-            });
+            })
         },
+        
+        
         //:: Rename Group
         renameGroup() {
             this.$modal.show("dialog", {
@@ -295,68 +361,70 @@ export default {
                         title: "Rename",
                         class: "dialog-red-btn dialog-btn",
                         handler: () => {
-                            const element = document.getElementsByName(
-                                "dialog-input"
-                            )[0];
-                            let newName = element.value.trim(" ");
+                            const element = document.getElementsByName("dialog-input")[0]
+                            
+                            let newName = element.value.trim(" ")
+                            
                             // Check Repeat
                             for (let oldName of this.$store.state
                                 .folderGroups) {
                                 if (newName === oldName.name) {
-                                    element.value = "";
+                                    element.value = ""
                                     this.$notify(
                                         alreadyExist("folderlist", newName)
-                                    );
-                                    return;
+                                    )
+                                    return
                                 }
                             }
+                            
                             // Check Empty
                             if (/^\d+$/.test(newName)){
-                                element.value = "";
-                                this.$notify({
-                                    group: 'folderlist',
-                                    type: 'warn',
-                                    title: 'Unexpected Name',
-                                    text: `Don't use number as name`
-                                })
-                                return;
+                                element.value = ""
+                                this.$notify(digitNamingWarn("folderlist"))
+                                
+                                return
                             }
                             else if (newName !== "") {
                                 // Change Group Name
                                 this.$store.commit("RENAME_GROUP", {
                                     index: this.groupIndex,
                                     name: element.value,
-                                });
+                                })
+                                
                                 // Change Group Links Folders Name
                                 this.$store.commit("RENAME_LIST", {
                                     oldName: this.groupname,
                                     newName: newName,
-                                });
+                                })
+                                
                                 this.$store.commit(
                                     "CHANGE_ACTIVE_GROUP",
                                     newName
-                                );
+                                )
+                                
                                 if (!this.workspace.name.includes("*")) {
                                     this.$store.commit("SET_WORKSPACE", {
                                         name: `${this.workspace.name}*`,
                                         path: this.workspace.path,
-                                    });
+                                    })
                                 }
-                                this.$modal.hide("dialog");
-                                this.groupname = newName;
+                                
+                                this.$modal.hide("dialog")
+                                this.groupname = newName
+                                
                                 setTimeout(() => {
                                     // Re-add active class to current activeGroup
                                     const elList = document.getElementsByClassName(
                                         "draggable-group"
-                                    );
+                                    )
                                     elList.forEach((e) => {
-                                        e.classList.remove("active");
-                                    });
-                                    const target = elList[this.groupIndex];
-                                    target.classList.add("active");
-                                }, 10);
+                                        e.classList.remove("active")
+                                    })
+                                    const target = elList[this.groupIndex]
+                                    target.classList.add("active")
+                                }, 10)
                             } else {
-                                element.value = "";
+                                element.value = ""
                             }
                         },
                     },
@@ -364,25 +432,24 @@ export default {
                         title: "Cancel",
                         class: "dialog-green-btn dialog-btn",
                         handler: () => {
-                            this.$modal.hide("dialog");
+                            this.$modal.hide("dialog")
                         },
                     },
                 ],
-            });
+            })
         },
+        
+        
         openFolder() {
-            shell.openPath(this.folderpath);
+            shell.openPath(this.folderpath)
         },
+        
+        
         setMainFolder(){
             let target = this.folderpath.replace(/\\/g, '/')
             
             if(this.filefolder  === target) {
-                this.$notify({
-                    group: 'folderlist',
-                    type: 'notice',
-                    title: 'Notice',
-                    text: 'Current Main Folder is this folder'
-                });
+                this.$notify(isMainfolder("folderlist"))
                 return
             }
 
@@ -390,9 +457,11 @@ export default {
 
             const files = globDirFiles(target)
             const readable = filesFilter(files)
+            
             if(readable.length >= 3000){
                 this.$store.commit('OVERIDE_TEMP_FILES_LIST', files)
                 this.$store.commit('SET_CURFILE', readable[0])
+                
                 this.$modal.show("dialog", {
                     title: '🚧 Cache Files List Auto Enable',
                     text: "When directory have over 3000 files, it will use cache files list, that means it won't update directory with all operation outside Picnel.io 2, untill you click 'Refresh'.",
@@ -419,55 +488,62 @@ export default {
                 this.$store.commit('SET_CURFILE', readable[0])
             }
             else if (readable.length === 0) {
-                this.$notify({
-                    group: 'folderlist',
-                    type: 'warn',
-                    title: 'Warn',
-                    text: 'No readable files in the directory'
-                });
+                this.$notify(noReadable("folderlist"))
             }
             
         },
+        
+        
         copyfile(targetpath) {
             if (targetpath === "") {
-                this.$notify(targetPathEmpty("folderlist"));
-                return;
-            } else if (this.filepath === "") {
-                this.$notify(noFile("folderlist", "copy"));
-                return;
+                this.$notify(targetPathEmpty("folderlist"))
+                return
+            } 
+            else if (this.filepath === "") {
+                this.$notify(noFile("folderlist", "copy"))
+                return
             }
-            let target = path.join(targetpath, this.filename);
+            
+            let target = path.join(targetpath, this.filename)
+            
             try {
                 fs.copySync(this.filepath, target, {
                     overwrite: false,
                     errorOnExist: true,
-                });
+                })
+                
                 this.$store.commit("UPDATE_LOG", {
                     logger: "Copylog",
                     log: `File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`,
-                });
-            } catch (error) {
-                const extname = path.extname(this.filename);
-                let counter = 1;
-                let repeat = true;
+                })
+            } 
+            catch (error) {
+                const extname = path.extname(this.filename)
+                
+                let counter = 1
+                let repeat = true
+                
                 target = path.join(
                     targetpath,
                     this.filename.replace(extname, `(${counter})${extname}`)
-                );
+                )
+                
                 while (repeat) {
                     if (fs.existsSync(target)) {
-                        counter += 1;
+                        counter += 1
                         target = path.join(
                             targetpath,
                             this.filename.replace(
                                 extname,
                                 `(${counter})${extname}`
                             )
-                        );
-                    } else {
-                        repeat = false;
+                        )
+                    } 
+                    else {
+                        repeat = false
                     }
                 }
+                
                 this.$modal.show("dialog", {
                     title: "Already Exist & Auto Rename",
                     text: `Auto rename to: ${path.basename(target)}`,
@@ -479,7 +555,7 @@ export default {
                                 fs.copySync(this.filepath, target, {
                                     overwrite: false,
                                     errorOnExist: true,
-                                });
+                                })
                                 this.$modal.hide("dialog")
                             },
                         },
@@ -494,6 +570,8 @@ export default {
                 })
             }
         },
+        
+        
         movefile(targetpath) {
             let index = this.fileindex
             const changeFile = () => {
@@ -511,7 +589,7 @@ export default {
                     logger: "Movelog",
                     log: `File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`,
                 })
-            };
+            }
 
             // 排除空白目的位址
             if (targetpath === "") {
@@ -530,8 +608,8 @@ export default {
                 fs.moveSync(curpath, target, {
                     overwrite: false,
                     errorOnExist: true,
-                });
-                changeFile();
+                })
+                changeFile()
 
             } catch (error) {
                 
@@ -545,7 +623,7 @@ export default {
 
                 while (repeat) {
                     if (fs.existsSync(target)) {
-                        counter += 1;
+                        counter += 1
                         target = path.join(
                             targetpath,
                             this.filename.replace(
@@ -554,7 +632,7 @@ export default {
                             )
                         )
                     } else {
-                        repeat = false;
+                        repeat = false
                     }
                 }
                 this.$modal.show("dialog", {
@@ -569,23 +647,25 @@ export default {
                                     overwrite: false,
                                     errorOnExist: true,
                                 }).then(()=>{
-                                    changeFile();
+                                    changeFile()
                                 })
-                                this.$modal.hide("dialog");
+                                this.$modal.hide("dialog") 
                             },
                         },
                         {
                             title: "Cancel Move",
                             class: "dialog-btn dialog-red-btn",
                             handler: () => {
-                                this.$modal.hide("dialog");
-                                return;
+                                this.$modal.hide("dialog") 
+                                return 
                             },
                         },
                     ],
                 })
             }
         },
+        
+        
         save(q = null) {
             if (
                 this.workspace.name === "untitled" ||
@@ -597,30 +677,32 @@ export default {
             this.$store.commit("SET_WORKSPACE", {
                 name: this.workspace.name.replace("*", ""),
                 path: this.workspace.path,
-            });
+            }) 
             // Save workspace Json to path
             fs.writeJson(this.workspace.path, savefilter(this.allState), {
                 spaces: 4,
             }).then(() => {
-                this.$notify(saveFile("folderlist", this.workspace.name));
+                this.$notify(saveFile("folderlist", this.workspace.name)) 
                 // Save worksapce to config.json
-                const store = new Store();
-                let workspaces = store.get("workspaces");
-                let wkindex = 0;
+                const store = new Store()
+                let workspaces = store.get("workspaces")
+                let wkindex = 0
                 workspaces.forEach((wk, index) => {
                     if (wk.name === this.workspace.name) {
-                        wkindex = index;
+                        wkindex = index
                     }
-                });
-                workspaces[wkindex].main = this.filefolder;
-                store.set("workspaces", workspaces);
+                })
+                workspaces[wkindex].main = this.filefolder
+                store.set("workspaces", workspaces)
 
                 if (q === 'quit'){
                     remote.app.exit()
                 }
-            });
+            })
 
         },
+        
+        
         saveAs(q = null) {
             const options = {
                 title: "Save as workspace",
@@ -630,65 +712,67 @@ export default {
                         extensions: ["json"],
                     },
                 ],
-            };
-            let savePath = remote.dialog.showSaveDialog(options);
+            }
+            let savePath = remote.dialog.showSaveDialog(options)
             savePath.then((res) => {
                 if (res.canceled) {
-                    return;
+                    return
                 } else {
-                    const savepath = res.filePath.split("\\");
+                    const savepath = res.filePath.split("\\")
                     const saveName = savepath[savepath.length - 1].replace(
                         ".json",
                         ""
-                    );
+                    )
                     this.$store.commit("SET_WORKSPACE", {
                         name: saveName,
                         path: res.filePath,
-                    });
+                    })
                     // Save workspace Json to path
                     // Filter state which need to save
                     fs.writeJson(res.filePath, savefilter(this.allState), {
                         spaces: 4,
                     })
                         .then(() => {
-                            this.$notify(saveFile("folderlist", saveName));
+                            this.$notify(saveFile("folderlist", saveName))
                             // Save worksapce to config.json
-                            const store = new Store();
-                            let workspaces = store.get("workspaces");
+                            const store = new Store()
+                            let workspaces = store.get("workspaces")
                             const savedata = {
                                 name: saveName,
                                 path: res.filePath,
                                 main: this.filefolder,
                                 cover: "",
-                            };
+                            }
                             if (workspaces !== undefined) {
                                 // check exist
-                                let repeat = false;
+                                let repeat = false
                                 workspaces.forEach((wk) => {
                                     if (wk.name === saveName) {
-                                        repeat = true;
+                                        repeat = true
                                     }
-                                });
+                                })
                                 if (!repeat) {
-                                    workspaces.push(savedata);
-                                    store.set("workspaces", workspaces);
+                                    workspaces.push(savedata)
+                                    store.set("workspaces", workspaces)
                                 }
                             } else {
-                                store.set("workspaces", []);
-                                let workspaces = store.get("workspaces");
-                                workspaces.push(savedata);
-                                store.set("workspaces", workspaces);
+                                store.set("workspaces", [])
+                                let workspaces = store.get("workspaces")
+                                workspaces.push(savedata)
+                                store.set("workspaces", workspaces)
                             }
                             if (q === 'quit'){
                                 remote.app.exit()
                             }
                         })
                         .catch((err) => {
-                            console.error(err);
-                        });
+                            console.error(err)
+                        })
                 }
-            });
+            })
         },
+        
+        
         checkmove(el){
             if (el.dragged.classList[0]==='draggable-folder' && el.related.classList[0] === 'draggable-group'){
                 return false
@@ -698,84 +782,90 @@ export default {
             }
         }
     },
+    
     computed: {
         allState() {
-            return this.$store.state;
+            return this.$store.state
         },
-        mode() {
-            return this.$store.state.mode;
-        },
-        fileindex() {
-            return this.$store.getters.getFileIndex;
-        },
-        workspace() {
-            return this.$store.state.app.workspace;
-        },
-        filepath() {
-            return this.$store.state.curFile;
-        },
-        filefolder() {
-            return this.$store.getters.getFolderPath;
-        },
-        filename() {
-            return this.$store.getters.getFileName;
-        },
-        tempfileslist(){
-            return this.$store.state.cache.tempFilesList;
-        },
+        
+        ...mapState({
+            // Mode
+            mode: state => state.mode,
+            
+            // File
+            filepath: state => state.curFile,
+
+            // Worksapce
+            workspace: state => state.app.workspace,
+
+            // Cache
+            tempfileslist: state => state.cache.tempfileslist,
+            tempColor: state => state.cache.tempColor,
+
+            // Group
+            activegroup: state => state.activeGroup,
+        }),
+
+        ...mapGetters({
+            // File
+            fileindex: 'getFileIndex',
+            filefolder: 'getFolderPath',
+            filename: 'getFileName',
+        }),
+
         foldergroups: {
             get() {
-                return this.$store.state.folderGroups;
+                return this.$store.state.folderGroups
             },
             set(data) {
-                this.$store.commit("UPDATE_GROUP", data);
+                this.$store.commit("UPDATE_GROUP", data)
             },
         },
+        
         folderlist: {
             get() {
-                let act = this.$store.state.activeGroup;
-                return this.$store.state.folderLists[act];
+                let act = this.$store.state.activeGroup
+                return this.$store.state.folderLists[act]
             },
             set(data) {
-                this.$store.commit("UPDATE_LISTS", data);
+                this.$store.commit("UPDATE_LISTS", data)
                 if (!this.workspace.name.includes("*")) {
                     this.$store.commit("SET_WORKSPACE", {
                         name: `${this.workspace.name}*`,
                         path: this.workspace.path,
-                    });
+                    })
                 }
             },
         },
-        activegroup() {
-            return this.$store.state.activeGroup;
-        },
+
+        // Draggable Options
         dragOptions() {
             return {
                 animation: 200,
                 group: "description",
                 disabled: false,
                 ghostClass: "ghost",
-            };
+            }
         },
-        tempColor() {
-            return this.$store.state.cache.tempColor;
-        },
+
     },
     mounted() {
-        //:: Cancel context menu
-        const context_folder = document.getElementById("folder-context");
-        const context_group = document.getElementById("group-context");
+        //:: Hide all context menu event
+        const context_folder = document.getElementById("folder-context")
+        const context_group = document.getElementById("group-context")
+        
         window.addEventListener("click", () => {
-            context_folder.classList.remove("context-active");
-            context_group.classList.remove("context-active");
-        });
+            context_folder.classList.remove("context-active")
+            context_group.classList.remove("context-active")
+        })
     },
     created() {
+        // Quit app event
         this.$bus.$on("quit:save", () => {
              this.save("quit")
         })
     },
-};
+}
 </script>
 
 <style scoped lang="scss">

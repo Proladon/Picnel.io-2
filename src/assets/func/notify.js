@@ -1,4 +1,23 @@
-const saveFile= (group, name) => {
+const isMainfolder = (group) => {
+    return {
+        group: group,
+        type: 'notice',
+        title: 'Notice',
+        text: 'Current Main Folder is this folder'
+    }
+}
+
+const noReset = (group) => {
+    return {
+        group: group,
+        type: 'notice',
+        title: 'Notification',
+        text: 'No need to reset.'
+    }
+}
+
+
+const saveFile = (group, name) => {
     return {
         group: group,
         type: 'success',
@@ -25,12 +44,30 @@ const noFile= (group, verb) => {
     }
 }
 
+const noReadable= (group) => {
+    return {
+        group: group,
+        type: 'warn',
+        title: 'Warn',
+        text: `No readable files in the directory`
+    }
+}
+
 const alreadyExist = (group, target) => {
     return {
         group: group,
         type: "warn",
         title: "Name Repeat",
         text: `Name: ${target} already existing`
+    }
+}
+
+const digitNamingWarn = (group) => {
+    return {
+        group: group,
+        type: 'warn',
+        title: 'Unexpected Name',
+        text: `Don't use number as name`
     }
 }
 
@@ -43,9 +80,13 @@ const plsUploadFolder = {
 
 
 export {
+    isMainfolder,
+    noReset,
     saveFile,
     targetPathEmpty,
     noFile,
+    noReadable,
+    digitNamingWarn,
     alreadyExist,
     plsUploadFolder,
 }

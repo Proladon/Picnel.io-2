@@ -42,12 +42,18 @@
 </template>
 
 <script>
-    import {mapGetters} from 'vuex'
-    // import fs from 'fs-extra'
-    // import path from 'path'
+    import { mapGetters } from 'vuex'
     import mime from 'mime-types'
     import { shell, remote } from 'electron'
     import Mainfoldercontext from  '@/components/contextmenu/Mainfoldercontext.vue'
+    
+    // Notify
+    import { noReset } from '@/assets/func/notify.js'
+
+    // Helper
+    import { getRootPath } from '@/assets/func/helper.js'
+
+    import fg from 'fast-glob'
 
     export default {
         name: 'Statusbar',
@@ -61,19 +67,15 @@
                 let readablefiles = []
                 
                 // Get Select Folder Path
+                // => Disk:/../../xxx.ext
                 const abspath = (e.target.files[0].path).split('\\')
-                const relpath = (e.target.files[0].webkitRelativePath).split('/')[0]
-                let root = ""
-                for(let p of abspath){
-                    if (p !== relpath){
-                        root += p + '/'
-                    }
-                    else if (p === relpath){
-                        root += p
-                        break
-                    }
-                }
                 
+                // => folder/xxx.ext
+                const relpath = (e.target.files[0].webkitRelativePath).split('/')[0]
+
+                // Get root path
+                let root = getRootPath(abspath, relpath)
+               
                 this.$store.commit('SET_TEMP_FILES_LIST', root)
 
                 this.tempfileslist.map(f => {
@@ -93,7 +95,7 @@
                         type: 'warn',
                         title: 'Warn',
                         text: 'No readable files in the directory'
-                    });
+                    })
                 }
                 else{
                     this.$store.commit('SET_CURFILE', readablefiles[0])
@@ -132,12 +134,7 @@
             //:: Reset Folder
             resetfolder() {
                 if (this.filename === '') {
-                    this.$notify({
-                        group: 'home',
-                        type: 'warn',
-                        title: 'Notification',
-                        text: 'No need to reset.'
-                    });
+                    this.$notify(noReset("home"))
                     return
                 }
                 this.$store.commit('SET_CURFILE', "")
@@ -148,13 +145,13 @@
                 }
             },
             mainfolderContext(e){
-                const element = document.getElementById("mainfolder-context");
-                element.classList.remove("context-active");
-                element.style.top = parseInt(e.clientY)-50  + "px";
-                element.style.left = e.clientX + "px";
+                const element = document.getElementById("mainfolder-context")
+                element.classList.remove("context-active")
+                element.style.top = parseInt(e.clientY)-50  + "px"
+                element.style.left = e.clientX + "px"
                 setTimeout(() => {
-                    element.classList.add("context-active");
-                }, 150);
+                    element.classList.add("context-active")
+                }, 150)
             },
 
             openfolder(){
@@ -175,6 +172,7 @@
             tempfileslist(){
                 return this.$store.state.cache.tempFilesList
             },
+            
             ...mapGetters({
                 file: 'getCurFilePath',
                 filename: 'getFileName',
@@ -185,10 +183,10 @@
             })
         },
         mounted(){
-            const element = document.getElementById("mainfolder-context");
+            const element = document.getElementById("mainfolder-context")
             window.addEventListener("click", () => {
-                element.classList.remove("context-active");
-            });
+                element.classList.remove("context-active")
+            })
         }
         
     }
