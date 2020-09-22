@@ -11,6 +11,7 @@
 ![](https://img.shields.io/github/issues-closed-raw/Proladon/Picnel.io-2?color=A6A6A6&style=for-the-badge)
 ![](https://img.shields.io/powershellgallery/p/DNS.1.1.1.1?color=skyblue&style=for-the-badge)
 
+![preview](https://github.com/Proladon/Picnel.io-2/blob/master/public/Picne.io_2_preview.png)
 ## Picnel.io 2 is rebuild of [Picnel.io](https://github.com/Proladon/Picnel.io)
 Picnel.io-2 is using `vue-electron`(Vue 2). so unlike picnel.io building with C# `WPF`, it's cross platform.
 
