@@ -93,3 +93,13 @@
 .workspace-item-wrapper::-webkit-scrollbar-corner {
     background: transparent;
 }
+
+// ---------------- //
+//                  Pane             //
+// ---------------- //
+
+/* width */
+.folder-pane::-webkit-scrollbar,
+.group-pane::-webkit-scrollbar {
+    width: 0;
+}

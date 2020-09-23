@@ -19,7 +19,7 @@
         </div>
         <splitpanes>
             <!-- Folders -->
-            <pane size="70">
+            <pane size="70" class="folder-pane">
                 <draggable
                     v-model="folderlist"
                     v-bind="dragOptions"
@@ -53,7 +53,7 @@
             </pane>
 
             <!-- Group -->
-            <pane>
+            <pane class="group-pane">
                 <draggable
                     v-model="foldergroups"
                     v-bind="dragOptions"
@@ -894,11 +894,17 @@ export default {
 .splitpanes__pane {
     overflow-y: auto;
 }
-
+.folder-pane, .group-pane{
+    box-sizing: border-box;
+    padding-top: 30px;
+    // padding-bottom: 30px;
+}
 // ---------------- //
 //             Controls            //
 // ---------------- //
 .list-control {
+    position: absolute;
+    z-index: 2;
     width: 100%;
     height: 25px;
     box-sizing: border-box;
@@ -929,7 +935,7 @@ export default {
 }
 
 // ---------------- //
-//      draggable      //
+//          draggable          //
 // ---------------- //
 .active {
     color: var(--dark) !important;

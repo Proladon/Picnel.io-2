@@ -28,7 +28,7 @@
                 <div class="release-info" v-if="info === 'release'">
                     <p class="content-h1">Release</p>
                     <div class="content-block">
-                        <p class="content-h2">Ver 1.0.4 Beta</p>
+                        <p class="content-h2">Ver 1.0.5</p>
                     </div>
                 </div>
 
@@ -38,7 +38,7 @@
                     <div class="intro content-block">
                         <img src="@/assets/icon/pic2.png" alt="">
                         <div class="intro-content">
-                            <p>Version: 1.0.4 Beta</p>
+                            <p>Version: 1.0.5</p>
                         </div>
                     </div>   
                     <div class="related-img content-block">
