@@ -1,4 +1,4 @@
-import {globDirFiles} from '@/assets/func/helper.js'
+import {getDirFiles} from '@/assets/func/helper.js'
 const state = {
     tempColor: Object,
     tempFilesList: [],
@@ -15,7 +15,8 @@ const mutations = {
         state.tempFilesList = data;
     },
     SET_TEMP_FILES_LIST: (state, targetpath) => {
-        state.tempFilesList = globDirFiles(targetpath);
+        // state.tempFilesList = globDirFiles(targetpath);
+        state.tempFilesList = getDirFiles(targetpath);
     },
     CLEAR_TEMP_FILES_LIST: (state) => {
         state.tempFilesList = [];

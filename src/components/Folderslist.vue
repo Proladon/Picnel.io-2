@@ -130,7 +130,7 @@ import fs from "fs-extra"
 import path from "path"
 import { shell, remote } from "electron"
 import Store from "electron-store"
-
+import sizeOf from 'image-size'
 // Vuex
 import { mapState, mapGetters } from "vuex"
 
@@ -570,9 +570,10 @@ export default {
             } catch (error) {
                 let exist = target
                 target = repeatAutoRename(this.filename, targetpath)
-
+                const exist_size = sizeOf(exist)
+                const target_size = sizeOf(this.filepath)
                 this.$modal.show("dialog", {
-                    title: "Existing & Auto Rename",
+                    title: "Existing Compare",
                     text: `
                     <div class="repeat-compare-modal">
                         <p class="op-type">${opType}</p>
@@ -585,6 +586,10 @@ export default {
                         <div class="contain-wrapper">
                             <p>Current</p>
                             <p>Existing</p>
+                        </div>
+                        <div class="contain-wrapper">
+                            <p>${exist_size.width} x ${exist_size.height}</p>
+                            <p>${target_size.width} x ${target_size.height}</p>
                         </div>
                         <p>Auto-Rename:</p>
                         <p><strong>${path.basename(target)}</strong></p>

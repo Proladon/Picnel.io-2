@@ -3,7 +3,7 @@ import Vuex from "vuex";
 import fs from 'fs-extra'
 import mime from 'mime-types'
 import path from 'path'
-import {filesFilter, globDirFiles, getDirFiles} from '@/assets/func/helper.js'
+import {filesFilter, getDirFiles} from '@/assets/func/helper.js'
 import log from './modules/logger.js'
 import app from './modules/app.js'
 import cache from './modules/cache.js'
@@ -93,14 +93,8 @@ export default new Vuex.Store({
             function randomChoice(arr) {
                 return arr[Math.floor(Math.random() * arr.length)];
             }
-            let files_list = null
-            // Re-get all files in current folder
-            if (context.state.cache.tempFilesList.length > 3000) {
-                files_list = context.state.cache.tempFilesList
-            }
-            else {
-                files_list = getDirFiles(context.getters.getFolderPath)
-            }
+            
+            let files_list = context.getters.getFilesList
 
             const files = filesFilter(files_list)
             //? 如果資料夾內有多個檔案才執行
@@ -168,13 +162,8 @@ export default new Vuex.Store({
         },
 
         AFTER_MOVE_NEXT: (context, index) => {
-            let files_list = null
-            if (context.state.cache.tempFilesList.length > 3000) {
-                files_list = context.state.cache.tempFilesList
-            }
-            else {
-                files_list = getDirFiles(context.getters.getFolderPath)
-            }
+            let files_list = context.getters.getFilesList
+
             const files = filesFilter(files_list)
             if (files.length === 0) {
                 context.commit('SET_CURFILE', '')
@@ -227,7 +216,11 @@ export default new Vuex.Store({
                 return state.cache.tempFilesList
             }
             else {
-                return globDirFiles(getters.getFolderPath)
+                // Fast-Glob
+                // return globDirFiles(getters.getFolderPath)
+                
+                // fs
+                return getDirFiles(getters.getFolderPath)
             }
         },
         //:: File Index
