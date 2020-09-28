@@ -19,9 +19,9 @@
             <img src="@/assets/icon/info.svg" style="width:70%">
         </div>
         
-        <div class="views" @click="updateView" :class="{active_view: views === 'update'}">
+        <!-- <div class="views" @click="updateView" :class="{active_view: views === 'update'}">
             <img src="@/assets/icon/update.svg">
-        </div>
+        </div> -->
         
         <div class="views" @click="settingsView" :class="{active_view: views === 'settings'}">
             <img src="@/assets/icon/energy.svg">
@@ -79,13 +79,12 @@
 
                 // this.target = e.target
             },
-            settingsView(){
-                remote.dialog.showMessageBox({
-                    message: "Sorry! this page is not done yet"
-                })
-                // this.$store.commit('SET_VIEW', "settings")
-
-                // this.target = e.target
+            settingsView(e){
+                // remote.dialog.showMessageBox({
+                //     message: "Sorry! this page is not done yet"
+                // })
+                this.$store.commit('SET_VIEW', "settings")
+                this.target = e.target
             },
         },
         computed: {
@@ -99,24 +98,7 @@
                 viewmode: 'getMode'
             })
         },
-        watch:{
-            // workspacesView:{
-            //     handler: function (view) {
-            //         if(view === false){
-            //             this.target = document.getElementById('homeview')
-            //         }
-            //     }
-            // },
-            // target: (e)=>{
-            //     document.getElementsByClassName('views').forEach(element => {
-            //         element.classList.remove('active_view')
-            //     })
-            //     e.classList.add('active_view')
-            // }
-        },
-        // mounted(){
-        //     document.getElementById('homeview').classList.add('active_view')
-        // }
+
     }
 </script>
 

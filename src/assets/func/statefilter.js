@@ -28,8 +28,14 @@ const newstate = () => {
     }
 }
 
+const configfilter = {
+    "folders_anime": true,
+	"viewer_anime": true,
+}
+
 
 export {
     statefilter,
     newstate,
+    configfilter,
 }

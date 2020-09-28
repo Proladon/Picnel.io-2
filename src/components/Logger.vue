@@ -83,27 +83,38 @@
             },
 
             clearLog(){
-                this.$modal.show("dialog",{
-                    title: `Clear log`,
-                    text: `Clear all ${this.activetab} log ?`,
-                    buttons: [
-                        {
-                            title: "Clear",
-                            class: "dialog-red-btn dialog-btn",
-                            handler: () => {
-                                this.$store.commit('CLEAR_LOG')
-                                this.$modal.hide("dialog")
-                            }
-                        },
-                        {
-                            title: "Cancel",
-                            class: "dialog-green-btn dialog-btn",
-                            handler: () => {
-                                this.$modal.hide("dialog")
-                            }
-                        }
-                    ]
-                })
+                const Clearlog = () => import('@/components/modal/Clearlog.vue')
+                this.$modal.show(
+                    Clearlog,
+                    {
+                        logger:this.activetab
+                    },
+                    {
+                        width: "300",
+                        classes: "addfolders-modal"
+                    }
+                )
+                // this.$modal.show("dialog",{
+                //     title: `Clear log`,
+                //     text: `Clear all ${this.activetab} log ?`,
+                //     buttons: [
+                //         {
+                //             title: "Clear",
+                //             class: "dialog-red-btn dialog-btn",
+                //             handler: () => {
+                //                 this.$store.commit('CLEAR_LOG')
+                //                 this.$modal.hide("dialog")
+                //             }
+                //         },
+                //         {
+                //             title: "Cancel",
+                //             class: "dialog-green-btn dialog-btn",
+                //             handler: () => {
+                //                 this.$modal.hide("dialog")
+                //             }
+                //         }
+                //     ]
+                // })
             },
         },
         computed: {

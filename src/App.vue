@@ -52,6 +52,7 @@
         <transition name="fade">
             <Workspaces v-if="views === 'workspaces'"/>
             <Info v-if="views === 'info'"/>
+            <Settings v-if="views === 'settings'"/>
         </transition>
 
         <!-- Notify -->
@@ -75,6 +76,8 @@
     import Folderslist from './components/Folderslist.vue'
     import Statusbar from './components/Statusbar.vue'
 
+    import {configfilter} from '@/assets/func/statefilter.js'
+
     import {remote} from 'electron'
 
     export default {
@@ -89,6 +92,7 @@
             Statusbar,
             Workspaces: () => import('./components/views/Workspaces.vue'),
             Info: () => import('./components/views/Info.vue'),
+            Settings: () => import('./components/views/Settings.vue'),
         },
         data(){
             return{
@@ -148,6 +152,16 @@
                 return this.$store.state.app.workspace
             }
         },
+        mounted(){
+            const Store = require('electron-store')
+            const store = new Store()
+            if (store.get('user_configs') === undefined){
+                store.set('user_configs', configfilter)
+            }
+            else{
+                this.$store.commit('SET_CONFIG', store.get('user_configs'))
+            }
+        }
     }
 </script>
 

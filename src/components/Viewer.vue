@@ -90,6 +90,7 @@ import { mapGetters } from "vuex";
 import anime from "animejs";
 import "viewerjs/dist/viewer.css";
 import fs from "fs-extra";
+import Store from 'electron-store'
 // import path from 'path'
 import mime from "mime-types";
 import {filesFilter, deletefileLogging} from "@/assets/func/helper.js";
@@ -99,6 +100,7 @@ import {plsUploadFolder} from "@/assets/func/notify.js";
 export default {
     name: "Viewer",
     components: {},
+
     methods: {
         dragging() {},
         dragleave() {},
@@ -285,6 +287,9 @@ export default {
             tempfileslist(){
                 return this.$store.state.cache.tempFilesList
             },
+            viewer_anime(){
+                return this.$store.config.viewer_anime
+            },
         ...mapGetters({
             curfile: "getCurFilePath",
             filename: "getFileName",
@@ -295,14 +300,17 @@ export default {
         }),
     },
     watch: {
-        curfile: () => {
-            anime({
-                targets: [".files-viewer"],
-                opacity: ["0", "1"],
-                duration: 1000,
-                easing: "easeInOutQuad",
-            });
-        },
+        curfile() {
+            const store = new Store()
+            if(store.get('user_configs.viewer_anime')){
+                anime({
+                    targets: [".files-viewer"],
+                    opacity: ["0", "1"],
+                    duration: 1000,
+                    easing: "easeInOutQuad",
+                })
+            }
+        }
     },
 };
 </script>

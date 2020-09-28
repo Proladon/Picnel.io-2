@@ -7,6 +7,7 @@ import {filesFilter, getDirFiles} from '@/assets/func/helper.js'
 import log from './modules/logger.js'
 import app from './modules/app.js'
 import cache from './modules/cache.js'
+import config from './modules/config.js'
 
 Vue.use(Vuex);
 
@@ -25,6 +26,9 @@ export default new Vuex.Store({
     mutations: {
         SET_STATE: (state, data) => {
             Object.assign(state, data)
+        },
+        SET_CONFIG: (state, data) => {
+            Object.assign(state.config, data)
         },
         //:: Mode
         CHANGE_MODE: (state, mode) => {
@@ -162,13 +166,16 @@ export default new Vuex.Store({
         },
 
         AFTER_MOVE_NEXT: (context, index) => {
-            let files_list = context.getters.getFilesList
+            let files_list = getDirFiles(context.getters.getFolderPath)
+            
+            console.log(files_list)
 
             const files = filesFilter(files_list)
             if (files.length === 0) {
                 context.commit('SET_CURFILE', '')
             }
             else if (index + 1 < files.length) {
+                console.log(files[index])
                 context.commit('SET_CURFILE', files[index])
             }
             else if (index + 1 > files.length) {
@@ -182,6 +189,7 @@ export default new Vuex.Store({
         app,
         log,
         cache,
+        config,
     },
     getters: {
         //:: File Path

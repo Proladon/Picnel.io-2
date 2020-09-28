@@ -115,7 +115,8 @@ import {
 import { statefilter } from "@/assets/func/statefilter.js"
 import {
     filesFilter,
-    globDirFiles,
+    // globDirFiles,
+    getDirFiles,
     repeatAutoRename,
     deletefileLogging,
 } from "@/assets/func/helper.js"
@@ -171,13 +172,15 @@ export default {
             this.$store.commit("CHANGE_ACTIVE_GROUP", name)
 
             // Target Folder item animation
-            setTimeout(() => {
-                anime({
-                    targets: [".draggable-folder"],
-                    translateX: ["-500", "0"],
-                    delay: anime.stagger(100),
-                })
-            })
+            if (this.folders_anime){
+                setTimeout(() => {
+                    anime({
+                        targets: [".draggable-folder"],
+                        translateX: ["-500", "0"],
+                        delay: anime.stagger(100),
+                    })
+                }, 0)
+            }
         },
 
         //:: Show add folders modal
@@ -470,7 +473,7 @@ export default {
 
             this.$store.commit("CLEAR_TEMP_FILES_LIST", target)
 
-            const files = globDirFiles(target)
+            const files = getDirFiles(target)
             const readable = filesFilter(files)
 
             if (readable.length >= 3000) {
@@ -825,6 +828,9 @@ export default {
 
             // Group
             activegroup: (state) => state.activeGroup,
+
+            // Configs
+            folders_anime: (state) => state.config.folders_anime
         }),
 
         ...mapGetters({

@@ -7,6 +7,11 @@ const state = {
     workspace: {
         name: "untitled",
         path: "",
+    },
+
+    configs: {
+        folders_animation: true,
+        viewer_animation: true,
     }
     
 }
