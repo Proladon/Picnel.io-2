@@ -48,12 +48,13 @@
             homeView(e){
                 this.target = e.target
                 this.$store.commit('SET_VIEW', "home")
-                // this.$store.commit('HOME_VIEW')
             },
             changeMode() {
                 if (this.viewmode === 'Random') {
                     this.$store.commit('CHANGE_MODE', 'PreNext')
-                } else {
+                } else if (this.viewmode === 'PreNext'){
+                    this.$store.commit('CHANGE_MODE', 'Multiple')
+                } else if (this.viewmode === 'Multiple'){
                     this.$store.commit('CHANGE_MODE', 'Random')
                 }
                 this.$notify({
@@ -75,14 +76,9 @@
                 remote.dialog.showMessageBox({
                     message: "Sorry! this page is not done yet"
                 })
-                // this.$store.commit('SET_VIEW', "update")
 
-                // this.target = e.target
             },
             settingsView(e){
-                // remote.dialog.showMessageBox({
-                //     message: "Sorry! this page is not done yet"
-                // })
                 this.$store.commit('SET_VIEW', "settings")
                 this.target = e.target
             },

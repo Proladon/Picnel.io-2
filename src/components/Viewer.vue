@@ -13,20 +13,28 @@
             <!-- Image Viewer -->
             <img class="files-viewer"
                 :src="`local-resource://${curfile}`"
-                v-if="curfile !== '' && filetype === 'image'"
+                v-if="curfile !== '' && filetype === 'image'&&mode !== 'Multiple'"
             />
             <!-- Video Viewer -->
             <video class="files-viewer"
                 :src="`local-resource://${curfile}`"
                 controls
-                v-if="curfile !== '' && filetype === 'video'"
+                v-if="curfile !== '' && filetype === 'video'&&mode !== 'Multiple'"
             ></video>
             <!-- Audio Viewer -->
             <audio class="files-viewer"
                 :src="`local-resource://${curfile}`"
                 controls
-                v-if="curfile !== '' && filetype === 'audio'"
+                v-if="curfile !== '' && filetype === 'audio'&&mode !== 'Multiple'"
             ></audio>
+            <!-- Multiple Viewer -->
+            <div 
+                class="files-viewer multiple-viewer"
+                v-if="mode === 'Multiple' "
+            >
+                <img class="file-item" v-for="img in files" :key="img" :src="`local-resource://${img}`" />
+                <canvas id="canvas-file-item"></canvas>
+            </div>
         </div>
 
         <!-- Controls -->
@@ -95,6 +103,7 @@ import Store from 'electron-store'
 import mime from "mime-types";
 import {filesFilter, deletefileLogging} from "@/assets/func/helper.js";
 import {plsUploadFolder} from "@/assets/func/notify.js";
+
 
 
 export default {
@@ -310,6 +319,44 @@ export default {
                     easing: "easeInOutQuad",
                 })
             }
+        },
+
+        mode(){
+            setTimeout(() => {
+                const img = document.querySelector('img');
+                // const img = document.querySelector('img');
+                // document.querySelector('input').addEventListener('change', function (e) {
+                // img.src = URL.createObjectURL(e.target.files[0]);
+                // });
+
+                // const picaInstance = pica();
+                
+                // img.onload = function () {
+                // const canvasFromImg = document.querySelector('#output-from-img');
+                // const {height, width, naturalHeight, naturalWidth} = img;
+                // const options = {
+                //     quality: 0,
+                //     alpha: true,
+                //     unsharpAmount: 40,
+                //     unsharpRadius: 0.8,
+                //     unsharpThreshold: 10
+                // };
+
+                // canvasFromImg.height = height;
+                // canvasFromImg.width = width;
+                // picaInstance.resize(img, canvasFromImg, options);
+
+                // const tempCanvas = document.createElement('canvas');
+                // const canvasFromCanvas = document.querySelector('#output-from-canvas');
+                // tempCanvas.height = naturalHeight;
+                // tempCanvas.width = naturalWidth;
+                // canvasFromCanvas.height = height;
+                // canvasFromCanvas.width = width;
+                // tempCanvas.getContext('2d').drawImage(img, 0, 0, naturalWidth, naturalHeight);
+                // picaInstance.resize(tempCanvas, canvasFromCanvas, options);
+                // };
+                
+            });
         }
     },
 };
@@ -324,6 +371,7 @@ export default {
 }
 
 #view-area {
+    overflow: auto;
     width: 100%;
     height: 100%;
     display: flex;
@@ -459,4 +507,21 @@ export default {
 .context-active {
     transform: scale(1) !important;
 }
+
+.multiple-viewer{
+    .file-item{
+        position: relative;
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        opacity: 0;
+    }
+
+    #canvas-file-item{
+        pointer-events: none;
+        width: 100px;
+        height: 100px;
+    }
+}
 </style>
+

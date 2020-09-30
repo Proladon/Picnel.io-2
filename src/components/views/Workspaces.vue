@@ -127,7 +127,6 @@
                     this.cover = wk[index].cover
                 }
 
-                console.log(this.target)
                 if(this.target !== null){
                     this.target.classList.remove("item-active")
                 }

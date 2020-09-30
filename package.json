@@ -23,6 +23,7 @@
         "image-size": "^0.9.1",
         "mime-types": "^2.1.27",
         "path": "^0.12.7",
+        "pica": "^6.1.1",
         "splitpanes": "^2.2.1",
         "v-viewer": "^1.5.1",
         "velocity-animate": "^1.5.2",
