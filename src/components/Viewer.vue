@@ -32,8 +32,10 @@
                 class="files-viewer multiple-viewer"
                 v-if="mode === 'Multiple' "
             >
-                <img class="file-item" v-for="img in files" :key="img" :src="`local-resource://${img}`" />
-                <canvas id="canvas-file-item"></canvas>
+                <div class="file-item-wrapper" v-for="img in files" :key="img">
+                    <img class="file-item"  :src="`local-resource://${img}`" />
+                    <canvas class="canvas-file-item"></canvas>
+                </div>
             </div>
         </div>
 
@@ -321,42 +323,22 @@ export default {
             }
         },
 
-        mode(){
-            setTimeout(() => {
-                const img = document.querySelector('img');
-                // const img = document.querySelector('img');
-                // document.querySelector('input').addEventListener('change', function (e) {
-                // img.src = URL.createObjectURL(e.target.files[0]);
-                // });
+        mode(e){
+            if(e === 'Multiple'){
 
-                // const picaInstance = pica();
-                
-                // img.onload = function () {
-                // const canvasFromImg = document.querySelector('#output-from-img');
-                // const {height, width, naturalHeight, naturalWidth} = img;
-                // const options = {
-                //     quality: 0,
-                //     alpha: true,
-                //     unsharpAmount: 40,
-                //     unsharpRadius: 0.8,
-                //     unsharpThreshold: 10
-                // };
-
-                // canvasFromImg.height = height;
-                // canvasFromImg.width = width;
-                // picaInstance.resize(img, canvasFromImg, options);
-
-                // const tempCanvas = document.createElement('canvas');
-                // const canvasFromCanvas = document.querySelector('#output-from-canvas');
-                // tempCanvas.height = naturalHeight;
-                // tempCanvas.width = naturalWidth;
-                // canvasFromCanvas.height = height;
-                // canvasFromCanvas.width = width;
-                // tempCanvas.getContext('2d').drawImage(img, 0, 0, naturalWidth, naturalHeight);
-                // picaInstance.resize(tempCanvas, canvasFromCanvas, options);
-                // };
-                
-            });
+                setTimeout(() => {
+                    const imgs = document.getElementsByClassName('file-item');
+                    const canvas = document.getElementsByClassName('canvas-file-item');
+                    
+                    imgs.forEach((i, index) => {
+                        let context = canvas[index].getContext("2d")
+                        canvas[index].width = i.width
+                        canvas[index].height = i.height
+                        context.drawImage(i, 0, 0, i.width, i.height);
+                    });
+                    
+                });
+            }
         }
     },
 };
@@ -509,18 +491,31 @@ export default {
 }
 
 .multiple-viewer{
-    .file-item{
+    display: flex;
+    flex-wrap: wrap;
+    .file-item-wrapper{
         position: relative;
-        width: 100px;
-        height: 100px;
-        object-fit: cover;
-        opacity: 0;
-    }
+        
+        .file-item{
+            cursor: pointer;
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            opacity: 0;
+        }
 
-    #canvas-file-item{
-        pointer-events: none;
-        width: 100px;
-        height: 100px;
+        .canvas-file-item{
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            pointer-events: none;
+            width: 100px;
+            height: 100px;
+            background:rgba($color: skyblue, $alpha: .3);
+        }
+
     }
 }
 </style>
