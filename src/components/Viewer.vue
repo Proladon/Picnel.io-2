@@ -31,16 +31,17 @@
             <div 
                 class="files-viewer multiple-viewer"
                 v-if="mode === 'Multiple' "
+                v-lazy-container="{ selector: 'img' }"
             >
-                <div class="file-item-wrapper" v-for="img in files" :key="img">
-                    <img class="file-item"  :src="`local-resource://${img}`" />
+                <div class="file-item-wrapper" v-for="(img,index) in files" :key="img">
+                    <img class="file-item"  :data-src="`local-resource://${img}`" @load="loaded($event, index)"/>
                     <canvas class="canvas-file-item"></canvas>
                 </div>
             </div>
         </div>
 
         <!-- Controls -->
-        <div class="operate-btn-wrapper">
+        <div class="operate-btn-wrapper" v-show="mode !== 'Multiple'">
             
             <div class="operate-btn" @click="openfile">
                 <img src="@/assets/icon/openfolder.svg">
@@ -61,11 +62,11 @@
         </div>
 
         <!-- StartEnd Btn -->
-        <div id="start-index" class="view-control">
+        <div id="start-index" class="view-control" v-show="mode !== 'Multiple'">
             <button @click="goStart">Start</button>
         </div>
 
-        <div id="end-index" class="view-control">
+        <div id="end-index" class="view-control" v-show="mode !== 'Multiple'">
             <button @click="goEnd">End</button>
         </div>
         
@@ -292,6 +293,17 @@ export default {
                 {filepath:this.curfile, filename: this.filename},
                 {width:'400', classes: 'addfolders-modal'}
             )
+        },
+        loaded(e, index){
+            if(this.mode !== 'Multiple') return
+            console.log("loaded")
+            let i = e.target
+            const canvas = document.getElementsByClassName('canvas-file-item');
+            
+            let context = canvas[index].getContext("2d")
+            canvas[index].width = i.width
+            canvas[index].height = i.height
+            context.drawImage(i, 0, 0, i.width, i.height);
         }
     },
     computed: {
@@ -323,23 +335,6 @@ export default {
             }
         },
 
-        mode(e){
-            if(e === 'Multiple'){
-
-                setTimeout(() => {
-                    const imgs = document.getElementsByClassName('file-item');
-                    const canvas = document.getElementsByClassName('canvas-file-item');
-                    
-                    imgs.forEach((i, index) => {
-                        let context = canvas[index].getContext("2d")
-                        canvas[index].width = i.width
-                        canvas[index].height = i.height
-                        context.drawImage(i, 0, 0, i.width, i.height);
-                    });
-                    
-                });
-            }
-        }
     },
 };
 </script>
@@ -493,6 +488,13 @@ export default {
 .multiple-viewer{
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    padding-left: 5px;
+    padding-right: 5px;
+    
     .file-item-wrapper{
         position: relative;
         
@@ -502,6 +504,7 @@ export default {
             height: 100px;
             object-fit: cover;
             opacity: 0;
+            margin: 5px;
         }
 
         .canvas-file-item{
