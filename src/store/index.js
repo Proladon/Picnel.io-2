@@ -168,8 +168,6 @@ export default new Vuex.Store({
         AFTER_MOVE_NEXT: (context, index) => {
             let files_list = getDirFiles(context.getters.getFolderPath)
             
-            console.log(files_list)
-
             const files = filesFilter(files_list)
             if (files.length === 0) {
                 context.commit('SET_CURFILE', '')

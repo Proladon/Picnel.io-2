@@ -28,16 +28,29 @@
                 v-if="curfile !== '' && filetype === 'audio'&&mode !== 'Multiple'"
             ></audio>
             <!-- Multiple Viewer -->
+            
             <div 
                 class="files-viewer multiple-viewer"
                 v-if="mode === 'Multiple' "
                 v-lazy-container="{ selector: 'img' }"
             >
+                
                 <div class="file-item-wrapper" v-for="(img,index) in files" :key="img">
-                    <img class="file-item"  :data-src="`local-resource://${img}`" @load="loaded($event, index)"/>
-                    <canvas class="canvas-file-item"></canvas>
+                    <Checkbox class="select-check" :value="img" v-model="tempSelected" color="#f50057" @change="fileSelected(index, img)"></Checkbox>
+                    <div class="file-img-wrapper">
+                        <img class="file-item"  :data-src="`local-resource://${img}`" @load="loaded($event, index)"/>
+                        <canvas class="canvas-file-item"></canvas>
+                    </div>
                 </div>
+
             </div>
+        </div>
+
+
+        <div class="selected-info" v-show="mode === 'Multiple'">
+            <p>Selected: {{tempSelected.length}}</p>
+            <div class="select-controls" @click="selectAll">Select All</div>
+            <div class="select-controls" @click="cancelAll">Cancel All</div>
         </div>
 
         <!-- Controls -->
@@ -107,11 +120,12 @@ import mime from "mime-types";
 import {filesFilter, deletefileLogging} from "@/assets/func/helper.js";
 import {plsUploadFolder} from "@/assets/func/notify.js";
 
+import Checkbox from 'vue-material-checkbox'
 
 
 export default {
     name: "Viewer",
-    components: {},
+    components: {Checkbox},
 
     methods: {
         dragging() {},
@@ -296,7 +310,6 @@ export default {
         },
         loaded(e, index){
             if(this.mode !== 'Multiple') return
-            console.log("loaded")
             let i = e.target
             const canvas = document.getElementsByClassName('canvas-file-item');
             
@@ -304,6 +317,32 @@ export default {
             canvas[index].width = i.width
             canvas[index].height = i.height
             context.drawImage(i, 0, 0, i.width, i.height);
+        },
+        fileSelected(index, img){
+            const wrapper = document.getElementsByClassName('file-item-wrapper')
+            if (this.tempSelected.includes(img)){
+                wrapper[index].classList.add('selected')
+            }
+            else{
+                wrapper[index].classList.remove('selected')
+            }
+        },
+        selectAll(){
+            this.$store.commit('RESET_SELECTED')
+            for (let i of this.files){
+                this.$store.commit('ADD_SELECTED', i)
+            }
+            const el = document.getElementsByClassName('file-item-wrapper')
+            el.forEach(element => {
+                element.classList.add('selected')
+            });
+        },
+        cancelAll(){
+            this.$store.commit('RESET_SELECTED')
+            const el = document.getElementsByClassName('file-item-wrapper')
+            el.forEach(element => {
+                element.classList.remove('selected')
+            });
         }
     },
     computed: {
@@ -311,7 +350,15 @@ export default {
                 return this.$store.state.cache.tempFilesList
             },
             viewer_anime(){
-                return this.$store.config.viewer_anime
+                return this.$store.state.config.viewer_anime
+            },
+            tempSelected:{
+                get(){
+                    return this.$store.state.cache.tempSelected
+                },
+                set(data){
+                    this.$store.commit('UPDATE_SELECTED', data)
+                }
             },
         ...mapGetters({
             curfile: "getCurFilePath",
@@ -477,7 +524,36 @@ export default {
 #prenext-mode:hover {
     opacity: 0.3;
 }
+// ---------------- //
+//        Selected-info       //
+// ---------------- //
+.selected-info{
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+    width: 100%;
+    height: 30px;
+    background-color: var(--dark);
 
+    color: mediumspringgreen;
+}
+
+.select-controls{
+    margin-left: 10px;
+    cursor: pointer;
+    padding: 5px;
+    color: lightgray;
+    box-sizing: border-box;
+    border: solid 2px var(--lightyellow);
+    border-radius: 8px;
+}
+
+.select-controls:hover{
+    color: var(--dark);
+    background-color: cadetblue;
+}
 // ---------------- //
 //             Context             //
 // ---------------- //
@@ -492,34 +568,54 @@ export default {
     height: 100%;
     width: 100%;
     box-sizing: border-box;
+    padding-top: 60px;
     padding-left: 5px;
     padding-right: 5px;
+
+    
     
     .file-item-wrapper{
-        position: relative;
         
-        .file-item{
-            cursor: pointer;
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            opacity: 0;
-            margin: 5px;
+        display: flex;
+        flex-direction: column;
+        padding: 5px;
+        margin: 5px;
+
+        .select-check{
+            cursor: default;
+            margin: 0;
+            margin-bottom: 3px;
         }
 
-        .canvas-file-item{
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            pointer-events: none;
-            width: 100px;
-            height: 100px;
-            background:rgba($color: skyblue, $alpha: .3);
-        }
+        .file-img-wrapper{
+            position: relative;
+            
+            .file-item{
+                cursor: pointer;
+                width: 100px;
+                height: 100px;
+                object-fit: cover;
+                opacity: 0;
+                
+            }
 
+            .canvas-file-item{
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                pointer-events: none;
+                width: 100px;
+                height: 100px;
+                background:rgba($color: skyblue, $alpha: .3);
+            }
+        }
     }
+    .selected{
+        background-color: rgba($color: lightblue, $alpha: .5);
+    }
+
 }
 </style>
 

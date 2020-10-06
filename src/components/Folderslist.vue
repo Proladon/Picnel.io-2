@@ -511,10 +511,11 @@ export default {
             }
         },
         
-        fileOperate(opType, targetpath){
+        fileOperate(opType, targetpath, file=null){
   
             let index = this.fileindex
 
+            // After Operation changing file function
             const changeFile = () => {
                 if (this.tempfileslist.length > 3000) {
                     this.$store.commit("REMOVE_TEMP_FILES_ITEM", index)
@@ -547,20 +548,37 @@ export default {
                 return
             }
 
+
             targetpath = targetpath.replace(/\\/g, "/")
-            // let curpath = this.filepath
-            let target = path.join(targetpath, this.filename)
+            let target = ""
+            if(this.mode === 'Multiple'){
+                const filename = path.basename(file)
+                target = path.join(targetpath, filename)
+            }
+            else{
+                target = path.join(targetpath, this.filename)
+            }
+
+            // Excute Operation
+            let curFilepath = ""
+            if(this.mode === 'Multiple'){
+                curFilepath = file
+            }
+            else{
+                curFilepath = this.filepath
+            }
 
             try {
+                
                 if (opType === 'Move'){
-                    fs.moveSync(this.filepath, target, {
+                    fs.moveSync(curFilepath, target, {
                         overwrite: false,
                         errorOnExist: true,
                     })
                     changeFile()
                 }
                 else if (opType === 'Copy'){
-                    fs.copySync(this.filepath, target, {
+                    fs.copySync(curFilepath, target, {
                         overwrite: false,
                         errorOnExist: true,
                     })
@@ -570,11 +588,12 @@ export default {
                         log: `File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`,
                     })
                 }
-            } catch (error) {
+            } 
+            catch (error) {
                 let exist = target
                 target = repeatAutoRename(this.filename, targetpath)
                 const exist_size = sizeOf(exist)
-                const target_size = sizeOf(this.filepath)
+                const target_size = sizeOf(curFilepath)
                 this.$modal.show("dialog", {
                     title: "Existing Compare",
                     text: `
@@ -582,7 +601,7 @@ export default {
                         <p class="op-type">${opType}</p>
                         <p>Already same filename in <strong>${path.basename(path.dirname(exist))}</strong></p>
                         <div class="img-wrapper">
-                            <img class="new-file" src="local-resource://${this.filepath}"  />
+                            <img class="new-file" src="local-resource://${curFilepath}"  />
                             <img class="exist-file" src="local-resource://${exist}"  />
                         </div>
 
@@ -604,14 +623,14 @@ export default {
                             class: "dialog-btn dialog-green-btn",
                             handler: () => {
                                 if (opType === 'Move'){
-                                    fs.moveSync(this.filepath, target, {
+                                    fs.moveSync(curFilepath, target, {
                                         overwrite: false,
                                         errorOnExist: true,
                                     })
                                     changeFile()
                                 }
                                 else if (opType === 'Copy'){
-                                    fs.copySync(this.filepath, target, {
+                                    fs.copySync(curFilepath, target, {
                                         overwrite: false,
                                         errorOnExist: true,
                                     })
@@ -632,7 +651,7 @@ export default {
                                 remote.dialog.showMessageBox(deleteMessage)
                                     .then((res) => {
                                         if (res.response === 0) {
-                                            fs.remove(this.filepath).then(() => {
+                                            fs.remove(curFilepath).then(() => {
                                                 changeFile()
                                             }
                                             )
@@ -640,7 +659,7 @@ export default {
                                                 logger: "Deletelog",
                                                 log: deletefileLogging(
                                                     this.filename,
-                                                    this.filepath
+                                                    curFilepath
                                                 ),
                                             })
 
@@ -657,7 +676,7 @@ export default {
                                     .then((res) => {
                                         if (res.response === 0){
 
-                                            fs.moveSync(this.filepath, exist, {
+                                            fs.moveSync(curFilepath, exist, {
                                                 overwrite: true,
                                                 errorOnExist: false,
                                             })
@@ -679,13 +698,31 @@ export default {
                     ],
                 })
             }
+            return
         },
+
         copyfile(targetpath) {
-            this.fileOperate("Copy", targetpath)
+            if(this.mode === 'Multiple'){
+                this.tempSelected.forEach(img => {
+                    setTimeout(() => {
+                        this.fileOperate("Copy", targetpath, img)
+                    }, 1000);
+                })
+            }
+            else{
+                this.fileOperate("Copy", targetpath)
+            }
         },
 
         movefile(targetpath) {
-            this.fileOperate("Move", targetpath)
+            if(this.mode === 'Multiple'){
+                this.tempSelected.forEach(img => {
+                    this.fileOperate("Move", targetpath, img)
+                })
+            }
+            else{
+                this.fileOperate("Move", targetpath)
+            }
         },
 
         save(q = null) {
@@ -830,7 +867,10 @@ export default {
             activegroup: (state) => state.activeGroup,
 
             // Configs
-            folders_anime: (state) => state.config.folders_anime
+            folders_anime: (state) => state.config.folders_anime,
+
+            // Selected
+            tempSelected: (state) => state.cache.tempSelected
         }),
 
         ...mapGetters({
