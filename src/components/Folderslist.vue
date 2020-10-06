@@ -594,120 +594,142 @@ export default {
                 target = repeatAutoRename(this.filename, targetpath)
                 const exist_size = sizeOf(exist)
                 const target_size = sizeOf(curFilepath)
-                this.$modal.show("dialog", {
-                    title: "Existing Compare",
-                    text: `
-                    <div class="repeat-compare-modal">
-                        <p class="op-type">${opType}</p>
-                        <p>Already same filename in <strong>${path.basename(path.dirname(exist))}</strong></p>
-                        <div class="img-wrapper">
-                            <img class="new-file" src="local-resource://${curFilepath}"  />
-                            <img class="exist-file" src="local-resource://${exist}"  />
-                        </div>
-
-                        <div class="contain-wrapper">
-                            <p>Current</p>
-                            <p>Existing</p>
-                        </div>
-                        <div class="contain-wrapper">
-                            <p>${exist_size.width} x ${exist_size.height}</p>
-                            <p>${target_size.width} x ${target_size.height}</p>
-                        </div>
-                        <p>Auto-Rename:</p>
-                        <p><strong>${path.basename(target)}</strong></p>
-                    </div>
-                    `,
-                    buttons: [
-                        {
-                            title: "Rename",
-                            class: "dialog-btn dialog-green-btn",
-                            handler: () => {
-                                if (opType === 'Move'){
-                                    fs.moveSync(curFilepath, target, {
-                                        overwrite: false,
-                                        errorOnExist: true,
-                                    })
-                                    changeFile()
-                                }
-                                else if (opType === 'Copy'){
-                                    fs.copySync(curFilepath, target, {
-                                        overwrite: false,
-                                        errorOnExist: true,
-                                    })
-
-                                    this.$store.commit("UPDATE_LOG", {
-                                        logger: "Copylog",
-                                        log: `File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`,
-                                    })
-                                }
-
-                                this.$modal.hide("dialog")
-                            },
-                        },
-                        {
-                            title: "Delete Current",
-                            class: "dialog-btn dialog-red-btn",
-                            handler: () => {
-                                remote.dialog.showMessageBox(deleteMessage)
-                                    .then((res) => {
-                                        if (res.response === 0) {
-                                            fs.remove(curFilepath).then(() => {
-                                                changeFile()
-                                            }
-                                            )
-                                            this.$store.commit("UPDATE_LOG", {
-                                                logger: "Deletelog",
-                                                log: deletefileLogging(
-                                                    this.filename,
-                                                    curFilepath
-                                                ),
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        
+                        this.$modal.show("dialog", {
+                            title: "Existing Compare",
+                            text: `
+                            <div class="repeat-compare-modal">
+                                <p class="op-type">${opType}</p>
+                                <p>Already same filename in <strong>${path.basename(path.dirname(exist))}</strong></p>
+                                <div class="img-wrapper">
+                                    <img class="new-file" src="local-resource://${curFilepath}"  />
+                                    <img class="exist-file" src="local-resource://${exist}"  />
+                                </div>
+        
+                                <div class="contain-wrapper">
+                                    <p>Current</p>
+                                    <p>Existing</p>
+                                </div>
+                                <div class="contain-wrapper">
+                                    <p>${exist_size.width} x ${exist_size.height}</p>
+                                    <p>${target_size.width} x ${target_size.height}</p>
+                                </div>
+                                <p>Auto-Rename:</p>
+                                <p><strong>${path.basename(target)}</strong></p>
+                            </div>
+                            `,
+                            buttons: [
+                                {
+                                    title: "Rename",
+                                    class: "dialog-btn dialog-green-btn",
+                                    handler: () => {
+                                        if (opType === 'Move'){
+                                            fs.moveSync(curFilepath, target, {
+                                                overwrite: false,
+                                                errorOnExist: true,
                                             })
-
-                                            this.$modal.hide("dialog")
-                                        }
-                                    })
-                            },
-                        },
-                        {
-                            title: "Overide",
-                            class: "dialog-btn dialog-orange-btn",
-                            handler: () => {
-                                remote.dialog.showMessageBox(overideMessage)
-                                    .then((res) => {
-                                        if (res.response === 0){
-
-                                            fs.moveSync(curFilepath, exist, {
-                                                overwrite: true,
-                                                errorOnExist: false,
-                                            })
-
                                             changeFile()
-
-                                            this.$modal.hide("dialog")
                                         }
-                                    })
-                            },
-                        },
-                        {
-                            title: "Cancel",
-                            class: "dialog-btn dialog-gray-btn",
-                            handler: () => {
-                                this.$modal.hide("dialog")
-                            },
-                        },
-                    ],
+                                        else if (opType === 'Copy'){
+                                            fs.copySync(curFilepath, target, {
+                                                overwrite: false,
+                                                errorOnExist: true,
+                                            })
+        
+                                            this.$store.commit("UPDATE_LOG", {
+                                                logger: "Copylog",
+                                                log: `File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`,
+                                            })
+                                        }
+        
+                                        this.$modal.hide("dialog")
+                                        resolve("123")
+                                    },
+                                },
+                                {
+                                    title: "Delete Current",
+                                    class: "dialog-btn dialog-red-btn",
+                                    handler: () => {
+                                        remote.dialog.showMessageBox(deleteMessage)
+                                            .then((res) => {
+                                                if (res.response === 0) {
+                                                    fs.remove(curFilepath).then(() => {
+                                                        changeFile()
+                                                    }
+                                                    )
+                                                    this.$store.commit("UPDATE_LOG", {
+                                                        logger: "Deletelog",
+                                                        log: deletefileLogging(
+                                                            this.filename,
+                                                            curFilepath
+                                                        ),
+                                                    })
+        
+                                                    this.$modal.hide("dialog")
+                                                    resolve("123")
+                                                }
+                                            })
+                                    },
+                                },
+                                {
+                                    title: "Overide",
+                                    class: "dialog-btn dialog-orange-btn",
+                                    handler: () => {
+                                        remote.dialog.showMessageBox(overideMessage)
+                                            .then((res) => {
+                                                if (res.response === 0){
+        
+                                                    fs.moveSync(curFilepath, exist, {
+                                                        overwrite: true,
+                                                        errorOnExist: false,
+                                                    })
+        
+                                                    changeFile()
+        
+                                                    this.$modal.hide("dialog")
+                                                    resolve("123")
+                                                }
+                                            })
+                                    },
+                                },
+                                {
+                                    title: "Cancel",
+                                    class: "dialog-btn dialog-gray-btn",
+                                    handler: () => {
+                                        this.$modal.hide("dialog")
+                                        resolve("123")
+                                    },
+                                },
+                            ],
+                        })
+                    }, 400);
+
                 })
             }
-            return
         },
 
         copyfile(targetpath) {
+            const tempSelected = this.tempSelected
+            const Operation = this.fileOperate
+            function getProm(i) {
+                return Operation("Copy", targetpath, i)
+            }
+
+            function Wait() {
+                return new Promise(r => setTimeout(r, 100))
+            }
+
+            
             if(this.mode === 'Multiple'){
-                this.tempSelected.forEach(img => {
-                    setTimeout(() => {
-                        this.fileOperate("Copy", targetpath, img)
-                    }, 1000);
-                })
+                (async function createChain() {
+                    for (let i of tempSelected) {
+                        await getProm(i);
+                        await Wait();
+                    }
+                })()
+                
             }
             else{
                 this.fileOperate("Copy", targetpath)
