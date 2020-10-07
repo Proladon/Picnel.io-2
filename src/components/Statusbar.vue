@@ -6,7 +6,7 @@
         </div>
 
         <div
-            v-if="tempfileslist.length >= 3000" 
+            v-if="tempfileslist.length >= 3000 || mode === 'Multiple'" 
             class="folder-refresh status-button status-item" 
             @click="refreshfolder">
             <p>Refresh</p>
@@ -26,11 +26,11 @@
             <p v-if="file !== '' ">{{this.folderinfo}}</p>
         </div>
         <!-- File -->
-        <div class="status-item cur-fileindex">
+        <div class="status-item cur-fileindex" v-if="mode !== 'Multiple'">
             <p>Index: {{this.fileindex + 1}}</p>
         </div>
 
-        <div class="status-item cur-filename">
+        <div class="status-item cur-filename" v-if="mode !== 'Multiple'">
             <p>{{this.filename}}</p>
         </div>
 
@@ -144,6 +144,9 @@
                 if (this.tempfileslist.length > 3000){
                     this.$store.commit('SET_TEMP_FILES_LIST', this.folderpath)
                 }
+                else{
+                    this.$store.dispatch('RANDOM_FILE')
+                }
             },
             
             
@@ -172,6 +175,9 @@
         computed: {
             tempfileslist(){
                 return this.$store.state.cache.tempFilesList
+            },
+            mode(){
+                return this.$store.state.mode
             },
             
             ...mapGetters({

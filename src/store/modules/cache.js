@@ -2,7 +2,7 @@ import {getDirFiles} from '@/assets/func/helper.js'
 const state = {
     tempColor: Object,
     tempFilesList: [],
-    tempSelected: []
+    tempSelected: [],
 };
 
 const mutations = {

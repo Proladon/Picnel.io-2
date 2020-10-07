@@ -126,22 +126,4 @@
     width: 0;
 }
 
-// ---------------- //
-//           pagination         //
-// ---------------- //
-.active-page{
-    cursor: pointer;
-    color: var(--lightyellow);
-    background-color: transparent;
-    border: none;
-    border-radius: 10px;
-    padding: 10px;
-    outline: none;
-}
-.active-page:hover{
-    border:solid 2px cadetblue ;
-}
 
-.active_page_light{
-    background: rgba($color: white, $alpha: .15) ;
-}

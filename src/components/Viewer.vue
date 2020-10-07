@@ -36,17 +36,18 @@
             >
                 
                 <div class="file-item-wrapper" v-for="(img,index) in items" :key="img">
-                    <Checkbox class="select-check" :value="img" v-model="tempSelected" color="#f50057" @change="fileSelected(index, img)"># {{files.indexOf(img) + 1}}</Checkbox>
+                    <Checkbox class="select-check" :value="img" v-model="tempSelected" color="#f50057" @change="fileSelected(index, img)" v-if="curfile !== ''"># {{files.indexOf(img) + 1}}</Checkbox>
                     <div class="file-img-wrapper">
-                        <img class="file-item"  :data-src="`local-resource://${img}`" @load="loaded($event, index)"/>
-                        <canvas class="canvas-file-item"></canvas>
+                        <img class="file-item"  :data-src="`local-resource://${img}`" @load="loaded($event, index)" v-if="curfile !== ''" />
+                        <canvas class="canvas-file-item" v-if="curfile !== ''"></canvas>
                     </div>
                 </div>
 
                 <vue-ads-pagination 
+                    class="pagination"
+                    v-if="curfile !== '' && files.length > 10"
                     :total-items="files.length"
                     :page="page"
-                    
                     :max-visible-pages="5"
                     @range-change="rangeChange"
                 >
@@ -54,17 +55,15 @@
                     <template
                         slot="buttons"
                         slot-scope="props"
-                        
                     >
                         <vue-ads-page-button
                             v-for="(button, key) in props.buttons"
                             :key="key"
                             v-bind="button"
                             :disable-styling="true"
-                            class="active-page"
+                            class="pagination-btn"
                             :class="{active_page_light: button.active}"
                             @page-change="page = button.page"
-                            
                         />
                     </template>
                 </vue-ads-pagination>
@@ -77,7 +76,7 @@
             <p>Selected: {{tempSelected.length}}</p>
             <div class="select-controls" @click="selectAll">Select All</div>
             <div class="select-controls" @click="cancelAll">Cancel All</div>
-            <div class="select-controls" >Delete Selected</div>
+            <div class="select-controls delete-selected" @click="deleteSelected">Delete Selected</div>
         </div>
 
         <!-- Controls -->
@@ -268,11 +267,13 @@ export default {
             const files = filesFilter(this.files);
             this.$store.commit("SET_CURFILE", files[files.length - 1]);
         },
+        
         deletefile() {
             if (this.filename === "") {
                 this.$notify(plsUploadFolder);
                 return;
             }
+
             // 警告永久刪除
             this.$modal.show("dialog", {
                 title: "Delete File",
@@ -283,18 +284,37 @@ export default {
                         class: "dialog-red-btn dialog-btn",
                         handler: () => {
                             let index = this.fileindex
-                            fs.remove(this.curfile)
-                                .then(()=>{
-                                    if(this.tempfileslist.length > 3000){
-                                        this.$store.commit('REMOVE_TEMP_FILES_ITEM', index)
-                                    }
-                                    if(this.mode === 'Random'){
-                                        this.$store.dispatch('RANDOM_FILE')
-                                    }
-                                    else if (this.mode === 'PreNext'){
-                                        this.$store.dispatch("AFTER_MOVE_NEXT", index)
-                                    }
-                                })
+
+                            const afterTreatment = ()=>{
+                                if(this.tempfileslist.length > 3000){
+                                    this.$store.commit('REMOVE_TEMP_FILES_ITEM', index)
+                                }
+                                if(this.mode === 'Random'){
+                                    this.$store.dispatch('RANDOM_FILE')
+                                }
+                                else if (this.mode === 'PreNext' || this.mode === 'Multiple'){
+                                    this.$store.dispatch("AFTER_MOVE_NEXT", index)
+                                }
+                            }
+
+                            // Delete File
+                            
+                            if(this.mode === 'Multiple'){
+                                for(let f of this.tempSelected){
+                                    fs.remove(f)
+                                        .then(()=>{
+                                            afterTreatment()
+                                        })
+                                }
+                            }
+                            else{
+                                fs.remove(this.curfile)
+                                    .then(()=>{
+                                        afterTreatment()
+                                    })
+                            }
+
+                            // Logging
                             this.$store.commit('UPDATE_LOG', {
                                 logger: 'Deletelog',
                                 log: deletefileLogging(this.filename, this.curfile)
@@ -374,12 +394,18 @@ export default {
                 element.classList.add('selected')
             });
         },
+        
         cancelAll(){
             this.$store.commit('RESET_SELECTED')
             const el = document.getElementsByClassName('file-item-wrapper')
             el.forEach(element => {
                 element.classList.remove('selected')
             });
+        },
+
+        deleteSelected(){
+            if(this.tempSelected.length === 0) return
+            this.deletefile()
         },
 
         rangeChange(start){
@@ -389,14 +415,12 @@ export default {
             for (let count=0; count<10; count++){
                 
                     if (this.tempSelected.includes(this.files[start])){
-                        console.log("yes")
                         setTimeout(() => {
                             const wrapper = document.getElementsByClassName('file-item-wrapper')
                             wrapper[count].classList.add('selected')
                         })
                     }
-
-                this.items.push(this.files[start])
+                if(this.files[start] !== undefined) this.items.push(this.files[start])
                 start++
             }
         }
@@ -416,6 +440,8 @@ export default {
                     this.$store.commit('UPDATE_SELECTED', data)
                 }
             },
+
+
         ...mapGetters({
             curfile: "getCurFilePath",
             filename: "getFileName",
@@ -437,6 +463,12 @@ export default {
                 })
             }
         },
+        files(){
+            this.items = []
+            for (let count=0; count<10; count++){
+                if(this.files[count] !== undefined) this.items.push(this.files[count])
+            }
+        }
 
     },
 };
@@ -610,6 +642,10 @@ export default {
     color: var(--dark);
     background-color: cadetblue;
 }
+
+.delete-selected:hover{
+    background-color: rgb(212, 91, 128);
+}
 // ---------------- //
 //             Context             //
 // ---------------- //
@@ -675,7 +711,31 @@ export default {
 
 }
 
+// ---------------- //
+//           pagination         //
+// ---------------- //
+.pagination{
+    color: gray;
+    width: 100%;
+    text-align: center;
+}
 
+.pagination-btn{
+    cursor: pointer;
+    color: var(--lightyellow);
+    background-color: transparent;
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    outline: none;
+}
+.pagination-btn:hover{
+    border:solid 2px cadetblue ;
+}
+
+.active_page_light{
+    background: rgba($color: white, $alpha: .15) ;
+}
 
 </style>
 

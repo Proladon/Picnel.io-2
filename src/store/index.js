@@ -93,7 +93,7 @@ export default new Vuex.Store({
     actions: {
 
         //:: 隨機挑選圖片
-        RANDOM_FILE: context => {
+        RANDOM_FILE: (context, oldindex=null) => {
             function randomChoice(arr) {
                 return arr[Math.floor(Math.random() * arr.length)];
             }
@@ -111,6 +111,9 @@ export default new Vuex.Store({
                     }
                 }
                 context.commit('SET_CURFILE', random_file)
+            }
+            else if (oldindex === -1) {
+                context.commit('SET_CURFILE', '')
             }
             else {
                 context.commit('SET_CURFILE', '')
@@ -173,11 +176,13 @@ export default new Vuex.Store({
                 context.commit('SET_CURFILE', '')
             }
             else if (index + 1 < files.length) {
-                console.log(files[index])
                 context.commit('SET_CURFILE', files[index])
             }
             else if (index + 1 > files.length) {
                 context.commit('SET_CURFILE', files[files.length - 1])
+            }
+            else if (index === -1) {
+                context.commit('SET_CURFILE', '')
             }
         },
         

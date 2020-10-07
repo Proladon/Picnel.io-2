@@ -182,6 +182,7 @@
 
             // :: Load Workspace
             loadWorkspace() {
+                this.$store.commit('RESET_SELECTED')
                 if (this.noSelected()) return
                 
                 this.$store.commit('CLEAR_TEMP_FILES_LIST')

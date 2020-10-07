@@ -473,6 +473,10 @@ export default {
                 return
             }
             this.$store.commit('RESET_SELECTED')
+            setTimeout(() => {
+                const wrapper = document.getElementsByClassName('file-item-wrapper')
+                wrapper.forEach(e => e.classList.remove('selected'))
+            })
 
             this.$store.commit("CLEAR_TEMP_FILES_LIST", target)
 
@@ -525,10 +529,14 @@ export default {
                 }
 
                 if (this.mode === "Random") {
-                    this.$store.dispatch("RANDOM_FILE")
-                } else {
+                    this.$store.dispatch("RANDOM_FILE", index)
+                } 
+                else if(this.mode === "PreNext" || this.mode === "Multiple"){
                     this.$store.dispatch("AFTER_MOVE_NEXT", index)
                 }
+
+                
+
 
                 this.$store.commit("UPDATE_LOG", {
                     logger: "Movelog",
@@ -579,6 +587,7 @@ export default {
                         errorOnExist: true,
                     })
                     changeFile()
+
                 }
                 else if (opType === 'Copy'){
                     fs.copySync(curFilepath, target, {
@@ -597,9 +606,9 @@ export default {
                 target = repeatAutoRename(this.filename, targetpath)
                 const exist_size = sizeOf(exist)
                 const target_size = sizeOf(curFilepath)
+
                 return new Promise(resolve => {
                     setTimeout(() => {
-                        
                         this.$modal.show("dialog", {
                             title: "Existing Compare",
                             text: `
@@ -758,11 +767,12 @@ export default {
                         await Wait();
                     }
                 })()
-                
+                this.$store.commit("RESET_SELECTED")
             }
             else{
                 this.fileOperate("Move", targetpath)
             }
+
         },
 
         save(q = null) {
