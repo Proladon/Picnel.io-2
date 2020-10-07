@@ -43,6 +43,7 @@
                     </div>
                 </div>
 
+
             </div>
         </div>
 
@@ -51,6 +52,7 @@
             <p>Selected: {{tempSelected.length}}</p>
             <div class="select-controls" @click="selectAll">Select All</div>
             <div class="select-controls" @click="cancelAll">Cancel All</div>
+            <div class="select-controls" >Delete Selected</div>
         </div>
 
         <!-- Controls -->
@@ -122,10 +124,14 @@ import {plsUploadFolder} from "@/assets/func/notify.js";
 
 import Checkbox from 'vue-material-checkbox'
 
-
 export default {
     name: "Viewer",
     components: {Checkbox},
+    data(){
+        return{
+            page: 1
+        }
+    },
 
     methods: {
         dragging() {},
@@ -617,5 +623,8 @@ export default {
     }
 
 }
+
+
+
 </style>
 

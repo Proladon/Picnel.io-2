@@ -50,9 +50,14 @@
                 this.$store.commit('SET_VIEW', "home")
             },
             changeMode() {
+                this.$notify({
+                    group: 'mode',
+                    clean: true
+                })
                 if (this.viewmode === 'Random') {
                     this.$store.commit('CHANGE_MODE', 'PreNext')
                 } else if (this.viewmode === 'PreNext'){
+                    this.$store.commit('RESET_SELECTED')
                     this.$store.commit('CHANGE_MODE', 'Multiple')
                 } else if (this.viewmode === 'Multiple'){
                     this.$store.commit('CHANGE_MODE', 'Random')

@@ -20,7 +20,12 @@ Vue.use(VModal, {
     },
     dialog: true,
 });
-Vue.use(VueLazyload,{
+Vue.use(VueLazyload, {
+    observer: true,
+    observerOptions: {
+        rootMargin: '0px',
+        threshold: 0.1
+    }
     // preLoad: 1.3,
     // error: 'dist/error.png',
     // loading: 'dist/loading.gif',

@@ -135,6 +135,8 @@ import sizeOf from 'image-size'
 // Vuex
 import { mapState, mapGetters } from "vuex"
 
+
+
 export default {
     name: "Folderslist",
 
@@ -470,6 +472,7 @@ export default {
                 this.$notify(isMainfolder("folderlist"))
                 return
             }
+            this.$store.commit('RESET_SELECTED')
 
             this.$store.commit("CLEAR_TEMP_FILES_LIST", target)
 
@@ -737,10 +740,25 @@ export default {
         },
 
         movefile(targetpath) {
+            const tempSelected = this.tempSelected
+            const Operation = this.fileOperate
+            function getProm(i) {
+                return Operation("Move", targetpath, i)
+            }
+
+            function Wait() {
+                return new Promise(r => setTimeout(r, 100))
+            }
+
+            
             if(this.mode === 'Multiple'){
-                this.tempSelected.forEach(img => {
-                    this.fileOperate("Move", targetpath, img)
-                })
+                (async function createChain() {
+                    for (let i of tempSelected) {
+                        await getProm(i);
+                        await Wait();
+                    }
+                })()
+                
             }
             else{
                 this.fileOperate("Move", targetpath)
