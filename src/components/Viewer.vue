@@ -35,7 +35,7 @@
                 v-lazy-container="{ selector: 'img' }"
             >
                 
-                <div class="file-item-wrapper" v-for="(img,index) in files" :key="img">
+                <div class="file-item-wrapper" v-for="(img,index) in items" :key="img">
                     <Checkbox class="select-check" :value="img" v-model="tempSelected" color="#f50057" @change="fileSelected(index, img)"></Checkbox>
                     <div class="file-img-wrapper">
                         <img class="file-item"  :data-src="`local-resource://${img}`" @load="loaded($event, index)"/>
@@ -43,6 +43,27 @@
                     </div>
                 </div>
 
+                <vue-ads-pagination 
+                    :total-items="files.length"
+                    :page="page"
+                    :max-visible-pages="5"
+                    @range-change="rangeChange"
+                >
+                
+                    <template
+                        slot="buttons"
+                        slot-scope="props"
+                    >
+                        <vue-ads-page-button
+                            v-for="(button, key) in props.buttons"
+                            :key="key"
+                            v-bind="button"
+                            :class="{'bg-yellow-dark': button.active}"
+                            @page-change="page = button.page"
+                            
+                        />
+                    </template>
+                </vue-ads-pagination>
 
             </div>
         </div>
@@ -123,13 +144,19 @@ import {filesFilter, deletefileLogging} from "@/assets/func/helper.js";
 import {plsUploadFolder} from "@/assets/func/notify.js";
 
 import Checkbox from 'vue-material-checkbox'
+import VueAdsPagination, { VueAdsPageButton } from 'vue-ads-pagination';
 
 export default {
     name: "Viewer",
-    components: {Checkbox},
+    components: {
+        Checkbox,
+        VueAdsPagination,
+        VueAdsPageButton,
+    },
     data(){
         return{
-            page: 1
+            page: 1,
+            items: [],
         }
     },
 
@@ -349,6 +376,14 @@ export default {
             el.forEach(element => {
                 element.classList.remove('selected')
             });
+        },
+
+        rangeChange(start){
+             this.items = []
+            for (let count=0; count<10; count++){
+                this.items.push(this.files[start])
+                start++
+            }
         }
     },
     computed: {
