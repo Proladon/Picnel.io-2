@@ -36,7 +36,7 @@
             >
                 
                 <div class="file-item-wrapper" v-for="(img,index) in items" :key="img">
-                    <Checkbox class="select-check" :value="img" v-model="tempSelected" color="#f50057" @change="fileSelected(index, img)"></Checkbox>
+                    <Checkbox class="select-check" :value="img" v-model="tempSelected" color="#f50057" @change="fileSelected(index, img)"># {{files.indexOf(img) + 1}}</Checkbox>
                     <div class="file-img-wrapper">
                         <img class="file-item"  :data-src="`local-resource://${img}`" @load="loaded($event, index)"/>
                         <canvas class="canvas-file-item"></canvas>
@@ -46,6 +46,7 @@
                 <vue-ads-pagination 
                     :total-items="files.length"
                     :page="page"
+                    
                     :max-visible-pages="5"
                     @range-change="rangeChange"
                 >
@@ -53,12 +54,15 @@
                     <template
                         slot="buttons"
                         slot-scope="props"
+                        
                     >
                         <vue-ads-page-button
                             v-for="(button, key) in props.buttons"
                             :key="key"
                             v-bind="button"
-                            :class="{'bg-yellow-dark': button.active}"
+                            :disable-styling="true"
+                            class="active-page"
+                            :class="{active_page_light: button.active}"
                             @page-change="page = button.page"
                             
                         />
@@ -155,7 +159,7 @@ export default {
     },
     data(){
         return{
-            page: 1,
+            page: 0,
             items: [],
         }
     },
@@ -379,8 +383,19 @@ export default {
         },
 
         rangeChange(start){
-             this.items = []
+            this.items = []
+            
+            
             for (let count=0; count<10; count++){
+                
+                    if (this.tempSelected.includes(this.files[start])){
+                        console.log("yes")
+                        setTimeout(() => {
+                            const wrapper = document.getElementsByClassName('file-item-wrapper')
+                            wrapper[count].classList.add('selected')
+                        })
+                    }
+
                 this.items.push(this.files[start])
                 start++
             }
@@ -624,6 +639,7 @@ export default {
 
         .select-check{
             cursor: default;
+            color: var(--lightyellow);
             margin: 0;
             margin-bottom: 3px;
         }

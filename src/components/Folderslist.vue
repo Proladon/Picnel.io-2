@@ -1106,4 +1106,6 @@ export default {
 .context-active {
     transform: scale(1) !important;
 }
+
+
 </style>
