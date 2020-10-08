@@ -65,6 +65,7 @@
 </template>
 
 <script>
+    // import {version} from 'package.json'
     // Splitpanes
     import {Splitpanes,Pane} from 'splitpanes'
     import 'splitpanes/dist/splitpanes.css'
@@ -150,11 +151,15 @@
             },
             workspace(){
                 return this.$store.state.app.workspace
+            },
+            check_update(){
+                return this.$store.state.config.check_update
             }
         },
         mounted(){
             const Store = require('electron-store')
             const store = new Store()
+            // init config
             if (store.get('user_configs') === undefined){
                 store.set('user_configs', configfilter)
             }
@@ -163,7 +168,39 @@
             }
 
             // Check Update
-            // const axios = require('axios')
+            // 
+            if(! this.check_update) return
+            const axios = require('axios')
+            axios.get('https://api.github.com/repos/Proladon/Picnel.io-2/releases')
+                .then(res => {
+                    let curversion = remote.app.getVersion()
+                    // let curversion = '1.0.0'
+                    let newset = res.data[0].name
+
+                    if (curversion !== newset) {
+                        this.$modal.show('dialog', {
+                            text: `
+                                <p class="version">Newest: <b class="new-version">${newset}</b></p>
+                                <p class="version">Current: <b class="cur-version">${curversion}</b></p>
+                                <p class="update-notice">⚡ New version available !</p>
+                            `,
+                            buttons: [
+                                {
+                                    title: 'Go Download',
+                                    class: "dialog-btn dialog-green-btn",
+                                    handler: ()=>{
+                                        remote.shell.openExternal(`https://github.com/Proladon/Picnel.io-2/releases/tag/${newset}`)
+                                        this.$modal.hide('dialog')
+                                    }
+                                },
+                            ]
+                        })
+                    }
+                }).catch(()=>{
+                    this.$modal.show('dialog', {
+                        text: 'Checking update failed'
+                    })
+                })
 
         }
     }

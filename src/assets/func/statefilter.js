@@ -30,7 +30,9 @@ const newstate = () => {
 
 const configfilter = {
     "folders_anime": true,
-	"viewer_anime": true,
+    "viewer_anime": true,
+    "mode_notify": true,
+    "check_update": true,
 }
 
 

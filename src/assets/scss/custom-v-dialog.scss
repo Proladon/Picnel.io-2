@@ -112,3 +112,31 @@ input{
             // object-fit: contain;
         }
 }
+
+// ---------------- //
+//        Update Check      //
+// ---------------- //
+
+.version{
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 10px;
+    
+    b{
+        font-size: 20px;
+    }
+}
+
+.cur-version{
+    background-color: lightgrey;
+}
+
+.new-version{
+    background-color: mediumspringgreen;
+}
+
+.update-notice{
+    text-align: center;
+    font-size: 20px;
+    color:  rgb(212, 91, 128);
+}

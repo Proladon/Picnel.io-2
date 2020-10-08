@@ -7,18 +7,20 @@
                 <div class="info-btn" @click="about" :class="{active_info_btn : info==='about'}">
                     <p>🔰 About</p>
                 </div>
-
-                <div class="info-btn" @click="release" :class="{active_info_btn : info==='release'}">
-                    <p>Release</p>
+                
+                <div class="info-btn url-btn" @click="update">
+                    <p>⚡ Check Update</p>
                 </div>
-
+                
                 <div class="info-btn url-btn" @click="docs">
                     <p>📚 Documentation</p>
                 </div>
 
-                <div class="info-btn url-btn" @click="report" :class="{active_info_btn : info==='report'}">
+                <div class="info-btn url-btn" @click="report" >
                     <p>🔥 Issues report</p>
                 </div>
+
+                
             </div>
             
 
@@ -70,7 +72,7 @@
 </template>
 
 <script>
-import {shell} from 'electron'
+import {remote} from 'electron'
     export default {
         name: 'Info',
         data(){
@@ -80,19 +82,71 @@ import {shell} from 'electron'
         },
         methods:{
             openlink(link){
-                shell.openExternal(link)
+                remote.shell.openExternal(link)
             },
             release(){
-                shell.openExternal('https://github.com/Proladon/Picnel.io-2/releases')
+                remote.shell.openExternal('https://github.com/Proladon/Picnel.io-2/releases')
             },
             about(){
                 this.info = 'about'
             },
             docs(){
-                shell.openExternal('https://proladon.github.io/Picnel.io-2_Documentation/')
+                remote.shell.openExternal('https://proladon.github.io/Picnel.io-2_Documentation/')
             },
             report(){
-                shell.openExternal('https://github.com/Proladon/Picnel.io-2/issues/new')
+                remote.shell.openExternal('https://github.com/Proladon/Picnel.io-2/issues/new')
+            },
+            update(){
+                const axios = require('axios')
+                axios.get('https://api.github.com/repos/Proladon/Picnel.io-2/releases')
+                    .then(res => {
+                        let curversion = remote.app.getVersion()
+                        // let curversion = '1.0.0'
+                        let newset = res.data[0].name
+
+                        if (curversion === newset) {
+                            this.$modal.show('dialog', {
+                                text: `
+                                    <p class="version">Newest: <b class="cur-version">${newset}</b></p>
+                                    <p class="version">Current: <b class="cur-version">${curversion}</b></p>
+                                    <p class="update-notice">✅ You're in newest version</p>
+                                `,
+                                buttons: [
+                                    {
+                                        title: 'Cancel',
+                                        class: "dialog-btn dialog-gray-btn",
+                                        handler: ()=>{
+                                            this.$modal.hide('dialog')
+                                        }
+                                    },
+                                ]
+                            })
+                        }
+                        else{
+                            this.$modal.show('dialog', {
+                                text: `
+                                    <p class="version">Newest: <b class="new-version">${newset}</b></p>
+                                    <p class="version">Current: <b class="cur-version">${curversion}</b></p>
+                                    <p class="update-notice">⚡ New version available !</p>
+                                `,
+                                buttons: [
+                                    {
+                                        title: 'Go Download',
+                                        class: "dialog-btn dialog-green-btn",
+                                        handler: ()=>{
+                                            remote.shell.openExternal(`https://github.com/Proladon/Picnel.io-2/releases/tag/${newset}`)
+                                            this.$modal.hide('dialog')
+                                        }
+                                    },
+                                ]
+                            })
+                        }
+                    }).catch(()=>{
+                        this.$modal.show('dialog', {
+                            text: 'Checking update failed'
+                        })
+                    })
+
             }
         }
     }

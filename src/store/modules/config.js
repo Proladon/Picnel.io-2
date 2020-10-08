@@ -4,6 +4,8 @@ const state = {
     folders_anime: true,
 
     mode_notify: true,
+
+    check_update: true,
 }
 
 const mutations = {

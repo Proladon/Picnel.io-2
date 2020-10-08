@@ -35,8 +35,19 @@
                             :val="mode_notify"
                         />
                     </div>
+
+                    <div class="settings-category">
+                        <p class="settings-category-title">⚡ Update</p>
+                        <Settingsitem 
+                            type="toggle"
+                            config="check_update"
+                            name="Auto Check" 
+                            description="Auto check update on startup"
+                            :val="check_update"
+                        />
                     </div>
 
+                </div>
 
             </div>
 
@@ -58,6 +69,7 @@
                viewer_anime: state => state.config.viewer_anime,
                folders_anime: state => state.config.folders_anime,
                mode_notify: state => state.config.mode_notify,
+               check_update: state => state.config.check_update,
            })
        },
        mounted(){
