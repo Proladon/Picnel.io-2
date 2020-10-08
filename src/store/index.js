@@ -98,7 +98,7 @@ export default new Vuex.Store({
                 return arr[Math.floor(Math.random() * arr.length)];
             }
             
-            let files_list = getDirFiles(context.getters.getFolderPath)
+            let files_list = context.getters.getFilesList
 
             const files = filesFilter(files_list)
             //? 如果資料夾內有多個檔案才執行
@@ -123,7 +123,7 @@ export default new Vuex.Store({
         PRE_FILE: context => {
             let index = context.getters.getFileIndex
 
-            let files_list = getDirFiles(context.getters.getFolderPath)
+            let files_list = context.getters.getFilesList
 
             const files = filesFilter(files_list)
             
@@ -133,7 +133,7 @@ export default new Vuex.Store({
         },
         NEXT_FILE: (context, oldindex=null) => {
             let index = 0
-            let files_list = getDirFiles(context.getters.getFolderPath)
+            let files_list = context.getters.getFilesList
 
             if (oldindex !== null) index = oldindex
             else {
@@ -170,13 +170,10 @@ export default new Vuex.Store({
 
         AFTER_MOVE_NEXT: (context, index) => {
             let files_list = getDirFiles(context.getters.getFolderPath)
-            const files = filesFilter(files_list)
             
+            const files = filesFilter(files_list)
             if (files.length === 0) {
                 context.commit('SET_CURFILE', '')
-            }
-            else if (files.length === 1) {
-                context.commit('SET_CURFILE', files[0])
             }
             else if (index + 1 < files.length) {
                 context.commit('SET_CURFILE', files[index])
@@ -224,12 +221,23 @@ export default new Vuex.Store({
             }
             return path.basename(getters.getFolderPath)
         },
-
-
+        //:: Folder Files_list
+        getFilesList: (state, getters) => {
+            if (state.cache.tempFilesList.length > 3000) {
+                return state.cache.tempFilesList
+            }
+            else {
+                // Fast-Glob
+                // return globDirFiles(getters.getFolderPath)
+                
+                // fs
+                return getDirFiles(getters.getFolderPath)
+            }
+        },
         //:: File Index
         getFileIndex: (state, getters) => {
             const file = getters.getCurFilePath
-            const files_list = getDirFiles(getters.getFolderPath)
+            const files_list = getters.getFilesList
             const files = filesFilter(files_list)
             return files.indexOf(file)
         },
@@ -239,7 +247,7 @@ export default new Vuex.Store({
         },
         //:: Folder Info
         getFolderInfo: (state, getters) => {
-            const files = getDirFiles(getters.getFolderPath)
+            const files = getters.getFilesList
             let file_items = files.filter(i => 
                 fs.lstatSync(i).isFile()
             )

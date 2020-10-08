@@ -143,7 +143,7 @@ import fs from "fs-extra";
 import Store from 'electron-store'
 // import path from 'path'
 import mime from "mime-types";
-import {getDirFiles, filesFilter, deletefileLogging} from "@/assets/func/helper.js";
+import {filesFilter, deletefileLogging} from "@/assets/func/helper.js";
 import {plsUploadFolder} from "@/assets/func/notify.js";
 
 import Checkbox from 'vue-material-checkbox'
@@ -440,19 +440,15 @@ export default {
                     this.$store.commit('UPDATE_SELECTED', data)
                 }
             },
-            files(){
-                const files_list = getDirFiles(this.filefolder)
-                return filesFilter(files_list)
-            },
 
 
         ...mapGetters({
-            curfile: 'getCurFilePath',
-            filename: 'getFileName',
-            filefolder: 'getFolderPath',
+            curfile: "getCurFilePath",
+            filename: "getFileName",
             fileindex: 'getFileIndex',
-            filetype: 'getFileType',
-            mode: 'getMode',
+            filetype: "getFileType",
+            files: "getFilesList",
+            mode: "getMode",
         }),
     },
     watch: {
