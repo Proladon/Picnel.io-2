@@ -191,6 +191,7 @@
                     .then((res) => {
                         this.$store.commit('SET_STATE', res)
                         this.$store.commit('SET_VIEW', 'home')
+                        this.$store.commit('UPDATE_FILES_LIST')
                         this.$store.commit('SET_TEMP_FILES_LIST', this.filefolder)
                         
                         if (this.tempfileslist.length < 3000){

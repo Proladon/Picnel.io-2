@@ -62,12 +62,14 @@
                 } else if (this.viewmode === 'Multiple'){
                     this.$store.commit('CHANGE_MODE', 'Random')
                 }
-                this.$notify({
-                    group: 'mode',
-                    type: 'mode',
-                    title: 'Mode Change',
-                    text: `${this.viewmode}`,
-                })
+                if(this.mode_notify){
+                    this.$notify({
+                        group: 'mode',
+                        type: 'mode',
+                        title: 'Mode Change',
+                        text: `${this.viewmode}`,
+                    })
+                }
             },
             worksapceView(e){
                 this.target = e.target
@@ -94,6 +96,9 @@
             },
             views(){
                 return this.$store.state.app.curView
+            },
+            mode_notify(){
+                return this.$store.state.config.mode_notify
             },
             ...mapGetters({
                 viewmode: 'getMode'

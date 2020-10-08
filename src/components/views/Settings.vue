@@ -6,24 +6,37 @@
 
                 <div class="controls-wrapper">
                     
-                    <p class="settings-category">Animation</p>
-                    <Settingsitem 
-                        type="toggle"
-                        config="folders_anime"
-                        name="Target Folders" 
-                        description="Listing target fodlers animation"
-                        :val="folders_anime"
-                    />
-                    
-                    <Settingsitem 
-                        type="toggle"
-                        config="viewer_anime"
-                        name="Viewer" 
-                        description="Changing file animation"
-                        :val="viewer_anime"
-                    />
+                    <div class="settings-category">
+                        <p class="settings-category-title">💨 Animation</p>
+                        <Settingsitem 
+                            type="toggle"
+                            config="folders_anime"
+                            name="Target Folders" 
+                            description="Listing target fodlers animation"
+                            :val="folders_anime"
+                        />
+                        
+                        <Settingsitem 
+                            type="toggle"
+                            config="viewer_anime"
+                            name="Viewer" 
+                            description="Changing file animation"
+                            :val="viewer_anime"
+                        />
+                    </div>
 
-                </div>
+                    <div class="settings-category">
+                        <p class="settings-category-title">📢 Notification</p>
+                        <Settingsitem 
+                            type="toggle"
+                            config="mode_notify"
+                            name="Mode Change" 
+                            description="Changing view mode notification"
+                            :val="mode_notify"
+                        />
+                    </div>
+                    </div>
+
 
             </div>
 
@@ -44,6 +57,7 @@
            ...mapState({
                viewer_anime: state => state.config.viewer_anime,
                folders_anime: state => state.config.folders_anime,
+               mode_notify: state => state.config.mode_notify,
            })
        },
        mounted(){
@@ -62,6 +76,7 @@
 
     .settings-wrapper {
         display: flex;
+        flex-direction: column;
         width: 100%;
         height: 100%;
     }
@@ -75,7 +90,11 @@
         box-sizing: border-box;
         // border: solid 2px lightsalmon;
 
-        .settings-category {
+        .settings-category{
+            margin-bottom: 30px;
+        }
+
+        .settings-category-title {
             text-align: center;
             font-size: 20px;
             margin-bottom: 10px;

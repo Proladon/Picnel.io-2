@@ -161,6 +161,10 @@
             else{
                 this.$store.commit('SET_CONFIG', store.get('user_configs'))
             }
+
+            // Check Update
+            // const axios = require('axios')
+
         }
     }
 </script>

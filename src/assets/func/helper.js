@@ -4,8 +4,9 @@ import fg from 'fast-glob'
 import path from "path";
 
 //:: Filter files inside folder, ignore folder、unsupport files
-const filesFilter =  (files_list) => {
-    const readable = ["image", "video", "audio"];
+const filesFilter =  (files_list, restrict=null) => {
+    let readable = ["image", "video", "audio"]
+    if (restrict !== null) readable = [restrict]
     let readable_files = [];
     for (let item of files_list) {
         let type = mime.lookup(item);
@@ -17,6 +18,22 @@ const filesFilter =  (files_list) => {
         }
     }
     return readable_files;
+}
+
+// Check single file readable or not
+const readable = (file, restrict=null) => {
+    let readable = ["image", "video", "audio"]
+    if (restrict !== null) readable = [restrict]
+    let type = mime.lookup(file);
+    if (type !== false) {
+        type = type.split("/")[0];
+        if (readable.includes(type)) {
+            return true
+        }
+        else {
+            return false
+        }
+    }
 }
 
 //:: Get all files in the folder => fs
@@ -92,6 +109,7 @@ const deletefileLogging = (fileName, curPath, ) => {
 
 export {
     filesFilter,
+    readable,
     
     getDirFiles,
     globDirFiles,

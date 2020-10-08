@@ -6,7 +6,7 @@
         </div>
 
         <div
-            v-if="tempfileslist.length >= 3000 || mode === 'Multiple'" 
+            v-if="tempfileslist.length >= 3000 || mode === 'Multiple'"
             class="folder-refresh status-button status-item" 
             @click="refreshfolder">
             <p>Refresh</p>
@@ -95,7 +95,8 @@
                 }
                 else{
                     this.$store.commit('SET_CURFILE', readablefiles[0])
-
+                    this.$store.commit('UPDATE_FILES_LIST')
+                    
                     if (this.tempfileslist.length > 3000){
                         this.$modal.show("dialog", {
                             title: '🚧 Cache Files List Auto Enable',
@@ -135,8 +136,8 @@
                     this.$notify(noReset("home"))
                     return
                 }
-
                 this.$store.commit('SET_CURFILE', "")
+                this.$store.commit('CLEAR_TEMP_FILES_LIST')
             },
             
             
@@ -145,7 +146,7 @@
                     this.$store.commit('SET_TEMP_FILES_LIST', this.folderpath)
                 }
                 else{
-                    this.$store.dispatch('RANDOM_FILE')
+                    this.$store.commit('UPDATE_FILES_LIST')
                 }
             },
             

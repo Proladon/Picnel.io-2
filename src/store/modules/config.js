@@ -2,6 +2,8 @@ import Store from 'electron-store'
 const state = {
     viewer_anime: true,
     folders_anime: true,
+
+    mode_notify: true,
 }
 
 const mutations = {

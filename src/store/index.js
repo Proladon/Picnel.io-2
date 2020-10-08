@@ -15,6 +15,7 @@ export default new Vuex.Store({
     state: {
         mode: "Random",
         curFile: '',
+        fileslist: [],
         activeGroup: "",
         folderGroups: [],
         folderLists: {
@@ -30,11 +31,8 @@ export default new Vuex.Store({
         SET_CONFIG: (state, data) => {
             Object.assign(state.config, data)
         },
-        //:: Mode
-        CHANGE_MODE: (state, mode) => {
-            state.mode = mode
-        },
-
+        
+        //:: File
         SET_CURFILE: (state, data) => {
             state.curFile = data
             if (!state.app.workspace.name.includes("*")) {
@@ -45,6 +43,14 @@ export default new Vuex.Store({
             }
         },
 
+        UPDATE_FILES_LIST: (state) => {
+            state.fileslist = getDirFiles(path.dirname(state.curFile))
+        },
+        
+        //:: Mode
+        CHANGE_MODE: (state, mode) => {
+            state.mode = mode
+        },
        
         //:: Folders List
         UPDATE_LISTS: (state, data) => {
@@ -98,9 +104,13 @@ export default new Vuex.Store({
                 return arr[Math.floor(Math.random() * arr.length)];
             }
             
-            let files_list = context.getters.getFilesList
+            const cachemode = context.state.cache.tempFilesList.length >= 3000
+            
+            if (!cachemode) context.commit('UPDATE_FILES_LIST')
+            
+            const files = cachemode ?
+                filesFilter(context.state.cache.tempFilesList) : filesFilter(context.state.fileslist)
 
-            const files = filesFilter(files_list)
             //? 如果資料夾內有多個檔案才執行
             if (files.length > 0) {
                 // Not repeat choice curfile
@@ -118,29 +128,39 @@ export default new Vuex.Store({
             else {
                 context.commit('SET_CURFILE', '')
             }
+
+            
         },
 
         PRE_FILE: context => {
             let index = context.getters.getFileIndex
 
-            let files_list = context.getters.getFilesList
+            const cachemode = context.state.cache.tempFilesList.length >= 3000
 
-            const files = filesFilter(files_list)
+            if (!cachemode) context.commit('UPDATE_FILES_LIST')
+
+            const files = cachemode ?
+                filesFilter(context.state.cache.tempFilesList) : filesFilter(context.state.fileslist)
             
             if (files.length > 0 && index !== 0) {
                 context.commit('SET_CURFILE', files[index - 1])
             }
+
         },
         NEXT_FILE: (context, oldindex=null) => {
             let index = 0
-            let files_list = context.getters.getFilesList
-
+            
             if (oldindex !== null) index = oldindex
             else {
                 index = context.getters.getFileIndex
             }
-
-            const files = filesFilter(files_list)
+            
+            const cachemode = context.state.cache.tempFilesList.length >= 3000
+            
+            if (!cachemode) context.commit('UPDATE_FILES_LIST')
+            
+            const files = cachemode ?
+                filesFilter(context.state.cache.tempFilesList) : filesFilter(context.state.fileslist)
 
             if (oldindex !== null) {
                 context.commit('SET_CURFILE', files[index])
@@ -159,12 +179,13 @@ export default new Vuex.Store({
             else {
                 context.commit('SET_CURFILE', '')
             }
+
+            
         },
 
         DELETE_FILE: context => {
             fs.remove(context.state.curFile.filepath, function(err){
                 if (err) return console.error(err);
-                console.log("success!")
             });
         },
 
@@ -172,18 +193,23 @@ export default new Vuex.Store({
             let files_list = getDirFiles(context.getters.getFolderPath)
             
             const files = filesFilter(files_list)
+
             if (files.length === 0) {
                 context.commit('SET_CURFILE', '')
+            }
+            else if (files.length === 1) {
+                console.log(files[0])
+                context.commit('SET_CURFILE', files[0])
             }
             else if (index + 1 < files.length) {
                 context.commit('SET_CURFILE', files[index])
             }
-            else if (index + 1 > files.length) {
+            else if (index + 1 >= files.length) {
                 context.commit('SET_CURFILE', files[files.length - 1])
             }
             else if (index === -1) {
                 context.commit('SET_CURFILE', '')
-            }
+            } 
         },
         
 
@@ -221,24 +247,28 @@ export default new Vuex.Store({
             }
             return path.basename(getters.getFolderPath)
         },
-        //:: Folder Files_list
-        getFilesList: (state, getters) => {
-            if (state.cache.tempFilesList.length > 3000) {
-                return state.cache.tempFilesList
-            }
-            else {
-                // Fast-Glob
-                // return globDirFiles(getters.getFolderPath)
+        
+        
+        // //:: Folder Files_list
+        // getFilesList: (state, getters) => {
+        //     if (state.cache.tempFilesList.length > 3000) {
+        //         return state.cache.tempFilesList
+        //     }
+        //     else {
+        //         // Fast-Glob
+        //         // return globDirFiles(getters.getFolderPath)
                 
-                // fs
-                return getDirFiles(getters.getFolderPath)
-            }
-        },
+        //         console.log(getDirFiles(getters.getFolderPath))
+        //         return getDirFiles(getters.getFolderPath)
+        //     }
+        // },
+
+
         //:: File Index
         getFileIndex: (state, getters) => {
             const file = getters.getCurFilePath
-            const files_list = getters.getFilesList
-            const files = filesFilter(files_list)
+            const files = state.cache.tempFilesList.length > 3000 ?
+                filesFilter(state.cache.tempFilesList) : filesFilter(state.fileslist)
             return files.indexOf(file)
         },
         //:: View Mode
@@ -246,8 +276,10 @@ export default new Vuex.Store({
             return state.mode
         },
         //:: Folder Info
-        getFolderInfo: (state, getters) => {
-            const files = getters.getFilesList
+        getFolderInfo: (state) => {
+            const files = state.cache.tempFilesList.length > 3000 ?
+                state.cache.tempFilesList : state.fileslist
+            
             let file_items = files.filter(i => 
                 fs.lstatSync(i).isFile()
             )

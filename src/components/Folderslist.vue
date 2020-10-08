@@ -468,22 +468,28 @@ export default {
         setMainFolder() {
             let target = this.folderpath.replace(/\\/g, "/")
 
+            // return if current folder is mainfolder
             if (this.filefolder === target) {
                 this.$notify(isMainfolder("folderlist"))
                 return
             }
+
+
+            // Clear some cache and html class
             this.$store.commit('RESET_SELECTED')
+            
             setTimeout(() => {
                 const wrapper = document.getElementsByClassName('file-item-wrapper')
                 wrapper.forEach(e => e.classList.remove('selected'))
             })
 
-            this.$store.commit("CLEAR_TEMP_FILES_LIST", target)
 
+
+            // Check folder have readable files inside
             const files = getDirFiles(target)
             const readable = filesFilter(files)
-
             if (readable.length >= 3000) {
+                // this.$store.commit("CLEAR_TEMP_FILES_LIST", target)
                 this.$store.commit("OVERIDE_TEMP_FILES_LIST", files)
                 this.$store.commit("SET_CURFILE", readable[0])
 
@@ -511,9 +517,13 @@ export default {
                         },
                     ],
                 })
-            } else if (readable.length > 0) {
+            } 
+            else if (readable.length > 0) {
+                this.$store.commit("CLEAR_TEMP_FILES_LIST", target)
                 this.$store.commit("SET_CURFILE", readable[0])
-            } else if (readable.length === 0) {
+                this.$store.commit("UPDATE_FILES_LIST")
+            } 
+            else if (readable.length === 0) {
                 this.$notify(noReadable("folderlist"))
             }
         },
@@ -534,9 +544,6 @@ export default {
                 else if(this.mode === "PreNext" || this.mode === "Multiple"){
                     this.$store.dispatch("AFTER_MOVE_NEXT", index)
                 }
-
-                
-
 
                 this.$store.commit("UPDATE_LOG", {
                     logger: "Movelog",
@@ -586,6 +593,7 @@ export default {
                         overwrite: false,
                         errorOnExist: true,
                     })
+                    this.$store.commit('UPDATE_FILES_LIST')
                     changeFile()
 
                 }

@@ -36,7 +36,10 @@
             >
                 
                 <div class="file-item-wrapper" v-for="(img,index) in items" :key="img">
-                    <Checkbox class="select-check" :value="img" v-model="tempSelected" color="#f50057" @change="fileSelected(index, img)" v-if="curfile !== ''"># {{files.indexOf(img) + 1}}</Checkbox>
+                    <Checkbox class="select-check" :value="img" v-model="tempSelected" color="#f50057" @change="fileSelected(index, img)" v-if="curfile !== ''">
+                        # {{readable.indexOf(img) + 1}}
+                    </Checkbox>
+
                     <div class="file-img-wrapper">
                         <img class="file-item"  :data-src="`local-resource://${img}`" @load="loaded($event, index)" v-if="curfile !== ''" />
                         <canvas class="canvas-file-item" v-if="curfile !== ''"></canvas>
@@ -45,8 +48,8 @@
 
                 <vue-ads-pagination 
                     class="pagination"
-                    v-if="curfile !== '' && files.length > 10"
-                    :total-items="files.length"
+                    v-if="curfile !== '' && readable.length > 10"
+                    :total-items="readable.length"
                     :page="page"
                     :max-visible-pages="5"
                     @range-change="rangeChange"
@@ -143,7 +146,7 @@ import fs from "fs-extra";
 import Store from 'electron-store'
 // import path from 'path'
 import mime from "mime-types";
-import {filesFilter, deletefileLogging} from "@/assets/func/helper.js";
+import {filesFilter, readable, deletefileLogging} from "@/assets/func/helper.js";
 import {plsUploadFolder} from "@/assets/func/notify.js";
 
 import Checkbox from 'vue-material-checkbox'
@@ -174,7 +177,6 @@ export default {
                         // Directory
                         let readable = ["image", "video", "audio"];
                         
-
                         this.$store.commit('SET_TEMP_FILES_LIST', file.path.replace(/\\/g, '/'))
                         
                         let readablelist = this.tempfileslist.filter((f) => {
@@ -195,6 +197,7 @@ export default {
                             });
                         } else {
                             this.$store.commit("SET_CURFILE",readablelist[0])
+                            this.$store.commit("UPDATE_FILES_LIST")
 
                             if (this.tempfileslist.length > 3000){
                                 this.$modal.show("dialog", {
@@ -256,7 +259,10 @@ export default {
                 this.$notify(plsUploadFolder);
                 return;
             }
-            const files = filesFilter(this.files);
+            
+            const files = this.tempfileslist.length >= 3000 ?
+                filesFilter(this.tempfileslist) : filesFilter(this.fileslist)
+
             this.$store.commit("SET_CURFILE", files[0]);
         },
         goEnd() {
@@ -264,7 +270,10 @@ export default {
                 this.$notify(plsUploadFolder);
                 return;
             }
-            const files = filesFilter(this.files);
+            
+            const files = this.tempfileslist.length >= 3000 ?
+                filesFilter(this.tempfileslist) : filesFilter(this.fileslist)
+
             this.$store.commit("SET_CURFILE", files[files.length - 1]);
         },
         
@@ -303,6 +312,7 @@ export default {
                                 for(let f of this.tempSelected){
                                     fs.remove(f)
                                         .then(()=>{
+                                            this.$store.commit('UPDATE_FILES_LIST')
                                             afterTreatment()
                                         })
                                 }
@@ -310,6 +320,7 @@ export default {
                             else{
                                 fs.remove(this.curfile)
                                     .then(()=>{
+                                        this.$store.commit('UPDATE_FILES_LIST')
                                         afterTreatment()
                                     })
                             }
@@ -386,7 +397,7 @@ export default {
         },
         selectAll(){
             this.$store.commit('RESET_SELECTED')
-            for (let i of this.files){
+            for (let i of this.fileslist){
                 this.$store.commit('ADD_SELECTED', i)
             }
             const el = document.getElementsByClassName('file-item-wrapper')
@@ -414,18 +425,27 @@ export default {
             
             for (let count=0; count<10; count++){
                 
-                    if (this.tempSelected.includes(this.files[start])){
+                    if (this.tempSelected.includes(this.fileslist[start])){
                         setTimeout(() => {
                             const wrapper = document.getElementsByClassName('file-item-wrapper')
                             wrapper[count].classList.add('selected')
                         })
                     }
-                if(this.files[start] !== undefined) this.items.push(this.files[start])
+                if(this.fileslist[start] !== undefined && readable(this.fileslist[start], 'image')) this.items.push(this.fileslist[start])
                 start++
             }
-        }
+        },
     },
     computed: {
+
+            fileslist(){
+                if(this.tempfileslist.length >= 3000){
+                    return this.tempfileslist
+                }
+                else{
+                    return this.$store.state.fileslist
+                }
+            },
             tempfileslist(){
                 return this.$store.state.cache.tempFilesList
             },
@@ -440,14 +460,18 @@ export default {
                     this.$store.commit('UPDATE_SELECTED', data)
                 }
             },
+            readable(){
+                return filesFilter(this.fileslist, 'image')
+            },
+            
 
 
         ...mapGetters({
             curfile: "getCurFilePath",
             filename: "getFileName",
             fileindex: 'getFileIndex',
+            filefolder: 'getFolderPath',
             filetype: "getFileType",
-            files: "getFilesList",
             mode: "getMode",
         }),
     },
@@ -463,11 +487,17 @@ export default {
                 })
             }
         },
-        files(){
+        fileslist(){
             this.items = []
             for (let count=0; count<10; count++){
-                if(this.files[count] !== undefined) this.items.push(this.files[count])
+                let file = this.fileslist[count]
+                if(file !== undefined && readable(file, 'image')){
+                    this.items.push(file)
+                } 
             }
+        },
+        filefolder(){
+            this.page = 0
         }
 
     },
@@ -672,7 +702,7 @@ export default {
         flex-direction: column;
         padding: 5px;
         margin: 5px;
-
+        
         .select-check{
             cursor: default;
             color: var(--lightyellow);
