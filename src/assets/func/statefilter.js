@@ -32,6 +32,9 @@ const configfilter = {
     "folders_anime": true,
     "viewer_anime": true,
     "mode_notify": true,
+    "copy_notify": true,
+    "move_notify": true,
+    "delete_notify": true,
     "check_update": true,
 }
 

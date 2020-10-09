@@ -1,6 +1,6 @@
 {
     "name": "picnel.io_2",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "private": true,
     "scripts": {
         "serve": "vue-cli-service serve",

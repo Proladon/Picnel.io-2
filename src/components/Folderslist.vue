@@ -757,22 +757,27 @@ export default {
                         await Wait();
                     }
                 })()
-                
-                this.$notify({
-                    group: 'folderlist',
-                    title: 'Copy File',
-                    type: 'success',
-                    text: `Copy ${tempSelected.length} files success`
-                })
+
+                if(this.copy_notify){
+                    this.$notify({
+                        group: 'folderlist',
+                        title: 'Copy File',
+                        type: 'success',
+                        text: `Copy ${tempSelected.length} files success`
+                    })
+                }
             }
             else{
                 this.fileOperate("Copy", targetpath)
-                this.$notify({
-                    group: 'folderlist',
-                    title: 'Copy File',
-                    type: 'success',
-                    text: 'Copy success'
-                })
+
+                if(this.copy_notify){
+                    this.$notify({
+                        group: 'folderlist',
+                        title: 'Copy File',
+                        type: 'success',
+                        text: 'Copy success'
+                    })
+                }
             }
 
         },
@@ -810,22 +815,26 @@ export default {
                         store.commit('POP_SELECTED', tempSelected.indexOf(i))
                     }
                 })()
-
-                this.$notify({
-                    group: 'folderlist',
-                    title: 'Move File',
-                    type: 'success',
-                    text: `Copy ${tempSelected.length} files success`
-                })
+                
+                if (this.move_notify){
+                    this.$notify({
+                        group: 'folderlist',
+                        title: 'Move File',
+                        type: 'success',
+                        text: `Copy ${tempSelected.length} files success`
+                    })
+                }
             }
             else{
                 this.fileOperate("Move", targetpath)
-                this.$notify({
-                    group: 'folderlist',
-                    title: 'Copy File',
-                    type: 'success',
-                    text: 'Copy success'
-                })
+                if (this.move_notify){
+                    this.$notify({
+                        group: 'folderlist',
+                        title: 'Copy File',
+                        type: 'success',
+                        text: 'Copy success'
+                    })
+                }
             }
 
         },
@@ -975,7 +984,11 @@ export default {
             folders_anime: (state) => state.config.folders_anime,
 
             // Selected
-            tempSelected: (state) => state.cache.tempSelected
+            tempSelected: (state) => state.cache.tempSelected,
+
+            // Cofig
+            copy_notify: (state) => state.config.copy_notify,
+            move_notify: (state) => state.config.move_notify,
         }),
 
         ...mapGetters({

@@ -109,10 +109,31 @@
 //             Settings             //
 // ---------------- //
 
-/* width */
-.controls-wrapper::-webkit-scrollbar,
 .controls-wrapper::-webkit-scrollbar {
-    width: 0;
+    width: 12px;
+}
+
+.controls-wrapper::-webkit-scrollbar:horizontal {
+    height: 5px;
+}
+
+/* Track */
+.controls-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* Handle */
+.controls-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Handle on hover */
+.controls-wrapper::-webkit-scrollbar-thumb:hover {
+    background: rgb(25, 200, 206);
+}
+
+.controls-wrapper::-webkit-scrollbar-corner {
+    background: transparent;
 }
 
 
@@ -121,7 +142,6 @@
 // ---------------- //
 
 /* width */
-#view-area::-webkit-scrollbar,
 #view-area::-webkit-scrollbar {
     width: 0;
 }

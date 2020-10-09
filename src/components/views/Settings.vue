@@ -34,6 +34,30 @@
                             description="Changing view mode notification"
                             :val="mode_notify"
                         />
+                        
+                        <Settingsitem 
+                            type="toggle"
+                            config="copy_notify"
+                            name="Mode Change" 
+                            description="Changing view mode notification"
+                            :val="copy_notify"
+                        />
+
+                        <Settingsitem 
+                            type="toggle"
+                            config="move_notify"
+                            name="Mode Change" 
+                            description="Changing view mode notification"
+                            :val="move_notify"
+                        />
+
+                        <Settingsitem 
+                            type="toggle"
+                            config="delete_notify"
+                            name="Mode Change" 
+                            description="Changing view mode notification"
+                            :val="delete_notify"
+                        />
                     </div>
 
                     <div class="settings-category">
@@ -66,9 +90,17 @@
         },
         computed:{
            ...mapState({
+               // Anime
                viewer_anime: state => state.config.viewer_anime,
                folders_anime: state => state.config.folders_anime,
+               
+               // Notify
                mode_notify: state => state.config.mode_notify,
+               copy_notify: state => state.config.copy_notify,
+               move_notify: state => state.config.move_notify,
+               delete_notify: state => state.config.delete_notify,
+                
+               // Update
                check_update: state => state.config.check_update,
            })
        },
@@ -93,13 +125,12 @@
         height: 100%;
     }
 
-
-
     .controls-wrapper {
         overflow: auto;
         width: 100%;
         height: 100%;
         box-sizing: border-box;
+        padding-right: 15px;
         // border: solid 2px lightsalmon;
 
         .settings-category{

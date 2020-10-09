@@ -189,12 +189,14 @@ export default {
                         // No readable files
                         if (readablelist.length === 0) {
                             this.$store.commit('CLEAR_TEMP_FILES_LIST')
+                            
                             this.$notify({
                                 group: "viewer",
                                 type: "error",
                                 title: "Error",
                                 text: "No readable files in the directory",
-                            });
+                            })
+
                         } else {
                             this.$store.commit("SET_CURFILE",readablelist[0])
                             this.$store.commit("UPDATE_FILES_LIST")
@@ -308,7 +310,10 @@ export default {
 
                             // Delete File
 
-                            
+                            this.$notify({
+                                group: 'viewer',
+                                clean: true,
+                            })
                             
                             if(this.mode === 'Multiple'){
                                 for(let f of this.tempSelected){
@@ -324,12 +329,15 @@ export default {
                                             })
                                         })
                                 }
-                                this.$notify({
-                                    group: 'viewer',
-                                    title: 'Delete File',
-                                    type: 'success',
-                                    text: `Delete ${this.tempSelected.length} files success`
-                                })
+
+                                if(this.delete_notify){
+                                    this.$notify({
+                                        group: 'viewer',
+                                        title: 'Delete File',
+                                        type: 'success',
+                                        text: `Delete ${this.tempSelected.length} files success`
+                                    })
+                                }
                             }
                             else{
                                 fs.remove(this.curfile)
@@ -343,16 +351,17 @@ export default {
                                             log: deletefileLogging(this.filename, this.curfile)
                                         })
                                 })
-                                this.$notify({
-                                    group: 'viewer',
-                                    title: 'Delete File',
-                                    type: 'success',
-                                    text: `Delete file success`
-                                })
+
+                                if (this.delete_notify){
+                                    this.$notify({
+                                        group: 'viewer',
+                                        title: 'Delete File',
+                                        type: 'success',
+                                        text: `Delete file success`
+                                    })
+                                }
                             }
 
-                            // Logging
-                            
                             this.$modal.hide("dialog");
                         },
                     },
@@ -473,6 +482,9 @@ export default {
             },
             viewer_anime(){
                 return this.$store.state.config.viewer_anime
+            },
+            delete_notify(){
+                return this.$store.state.config.delete_notify
             },
             tempSelected:{
                 get(){

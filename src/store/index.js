@@ -198,7 +198,6 @@ export default new Vuex.Store({
                 context.commit('SET_CURFILE', '')
             }
             else if (files.length === 1) {
-                console.log(files[0])
                 context.commit('SET_CURFILE', files[0])
             }
             else if (index + 1 < files.length) {
