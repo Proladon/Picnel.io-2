@@ -27,20 +27,12 @@
 
             <div class="info-content">
 
-                <div class="release-info" v-if="info === 'release'">
-                    <p class="content-h1">Release</p>
-                    <div class="content-block">
-                        <p class="content-h2">Ver 1.0.6</p>
-                    </div>
-                </div>
-
-
                 <div class="about" v-if="info === 'about'">
                     <p class="content-h1">About</p>
                     <div class="intro content-block">
                         <img src="@/assets/icon/pic2.png" alt="">
                         <div class="intro-content">
-                            <p>Version: 1.0.6</p>
+                            <p>Version: {{version}}</p>
                         </div>
                     </div>   
                     <div class="related-img content-block">
@@ -78,6 +70,7 @@ import {remote} from 'electron'
         data(){
             return{
                 info: 'about',
+                version: "",
             }
         },
         methods:{
@@ -148,6 +141,9 @@ import {remote} from 'electron'
                     })
 
             }
+        },
+        mounted(){
+            this.version = remote.app.getVersion()
         }
     }
 </script>

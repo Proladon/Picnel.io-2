@@ -36,7 +36,7 @@
             >
                 
                 <div class="file-item-wrapper" v-for="(img,index) in items" :key="img">
-                    <Checkbox class="select-check" :value="img" v-model="tempSelected" color="#f50057" @change="fileSelected(index, img)" v-if="curfile !== ''">
+                    <Checkbox class="select-check"  :value="img" v-model="tempSelected" color="#f50057" @change="fileSelected(index, img)" v-if="curfile !== ''">
                         # {{readable.indexOf(img) + 1}}
                     </Checkbox>
 
@@ -129,7 +129,7 @@
             animation-type="velocity"
         />
         <notifications
-            group="nofiles"
+            group="viewer"
             position="bottom right"
             animation-type="velocity"
         />
@@ -144,7 +144,7 @@ import anime from "animejs";
 import "viewerjs/dist/viewer.css";
 import fs from "fs-extra";
 import Store from 'electron-store'
-// import path from 'path'
+import path from 'path'
 import mime from "mime-types";
 import {filesFilter, readable, deletefileLogging} from "@/assets/func/helper.js";
 import {plsUploadFolder} from "@/assets/func/notify.js";
@@ -190,7 +190,7 @@ export default {
                         if (readablelist.length === 0) {
                             this.$store.commit('CLEAR_TEMP_FILES_LIST')
                             this.$notify({
-                                group: "nofiles",
+                                group: "viewer",
                                 type: "error",
                                 title: "Error",
                                 text: "No readable files in the directory",
@@ -295,7 +295,7 @@ export default {
                             let index = this.fileindex
 
                             const afterTreatment = ()=>{
-                                if(this.tempfileslist.length > 3000){
+                                if(this.tempfileslist.length >= 3000){
                                     this.$store.commit('REMOVE_TEMP_FILES_ITEM', index)
                                 }
                                 if(this.mode === 'Random'){
@@ -307,29 +307,51 @@ export default {
                             }
 
                             // Delete File
+
+                            
                             
                             if(this.mode === 'Multiple'){
                                 for(let f of this.tempSelected){
                                     fs.remove(f)
                                         .then(()=>{
                                             this.$store.commit('UPDATE_FILES_LIST')
+                                            
                                             afterTreatment()
+                                            
+                                            this.$store.commit('UPDATE_LOG', {
+                                                logger: 'Deletelog',
+                                                log: deletefileLogging(path.basename(f), f)
+                                            })
                                         })
                                 }
+                                this.$notify({
+                                    group: 'viewer',
+                                    title: 'Delete File',
+                                    type: 'success',
+                                    text: `Delete ${this.tempSelected.length} files success`
+                                })
                             }
                             else{
                                 fs.remove(this.curfile)
                                     .then(()=>{
                                         this.$store.commit('UPDATE_FILES_LIST')
+                                        
                                         afterTreatment()
-                                    })
+                                        
+                                        this.$store.commit('UPDATE_LOG', {
+                                            logger: 'Deletelog',
+                                            log: deletefileLogging(this.filename, this.curfile)
+                                        })
+                                })
+                                this.$notify({
+                                    group: 'viewer',
+                                    title: 'Delete File',
+                                    type: 'success',
+                                    text: `Delete file success`
+                                })
                             }
 
                             // Logging
-                            this.$store.commit('UPDATE_LOG', {
-                                logger: 'Deletelog',
-                                log: deletefileLogging(this.filename, this.curfile)
-                            })
                             
                             this.$modal.hide("dialog");
                         },
@@ -498,8 +520,7 @@ export default {
         },
         filefolder(){
             this.page = 0
-        }
-
+        },
     },
 };
 </script>

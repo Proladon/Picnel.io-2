@@ -534,12 +534,12 @@ export default {
 
             // After Operation changing file function
             const changeFile = () => {
-                if (this.tempfileslist.length > 3000) {
+                if (this.tempfileslist.length >= 3000) {
                     this.$store.commit("REMOVE_TEMP_FILES_ITEM", index)
                 }
 
                 if (this.mode === "Random") {
-                    this.$store.dispatch("RANDOM_FILE", index)
+                    this.$store.dispatch("RANDOM_FILE")
                 } 
                 else if(this.mode === "PreNext" || this.mode === "Multiple"){
                     this.$store.dispatch("AFTER_MOVE_NEXT", index)
@@ -595,7 +595,7 @@ export default {
                     })
                     this.$store.commit('UPDATE_FILES_LIST')
                     changeFile()
-
+                    return new Promise(resolve => resolve('done'))
                 }
                 else if (opType === 'Copy'){
                     fs.copySync(curFilepath, target, {
@@ -607,6 +607,7 @@ export default {
                         logger: "Copylog",
                         log: `File: ${this.filename}//From: ${this.filefolder}//To: ${targetpath}`,
                     })
+                    return new Promise(resolve => resolve('done'))
                 }
             } 
             catch (error) {
@@ -650,6 +651,7 @@ export default {
                                                 overwrite: false,
                                                 errorOnExist: true,
                                             })
+                                            this.$store.commit('UPDATE_FILES_LIST')
                                             changeFile()
                                         }
                                         else if (opType === 'Copy'){
@@ -665,7 +667,7 @@ export default {
                                         }
         
                                         this.$modal.hide("dialog")
-                                        resolve("123")
+                                        resolve("done")
                                     },
                                 },
                                 {
@@ -676,21 +678,22 @@ export default {
                                             .then((res) => {
                                                 if (res.response === 0) {
                                                     fs.remove(curFilepath).then(() => {
+                                                        this.$store.commit('UPDATE_FILES_LIST')
                                                         changeFile()
-                                                    }
-                                                    )
-                                                    this.$store.commit("UPDATE_LOG", {
-                                                        logger: "Deletelog",
-                                                        log: deletefileLogging(
-                                                            this.filename,
-                                                            curFilepath
-                                                        ),
-                                                    })
-        
-                                                    this.$modal.hide("dialog")
-                                                    resolve("123")
                                                 }
-                                            })
+                                            )
+                                                this.$store.commit("UPDATE_LOG", {
+                                                    logger: "Deletelog",
+                                                    log: deletefileLogging(
+                                                        this.filename,
+                                                        curFilepath
+                                                    ),
+                                                })
+    
+                                                this.$modal.hide("dialog")
+                                                resolve("done")
+                                            }
+                                        })
                                     },
                                 },
                                 {
@@ -705,11 +708,11 @@ export default {
                                                         overwrite: true,
                                                         errorOnExist: false,
                                                     })
-        
+                                                    this.$store.commit('UPDATE_FILES_LIST')
                                                     changeFile()
         
                                                     this.$modal.hide("dialog")
-                                                    resolve("123")
+                                                    resolve("done")
                                                 }
                                             })
                                     },
@@ -719,7 +722,7 @@ export default {
                                     class: "dialog-btn dialog-gray-btn",
                                     handler: () => {
                                         this.$modal.hide("dialog")
-                                        resolve("123")
+                                        resolve("cancel")
                                     },
                                 },
                             ],
@@ -729,6 +732,7 @@ export default {
                 })
             }
         },
+
 
         copyfile(targetpath) {
             const tempSelected = this.tempSelected
@@ -741,6 +745,10 @@ export default {
                 return new Promise(r => setTimeout(r, 100))
             }
 
+            this.$notify({
+                group: 'folderlist',
+                clean: true,
+            })
             
             if(this.mode === 'Multiple'){
                 (async function createChain() {
@@ -750,15 +758,30 @@ export default {
                     }
                 })()
                 
+                this.$notify({
+                    group: 'folderlist',
+                    title: 'Copy File',
+                    type: 'success',
+                    text: `Copy ${tempSelected.length} files success`
+                })
             }
             else{
                 this.fileOperate("Copy", targetpath)
+                this.$notify({
+                    group: 'folderlist',
+                    title: 'Copy File',
+                    type: 'success',
+                    text: 'Copy success'
+                })
             }
+
         },
 
         movefile(targetpath) {
             const tempSelected = this.tempSelected
             const Operation = this.fileOperate
+            const store = this.$store
+            
             function getProm(i) {
                 return Operation("Move", targetpath, i)
             }
@@ -766,19 +789,43 @@ export default {
             function Wait() {
                 return new Promise(r => setTimeout(r, 100))
             }
-
             
+            this.$notify({
+                group: 'folderlist',
+                clean: true,
+            })
+
             if(this.mode === 'Multiple'){
                 (async function createChain() {
+                    let popitem = []
                     for (let i of tempSelected) {
-                        await getProm(i);
+                        let res = await getProm(i);
+                        if(res === 'done'){
+                            popitem.push(i)
+                        }
                         await Wait();
                     }
+
+                    for (let i of popitem){
+                        store.commit('POP_SELECTED', tempSelected.indexOf(i))
+                    }
                 })()
-                this.$store.commit("RESET_SELECTED")
+
+                this.$notify({
+                    group: 'folderlist',
+                    title: 'Move File',
+                    type: 'success',
+                    text: `Copy ${tempSelected.length} files success`
+                })
             }
             else{
                 this.fileOperate("Move", targetpath)
+                this.$notify({
+                    group: 'folderlist',
+                    title: 'Copy File',
+                    type: 'success',
+                    text: 'Copy success'
+                })
             }
 
         },

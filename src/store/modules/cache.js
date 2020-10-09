@@ -38,6 +38,9 @@ const mutations = {
     },
     UPDATE_SELECTED: (state, data) => {
         state.tempSelected = data
+    },
+    POP_SELECTED: (state, index) => {
+        state.tempSelected.splice(index, 1)
     }
 };
 
