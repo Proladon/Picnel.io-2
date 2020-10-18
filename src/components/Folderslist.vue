@@ -40,10 +40,10 @@
                             <p>{{ i.name }}</p>
 
                             <div class="folder-control-wrapper">
-                                <div class="copy" @click="copyfile(i.path)">
+                                <div class="copy" title="Copy to" @click="copyfile(i.path)">
                                     C
                                 </div>
-                                <div class="move" @click="movefile(i.path)">
+                                <div class="move" title="Move to" @click="movefile(i.path)">
                                     M
                                 </div>
                             </div>

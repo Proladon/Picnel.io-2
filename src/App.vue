@@ -227,6 +227,8 @@
         // --sidebar: cadetblue;
         --sidebar: rgb(142, 180, 192);
         --font: DisposableDroid BB;
+
+        --image-resolution: 500px;
     }
     
 

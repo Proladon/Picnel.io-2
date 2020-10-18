@@ -28,7 +28,6 @@
                 v-if="curfile !== '' && filetype === 'audio'&&mode !== 'Multiple'"
             ></audio>
             <!-- Multiple Viewer -->
-            
             <div 
                 class="files-viewer multiple-viewer"
                 v-if="mode === 'Multiple' "
@@ -80,6 +79,14 @@
             <div class="select-controls" @click="selectAll">Select All</div>
             <div class="select-controls" @click="cancelAll">Cancel All</div>
             <div class="select-controls delete-selected" @click="deleteSelected">Delete Selected</div>
+
+            <div class="res-controls-wrapper">
+                <div class="res-controls" title="Big Image" @click="big_res">B</div> 
+                <div class="spliter">|</div>
+                <div class="res-controls" title="Mid Image" @click="mid_res">M</div> 
+                <div class="spliter">|</div>
+                <div class="res-controls" title="Small Image" @click="small_res">S</div>
+            </div>
         </div>
 
         <!-- Controls -->
@@ -163,6 +170,7 @@ export default {
         return{
             page: 0,
             items: [],
+            resolution: 100,
         }
     },
 
@@ -413,9 +421,12 @@ export default {
             const canvas = document.getElementsByClassName('canvas-file-item');
             
             let context = canvas[index].getContext("2d")
-            canvas[index].width = i.width
-            canvas[index].height = i.height
-            context.drawImage(i, 0, 0, i.width, i.height);
+            // canvas[index].width = i.width
+            // canvas[index].height = i.height
+            // context.drawImage(i, 0, 0, i.width, i.height);
+            canvas[index].width = this.resolution
+            canvas[index].height = this.resolution
+            context.drawImage(i, 0, 0, this.resolution, this.resolution);
         },
         fileSelected(index, img){
             const wrapper = document.getElementsByClassName('file-item-wrapper')
@@ -452,7 +463,9 @@ export default {
 
         rangeChange(start){
             this.items = []
-            
+            document.getElementById('view-area').scrollTo({
+                top:0,
+            })
             
             for (let count=0; count<10; count++){
                 
@@ -466,6 +479,42 @@ export default {
                 start++
             }
         },
+
+        changeResolution(e){
+            const controls = document.getElementsByClassName('res-controls')
+            controls.forEach(el => {
+                el.classList.remove('res-active')
+            })
+            e.target.classList.add('res-active')
+
+            let root = document.documentElement;
+            root.style.setProperty('--image-resolution', this.resolution + "px")
+
+            const canvas = document.getElementsByClassName('canvas-file-item');
+            const imgs = document.getElementsByClassName('file-item');
+            
+            for(let index=0; index<10; index++){
+                let context = canvas[index].getContext("2d")
+    
+                canvas[index].width = this.resolution
+                canvas[index].height = this.resolution
+                context.drawImage(imgs[index], 0, 0, this.resolution, this.resolution);
+            }
+        },
+
+        big_res(e){
+            
+            this.resolution = 500
+            this.changeResolution(e)
+        },
+        mid_res(e){
+            this.resolution = 250
+            this.changeResolution(e)
+        },
+        small_res(e){
+            this.resolution = 100
+            this.changeResolution(e)
+        }
     },
     computed: {
 
@@ -534,6 +583,10 @@ export default {
             this.page = 0
         },
     },
+    mounted(){
+        let root = document.documentElement;
+        root.style.setProperty('--image-resolution', this.resolution + "px")
+    }
 };
 </script>
 
@@ -701,6 +754,7 @@ export default {
     border-radius: 8px;
 }
 
+
 .select-controls:hover{
     color: var(--dark);
     background-color: cadetblue;
@@ -708,6 +762,29 @@ export default {
 
 .delete-selected:hover{
     background-color: rgb(212, 91, 128);
+}
+
+.res-controls-wrapper{
+    display: flex;
+    margin-left: 10px;
+    padding: 5px;
+    color: lightgray;
+    box-sizing: border-box;
+    border: solid 2px var(--lightyellow);
+    border-radius: 8px;
+
+    .res-controls{
+        cursor: pointer;
+    }
+
+    .spliter{
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+
+    .res-active{
+        color: orange;
+    }
 }
 // ---------------- //
 //             Context             //
@@ -748,8 +825,8 @@ export default {
             
             .file-item{
                 cursor: pointer;
-                width: 100px;
-                height: 100px;
+                width: var(--image-resolution);
+                height: var(--image-resolution);
                 object-fit: cover;
                 opacity: 0;
                 
@@ -762,8 +839,8 @@ export default {
                 left: 0;
                 right: 0;
                 pointer-events: none;
-                width: 100px;
-                height: 100px;
+                width: var(--image-resolution);
+                height: var(--image-resolution);
                 background:rgba($color: skyblue, $alpha: .3);
             }
         }
