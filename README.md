@@ -31,6 +31,8 @@ Picnel.io-2 is using `vue-electron`(Vue 2). so unlike picnel.io building with C#
 ✅ Support `video` and `Audio` files  
 ✅ Auto Update Check  
 ✅ User preferences  
+✅ Notification
+
 
 # Introduction
 
