@@ -20,20 +20,17 @@ Picnel.io-2 is using `vue-electron`(Vue 2). so unlike picnel.io building with C#
 
 <!-- ## Develop status: [Progress status](https://github.com/Proladon/Picnel.io-2/projects/1) -->
 
-## Features add
-1. Allow dragdrop to reorder target folder position
-2. Cross platform
-3. Group pagination
-4. Smoothly animetion transition increse the experience
-5. More readable and controlable logger
-6. Export workspace to single `.json` file, that you can carry it
-7. Support `video` and `Audio` files
-
-## Todo
-- Target folders search、sort、filter
-- Auto Update
-- Theme preferences
-- Traditional Chinese support and more language support
+## Features add (Compare with Picnel.io)
+✅ Allow dragdrop to reorder target folder position
+✅ Cross platform
+✅ Multiple view and operate
+✅ Group pagination
+✅ Smoothly animetion transition increse the experience
+✅ More readable and controlable logger
+✅ Export workspace to single `.json` file, that you can carry it
+✅ Support `video` and `Audio` files
+✅ Auto Update Check
+✅ User preferences
 
 # Introduction
 
