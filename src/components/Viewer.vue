@@ -85,7 +85,7 @@
                 <div class="spliter">|</div>
                 <div class="res-controls" title="Mid Image" @click="mid_res">M</div> 
                 <div class="spliter">|</div>
-                <div class="res-controls" title="Small Image" @click="small_res">S</div>
+                <div class="res-controls res-active" title="Small Image" @click="small_res">S</div>
             </div>
         </div>
 
@@ -421,9 +421,6 @@ export default {
             const canvas = document.getElementsByClassName('canvas-file-item');
             
             let context = canvas[index].getContext("2d")
-            // canvas[index].width = i.width
-            // canvas[index].height = i.height
-            // context.drawImage(i, 0, 0, i.width, i.height);
             canvas[index].width = this.resolution
             canvas[index].height = this.resolution
             context.drawImage(i, 0, 0, this.resolution, this.resolution);
@@ -621,6 +618,7 @@ export default {
     transition: ease-in-out 0.3s;
 
     button {
+        color: var(--dark);
         width: 100%;
         height: 100%;
         border: none;

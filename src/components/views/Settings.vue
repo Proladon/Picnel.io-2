@@ -38,24 +38,24 @@
                         <Settingsitem 
                             type="toggle"
                             config="copy_notify"
-                            name="Mode Change" 
-                            description="Changing view mode notification"
+                            name="Copy Change" 
+                            description="Copy file notification"
                             :val="copy_notify"
                         />
 
                         <Settingsitem 
                             type="toggle"
                             config="move_notify"
-                            name="Mode Change" 
-                            description="Changing view mode notification"
+                            name="Move Change" 
+                            description="Move file notification"
                             :val="move_notify"
                         />
 
                         <Settingsitem 
                             type="toggle"
                             config="delete_notify"
-                            name="Mode Change" 
-                            description="Changing view mode notification"
+                            name="Delete File" 
+                            description="Delete file notification"
                             :val="delete_notify"
                         />
                     </div>
@@ -131,7 +131,6 @@
         height: 100%;
         box-sizing: border-box;
         padding-right: 15px;
-        // border: solid 2px lightsalmon;
 
         .settings-category{
             margin-bottom: 30px;
