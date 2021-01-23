@@ -53,5 +53,8 @@ This is a very inefficient way, and very tiring and irritating. Think about it i
 
 It can be seen that Pocnel.io 2 actually extracts and flatten different levels of folders to the same level. In this way, you don't need to open many folder windows, and find folders more quickly and easily. All operations can be completed quickly in one window, greatly improving efficiency.
 
+## TODO
+- edit picture (crop/resize)
+
 ## Contributes
 I'm just a beginner to coding and this my first time using electron. So it's really welcome and grateful for if anyone can help improve this code quality or any anothors contributes.
