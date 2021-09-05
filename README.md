@@ -13,7 +13,7 @@
 
 ![preview](https://github.com/Proladon/Picnel.io-2/blob/master/preview/Picne.io_2_preview.png)
 
-## ⚡Picnel.io 3 is on planning !
+## ⚡[Picnel.io 3](https://github.com/Proladon/Picnel.io-3) is on planning !
 
 ## Picnel.io 2 is rebuild of [Picnel.io](https://github.com/Proladon/Picnel.io)
 Picnel.io-2 is using `vue-electron`(Vue 2). so unlike picnel.io written by C# `WPF`, Picnel.io 2 is cross platform.
