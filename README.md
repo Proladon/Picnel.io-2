@@ -4,6 +4,10 @@
 
 <h1 align="center">Picnel.io 2</h1>  
 
+> **Warning**
+> ## This project is not maintained anymore !!
+> ## Please see new version project [PicPortal](https://github.com/Proladon/PicPortal)
+
 ![](https://img.shields.io/github/stars/Proladon/Picnel.io-2?style=for-the-badge)
 ![](https://img.shields.io/github/downloads/Proladon/Picnel.io-2/total?color=orange&label=Download&style=for-the-badge)
 ![](https://img.shields.io/github/v/release/Proladon/Picnel.io-2?color=6BD089&include_prereleases&label=Version&style=for-the-badge)
@@ -12,8 +16,6 @@
 ![](https://img.shields.io/powershellgallery/p/DNS.1.1.1.1?color=skyblue&style=for-the-badge)
 
 ![preview](https://github.com/Proladon/Picnel.io-2/blob/master/preview/Picne.io_2_preview.png)
-
-## ⚡[Picnel.io 3](https://github.com/Proladon/Picnel.io-3) is on planning !
 
 ## Picnel.io 2 is rebuild of [Picnel.io](https://github.com/Proladon/Picnel.io)
 Picnel.io-2 is using `vue-electron`(Vue 2). so unlike picnel.io written by C# `WPF`, Picnel.io 2 is cross platform.
